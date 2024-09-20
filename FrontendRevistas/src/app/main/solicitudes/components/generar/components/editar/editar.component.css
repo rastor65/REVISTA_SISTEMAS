@@ -1,0 +1,256 @@
+.solicitudes-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #fa6357;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.solicitudes-subtitle {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #fa6357;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+:host ::ng-deep .p-button-rounded {
+  border-radius: 20px;
+}
+
+:host ::ng-deep .p-button-secondary {
+  background-color: #fa6357;
+  color: #ffffff;
+  border: none;
+}
+
+:host ::ng-deep .p-button-secondary:hover {
+  background-color: #fa6357;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-header {
+  background-color: #fa6357;
+  color: #ffffff;
+  border: none;
+  padding: 1rem;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-header .p-dialog-title {
+  font-size: 20px;
+  margin: 0;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-header .p-dialog-title .pi {
+  margin-right: 0.5rem;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-content {
+  background-color: #ffffff;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-footer {
+  background-color: #f0f0f0;
+}
+
+:host ::ng-deep .contenido-cargado {
+  margin-top: 10px;
+  color: #777777;
+}
+
+.container-button {
+  margin-top: 20px;
+}
+
+.mi-dialog .p-dialog-content {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+.mi-dialog .p-dialog-header {
+  background-color: #fa6357;
+  color: #fff;
+  border: none;
+  padding: 1rem;
+}
+
+.mi-dialog .p-dialog-header .p-dialog-title {
+  font-size: 20px;
+  margin: 0;
+}
+
+.mi-dialog .p-dialog-header .p-dialog-title .pi {
+  margin-right: 0.5rem;
+}
+
+.mi-dialog .p-dialog-footer {
+  background-color: #f0f0f0;
+  padding: 10px 20px;
+  text-align: right;
+}
+
+button.p-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: #fa6357;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.p-button:hover {
+  background-color: #fa6357;
+}
+
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Centrar horizontalmente el contenido */
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #fa6357;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease-in-out;
+  text-align: center;
+  /* Centrar horizontalmente el texto */
+}
+
+.custom-file-upload:hover {
+  background-color: #fa6357;
+}
+
+.archivo-area {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  /* Cambia el color de fondo a tu elección */
+  border: 1px dashed #999;
+  /* Cambia el estilo y color del borde punteado */
+  border-radius: 4px;
+  align-items: center;
+  /* Centra verticalmente */
+  justify-content: space-between;
+}
+
+.archivo-area span {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  width: calc(50% - 20px);
+  /* Para mostrar dos cards por fila */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  width: calc(50% - 20px);
+  /* Para mostrar dos cards por fila */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.card-header {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.fecha-creacion {
+  background-color: #f0f0f0;
+  color: #777777;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: calc(100% - 20px);
+    /* Para mostrar una card por fila en pantallas pequeñas */
+  }
+}
+
+.view-toggle-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 20px;
+}
+
+.view-toggle-buttons button {
+  background-color: #fa6357;
+  border-color: #fa6357;
+  color: white;
+}
+
+label {
+  font-weight: bold;
+}
+
+.form-group {
+  padding: 5px;
+  width: 100%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+
+:host ::ng-deep .form-group {
+  width: 100%;
+}
+
+:host ::ng-deep .p-field {
+  width: 100%;
+}
+
+:host ::ng-deep p-multiSelect {
+  width: 100%;
+}
+
+.custom-button-color{
+  border-color: #fa6357 !important;
+  background-color: #fa6357 !important;
+}

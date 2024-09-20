@@ -1,0 +1,21 @@
+<div class="main">
+    <h1>Ver Categorias</h1>
+    <p-table [value]="categorias" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th >Indice</th>
+                <th >ID</th>
+                <th >Nombre</th>
+                <th >Seccion</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-categoria let-rowIndex="rowIndex">
+            <tr>
+                <td>{{rowIndex}}</td>
+                <td>{{categoria.id}}</td>
+                <td>{{categoria.name}}</td>
+                <td>{{categoria.seccionId}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

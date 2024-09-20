@@ -1,0 +1,9 @@
+<div class="main">
+    <h1>Crear tipo de solicitud</h1>
+    <form [formGroup]="form" (submit)="onSubmit()">
+        <input type="text" placeholder="Nombre" pInputText formControlName="tipo" />
+        <button pButton pRipple type="submit" label="Crear tipo" class="p-button-success"></button>
+    </form>
+</div>
+
+<p-toast></p-toast>

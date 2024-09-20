@@ -1,0 +1,128 @@
+<br>
+<br>
+<h2 class="solicitudes-title">Mis solicitudes</h2>
+
+<div class="solicitudes-container" *ngIf="solicitudes.length > 0; else noSolicitudes">
+  <div class="solicitud-card-container" *ngFor="let solicitud of solicitudes">
+    <div class="solicitud-card p-shadow-4">
+      <div class="solicitud-content">
+        <div class="solicitud-header">
+          <img src="assets/logo_r.jpg" class="solicitud-logo">
+          <div class="solicitud-title-container">
+            <h3 class="solicitud-title">{{ solicitud.titulo_articulo }}</h3>
+            <p class="solicitud-title">{{ getUsuarioNombre(solicitud.autores) }}</p>
+          </div>
+        </div>
+        <div class="corner-element">
+          <div>{{ solicitud.fecha_creacion | date: 'dd/MM/yyyy' }}</div>
+        </div>
+        <p class="solicitud-info">{{ solicitud.afiliacion }}</p>
+      </div>
+      <div class="solicitud-actions">
+        <button pButton type="button" label="Ver" icon="pi pi-search" class="p-button-outlined p-button-secondary w-100"
+          style="font-weight: bold;" (click)="mostrarDialogo(solicitud)"></button>
+        <button pButton type="button" label="Editar" icon="pi pi-pencil" style="font-weight: bold;"
+          class="p-button-outlined p-button-warning w-100" *ngIf="debeMostrarEditar(solicitud)"
+          (click)="MostrarEditarContenido(solicitud.contenidoSolicitud)"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #noSolicitudes>
+  <p class="no-solicitudes-message">No se encontraron solicitudes. Por favor, genere una nueva solicitud.</p>
+</ng-template>
+
+<p-dialog *ngIf="solicitudSeleccionada" header="{{ solicitudSeleccionada.titulo_articulo }}"
+  [(visible)]="displayDialog" [modal]="true" [style]="{ width: '80%', top: '30px' }" [showHeader]="false"
+  [closable]="true" [dismissableMask]="true">
+  <div class="solicitud-content">
+    <div class="solicitud-header">
+      <img src="assets/logo_r.jpg" class="solicitud-logo">
+      <div class="solicitud-title-container">
+        <h3 class="solicitud-title">{{ solicitudSeleccionada.titulo_articulo }}</h3>
+        <p class="solicitud-title">{{ getUsuarioNombre(solicitudSeleccionada.autores) }}</p>
+      </div>
+    </div>
+    <hr>
+    <ng-container *ngIf="contenidoSeleccionado">
+      <p-accordion>
+        <p-accordionTab header="Previsualización del Archivo Adjunto">
+          <embed *ngIf="fileURL" [src]="fileURL" width="100%" height="400px" type="application/pdf">
+        </p-accordionTab>
+        <p-accordionTab header="Previsualización de la Declaración de Originalidad">
+          <embed *ngIf="originalidadURL" [src]="originalidadURL" width="100%" height="400px" type="application/pdf">
+        </p-accordionTab>
+      </p-accordion>
+      <br>
+      <div style="display: flex; justify-content: space-around;">
+        <button pButton type="button" label="Descargar Archivo Adjunto" icon="pi pi-download" class="p-button-warning font-bold"
+          (click)="descargarArchivo(contenidoSeleccionado.id, 'archivo_adjunto')"></button>
+        <button pButton type="button" label="Descargar Declaración de Originalidad" icon="pi pi-download"
+          class="p-button-warning font-bold" (click)="descargarArchivo(contenidoSeleccionado.id, 'originalidad')"></button>
+      </div>
+      <br>
+      <div style="display: flex; justify-content: center; align-items: center;">
+        <button pButton type="button" label="Cerrar" icon="pi pi-times" class="p-button-outlined p-button-warning font-bold"
+          (click)="cerrarDialogo()"></button>
+      </div>
+      <br>
+    </ng-container>
+  </div>
+</p-dialog>
+
+
+<p-dialog header="Editar Contenido" [(visible)]="EditarDialog" [modal]="true" [responsive]="true"
+    [style]="{width: '80%', height: '60%', top: '30px'}" [baseZIndex]="10000" styleClass="mi-dialog custom-dialog"
+    [showHeader]="false" [closable]="false" [dismissableMask]="false">
+
+    <div class="p-grid p-dir-col p-fluid solicitud-form">
+
+        <div class="p-col-12 p-md-6">
+            <label for="archivo_adjunto"><b>Artículo</b></label><br>
+            <div class="archivo-area">
+                <div>
+                    <label for="archivo_adjunto" class="custom-file-upload">
+                        <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
+                        <input pButton type="file" id="archivo_adjunto" (change)="onFileChangeArticulo($event)" required
+                            style="display:none">
+                    </label>
+                </div>
+                <br>
+                <div *ngIf="archivoSeleccionado">
+                    <span>Archivo seleccionado:</span>
+                    {{ archivoSeleccionado }}
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="p-col-12 p-md-6">
+            <label for="declaracion_originalidad"><b>Declaración de originalidad</b></label><br>
+            <div class="archivo-area">
+                <div>
+                    <label for="declaracion_originalidad" class="custom-file-upload">
+                        <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
+                        <input pButton type="file" id="declaracion_originalidad"
+                            (change)="onFileChangeDeclaracion($event)" required style="display:none">
+                    </label>
+                </div>
+                <br>
+                <div *ngIf="archivoSeleccionado">
+                    <span>Archivo seleccionado:</span>
+                    {{ archivoSeleccionado2 }}
+                </div>
+            </div>
+        </div>
+        <br>
+        <hr>
+        <div class="p-col-12">
+            <button pButton label="Guardar" class="p-button-success p-button-outlined" icon="pi pi-save" (click)="guardarContenido()">
+            </button>
+            <button pButton label="Cancelar" class="p-button-secondary p-button-outlined" icon="pi pi-times" (click)="OcultarEditarContenido()">
+            </button>
+        </div>
+    </div>
+</p-dialog>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>

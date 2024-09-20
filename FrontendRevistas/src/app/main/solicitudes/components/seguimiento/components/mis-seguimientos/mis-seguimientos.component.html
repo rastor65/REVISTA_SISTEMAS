@@ -1,0 +1,96 @@
+<br>
+<br>
+<h2 class="solicitudes-title">Seguimiento de mis solicitudes</h2>
+<div class="seguimientos-container">
+    <div *ngIf="seguimientos.length > 0; else noSolicitudes">
+        <div *ngFor="let seguimiento of seguimientos" class="seguimiento-card">
+            <div class="shadow-2 surface-card border-round p-4 flex-1 text-center mb-6 md:mb-0">
+                <div class="mb-4">
+                    <img src="assets/logo_r.jpg" width="100" height="100" class="-mt-8">
+                    <span class="block text-900 mb-1 text-xl font-bold">{{ getSolicitudNombre(seguimiento.solicitudId)
+                        }}</span>
+                    <p class="text-600 m-0 font-medium">{{ getPasoNombre(seguimiento.pasos_seguimiento) }}</p>
+                    <span class="bg-blue-50 text-blue-400 border-round inline-flex py-1 px-2 text-sm">
+                        {{ getEstadoNombre(seguimiento.estado_seguimiento) }}
+                    </span>
+                </div>
+                <div>
+                    <button pButton class="p-button-info p-button-outlined" label="correciones" icon="pi pi-list"
+                        (click)="mostrarDialogoCorreciones(seguimiento)"></button>
+                </div>
+                <div class="flex justify-content-between align-items-center">
+                    <span class="text-600">Progreso</span>
+                    <div class="border-round" style="height: 7px;">
+                        {{ getPorcentaje(seguimiento.pasos_seguimiento) }}%
+                    </div>
+                </div>
+                <div class="surface-300 mt-2 mb-3 border-round" style="height: 7px; width: 100%;">
+                    <div [style.width.%]="getPorcentaje(seguimiento.pasos_seguimiento)"
+                        class="bg-blue-500 h-full border-round"></div>
+                </div>
+                <div class="flex justify-content-between align-items-center">
+                    <span class="text-900">{{ getNivelActual(seguimiento.pasos_seguimiento) }}/{{ totalPasos }}</span>
+                    <span class="text-primary font-medium">{{ seguimiento.fecha_asignacion }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #noSolicitudes>
+    <p class="no-solicitudes-message">No se encontraron seguimientos, recuerde que una vez se genera una solicitud se
+        generaran automaticamente los debidos seguimientos.</p>
+</ng-template>
+
+<p-dialog header="Evaluaciones de la solicitud" [(visible)]="DialogoCorreciones" [responsive]="true"
+    [style]="{ 'width': '25%', 'min-height': '300px', 'top': '30px', 'text-align': 'center'}" [showHeader]="false"
+    [closable]="false" [dismissableMask]="false" [modal]="true">
+
+    <ng-container>
+
+        <h3>Resultados de evaluador #1</h3>
+        <div *ngFor="let seguimiento of revisionEvaluador1Seguimientos">
+            <div>
+                <p>Estado: <b>{{ getEstadoNombre(seguimiento.estado_seguimiento) }}</b></p>
+                <ng-container *ngIf="!esPendiente(seguimiento.estado_seguimiento)">
+                    <p>Correcciones:</p>
+                    <button pButton type="button" class="p-button-success p-button-outlined"
+                        (click)="descargarCorrecciones(seguimiento.id)" icon="pi pi-download" label="Descargar">
+                    </button>
+
+                    <p>Formato de evaluación:</p>
+                    <button pButton type="button" class="p-button-success p-button-outlined"
+                        (click)="descargarFormato(seguimiento.id)" icon="pi pi-download" label="Descargar">
+                    </button>
+                </ng-container>
+            </div>
+        </div>
+        <br>
+        <h3>Resultados de evaluador #2</h3>
+        <div *ngFor="let seguimiento of revisionEvaluador2Seguimientos">
+            <div>
+                <p>Estado: <b>{{ getEstadoNombre(seguimiento.estado_seguimiento) }}</b></p>
+                <ng-container *ngIf="!esPendiente(seguimiento.estado_seguimiento)">
+                    <p>Correcciones:</p>
+                    <button pButton type="button" class="p-button-success p-button-outlined"
+                        (click)="descargarCorrecciones(seguimiento.id)" icon="pi pi-download" label="Descargar">
+                    </button>
+
+                    <p>Formato de evaluación:</p>
+                    <button pButton type="button" class="p-button-success p-button-outlined"
+                        (click)="descargarFormato(seguimiento.id)" icon="pi pi-download" label="Descargar">
+                    </button>
+                </ng-container>
+            </div>
+        </div>
+
+    </ng-container>
+
+    <br>
+    <br>
+
+    <div style="bottom: 10px; right: 20px;">
+        <button pButton type="button" label="Cerrar" class="p-button-secondary p-button-outlined p-button-rounded"
+            style="width: 100%;" (click)="cerrarDialogoCorreciones()"></button>
+    </div>
+</p-dialog>

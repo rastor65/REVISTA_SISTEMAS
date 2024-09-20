@@ -1,0 +1,10 @@
+<div class="main">
+    <h1>Crear Categoria</h1>
+    <form [formGroup]="form" (submit)="onSubmit()">
+        <input type="text" placeholder="Nombre" pInputText formControlName="name" />
+        <p-dropdown [options]="secciones"  placeholder="Selecciona una seccion" optionLabel="name" formControlName="seccionId" [showClear]="true"></p-dropdown>
+        <button pButton pRipple type="submit" label="Crear solicitud" class="p-button-success" [disabled]="!form.valid" ></button>
+    </form>
+</div>
+
+<p-toast></p-toast>

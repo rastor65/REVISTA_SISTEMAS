@@ -1,0 +1,29 @@
+<br>
+<br>
+<br>
+<div class="estado-delete">
+    <h2>Eliminar Estados de Seguimiento</h2>
+    <table class="estado-table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let estado of estados">
+                <td>{{ estado.nombre }}</td>
+                <td>{{ estado.descripcion }}</td>
+                <td><button (click)="confirmarEliminarEstado(estado)" pButton class="p-button-danger p-button-outlined"
+                        label="Eliminar" icon="pi pi-trash"></button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p-confirmDialog [visible]="mostrarDialogo" [rejectLabel]="'Cancelar'" [acceptLabel]="'Eliminar'"
+        (onReject)="mostrarDialogo = false" (onAccept)="eliminarEstado()">
+        ¿Estás seguro de que deseas eliminar este estado?
+    </p-confirmDialog>
+
+</div>

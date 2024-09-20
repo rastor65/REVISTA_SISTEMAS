@@ -1,0 +1,22 @@
+
+<br>
+<br>
+<h2 class="formacion-title">NIVELES DE FORMACIÓN</h2>
+
+<br>
+<br>
+
+<div class="container">
+  <p-table [value]="niveles" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,15]">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nombre</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-nivel>
+      <tr>
+        <td>{{ nivel.nombre }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

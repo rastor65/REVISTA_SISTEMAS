@@ -1,0 +1,32 @@
+.estado-delete {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .estado-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .estado-table th,
+  .estado-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+  }
+  
+  .btn-delete {
+    padding: 5px 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-delete:hover {
+    background-color: #c82333;
+  }
+  

@@ -1,0 +1,27 @@
+<div class="main">
+    <h1>Ver emprendimientos</h1>
+    <p-table [value]="emprendimientos" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th >Indice</th>
+                <th >ID</th>
+                <th >Datos</th>
+                <th >Propietario</th>
+                <th >Seccion</th>
+                <th >Categoria</th>
+                <th >Sub-Categoria</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-seccion let-rowIndex="rowIndex">
+            <tr>
+                <td>{{rowIndex}}</td>
+                <td>{{seccion.id}}</td>
+                <td>{{seccion.datos}}</td>
+                <td>{{seccion.persona_id}}</td>
+                <td>{{seccion.subCategori.categoriId.seccionId}}</td>
+                <td>{{seccion.subCategori.categoriId.name}}</td>
+                <td>{{seccion.subCategori.name}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

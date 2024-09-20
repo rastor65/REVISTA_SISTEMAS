@@ -1,0 +1,53 @@
+<br>
+<br>
+<h2 class="solicitudes-title">Editar Pasos</h2>
+<br>
+<div class="table-container">
+  <p-table [value]="pasos" [paginator]="true" [rows]="20" class="pasos-table" sortField="nivel" [sortOrder]="1">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="nivel">Nivel <p-sortIcon field="nivel"></p-sortIcon></th>
+        <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
+        <th pSortableColumn="dias_programacion">Días <p-sortIcon field="dias_programacion"></p-sortIcon></th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-paso>
+      <tr>
+        <td>{{ paso.nivel }}</td>
+        <td>{{ paso.nombre }}</td>
+        <td>{{ paso.dias_programacion }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" label="Editar" (click)="editarPaso(paso)"
+            class="p-button-outlined p-button-rounded p-button-warning editar-button"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+
+<p-dialog [(visible)]="mostrarDialogo" [modal]="true" [responsive]="true" [style]="{ width: '40vw' }"
+  [showHeader]=" false" [closable]="false" [dismissableMask]="false">
+  <ng-container *ngIf="pasoEditado">
+    <h3>Editar paso seleccionado</h3>
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="nivel">Nivel</label>
+        <input type="text" id="nivel" pInputText [(ngModel)]="pasoEditado.nivel">
+      </div>
+      <div class="p-field">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" pInputText [(ngModel)]="pasoEditado.nombre">
+      </div>
+      <div class="p-field">
+        <label for="dias_programacion">Días de Programación</label>
+        <input type="text" id="dias_programacion" pInputText [(ngModel)]="pasoEditado.dias_programacion">
+      </div>
+    </div>
+    <div class="p-dialog-footer">
+      <button pButton type="button" label="Guardar Cambios" (click)="guardarCambios()"></button>
+      <button pButton type="button" label="Cancelar" (click)="cerrarDialogo()"></button>
+    </div>
+  </ng-container>
+</p-dialog>

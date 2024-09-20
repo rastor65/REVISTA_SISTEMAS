@@ -1,0 +1,28 @@
+<div class="main" *ngIf="data">
+    <p-accordion >
+        <p-accordionTab header="Solicitud" [selected]="true">
+           <h4>Titulo:</h4>
+           <p> {{ data.pqrs.titulo }}</p>
+           <h4>Descripcion:</h4>
+           <p> {{ data.pqrs.description }}</p>
+        </p-accordionTab>
+    
+        <p-accordionTab  *ngFor="let respuesta of data.respuestas; index as i" header="Respuestas">
+            <h4>Descripcion:</h4>
+            <p> {{ respuesta.descripcion }}</p>
+            <h4>Anexo:</h4>
+            <p> {{ respuesta.anexo }}</p>
+         </p-accordionTab>
+    </p-accordion>
+    
+    <form [formGroup]="form" (submit)="submit()">
+        <h1>Responder a la solicitud</h1>
+        <textarea rows="7" cols="10" placeholder="Descripcion" formControlName="descripcion" pInputTextarea></textarea>
+        <input type="text" pInputText placeholder="Anexo" formControlName="anexo"> 
+        <button pButton pRipple type="submit" label="Responder" class="p-button-success"></button>
+    
+     </form>
+</div>
+
+
+<p-toast></p-toast>

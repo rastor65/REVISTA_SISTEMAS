@@ -1,0 +1,11 @@
+<br>
+<br>
+<div class="grid dialog-form-crear col-12 md:col-12 lg:col-12">
+  <form (submit)="crear()" [formGroup]="form">
+    <h3 class="my-3" icon="pi pi-plus">Crear rol</h3>
+    <input type="text" pInputText placeholder="Nombre" formControlName="nombre" [pKeyFilter]="blockSpecial"
+      class="my-3">
+    <button id="btnCrear" pButton pRipple type="submit" label="Guardar" class="p-button-success"
+      [disabled]="!form.valid"></button>
+  </form>
+</div>

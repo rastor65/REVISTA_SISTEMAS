@@ -1,0 +1,47 @@
+<br>
+<br>
+<h2 class="roles-title">ASIGNAR ROLES</h2>
+
+<div class="container">
+    <form class="form" name="usuarioForm">
+
+        <div class="form-group">
+            <label for="usuario">Usuario:</label>
+            <p-autoComplete name="usuario" [(ngModel)]="usuarioSeleccionado" [suggestions]="filteredUsuarios"
+                (completeMethod)="searchUsuarios($event)" field="username" [minLength]="1"
+                placeholder="Seleccionar usuario" (onSelect)="onUsuarioSelect($event)"></p-autoComplete>
+        </div>
+
+        <div class="form-group">
+            <label for="rol">Roles:</label>
+            <div *ngIf="usuarioSeleccionado.username">
+                <div *ngFor="let rol of roles">
+                    <p-checkbox [inputId]="'rol_' + rol.id" [value]="rol.id.toString()" [binary]="true"
+                        [label]="rol.name" [ngModel]="isRolSelected(rol)" (ngModelChange)="onRolChange(rol, $event)"
+                        [name]="'rol_' + rol.id"></p-checkbox>
+                </div>
+            </div>
+        </div>
+    </form>
+    <p-messages></p-messages> <!-- Componente para mostrar los mensajes -->
+</div>
+
+<div class="user-list">
+    <h3>Listado de usuarios y sus roles</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Rol (roles)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let item of usuarioRolesMap | keyvalue">
+                <tr>
+                    <td>{{ item.key }}</td>
+                    <td>{{ item.value.join(', ') }}</td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>

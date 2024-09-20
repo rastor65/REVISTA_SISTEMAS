@@ -1,0 +1,23 @@
+<div class="main">
+    <h1>Ver preguntas</h1>
+    <p-table [value]="preguntas" [tableStyle]="{'min-width': '60rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:20%">Indice</th>
+                <th pSortableColumn="id" style="width:20%">ID <p-sortIcon field="id"></p-sortIcon></th>
+                <th pSortableColumn="pregunta_nombre" style="width:20%">Pregunta <p-sortIcon
+                        field="pregunta_nombre"></p-sortIcon></th>
+                <th pSortableColumn="momento" style="width:20%">Momento <p-sortIcon field="momento"></p-sortIcon></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-pregunta let-rowIndex="rowIndex">
+            <tr>
+                <td>{{ rowIndex }}</td>
+                <td>{{ pregunta.id}}</td>
+                <td>{{ pregunta.pregunta_nombre}}</td>
+                <td>{{ pregunta.momento}}</td>
+
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

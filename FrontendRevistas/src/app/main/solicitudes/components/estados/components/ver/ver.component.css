@@ -1,0 +1,49 @@
+.solicitudes-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 20px 0;
+  text-align: center;
+  color: #fa6357;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.estado-list {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.estado-items {
+  list-style: none;
+  padding: 0;
+}
+
+.estado-item {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 10px 0;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.estado-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.estado-content {
+  padding: 10px;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+p {
+  margin: 5px 0;
+  color: #555;
+}

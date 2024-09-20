@@ -1,0 +1,290 @@
+.solicitudes-background {
+  background-color: #f5f5f5;
+  padding: 20px 0;
+}
+
+.solicitudes-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.solicitud-card-container {
+  flex-basis: calc(100% - 20px); /* Ajusta este valor según tus preferencias */
+  margin: 20px;
+}
+
+
+.solicitud-card {
+  position: relative; /* Agregar posición relativa para elementos hijos */
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  padding: 20px;
+  width: 100%;
+}
+/* Resto de estilos como en el ejemplo anterior */
+
+.solicitud-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.solicitud-date {
+  font-size: 14px;
+  color: #777;
+}
+
+.solicitud-info {
+  margin: 5px 0;
+}
+
+.solicitud-content {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.solicitud-card a {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+.solicitud-card a:hover {
+  color: #0056b3;
+}
+
+.solicitudes-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 70px;
+  text-align: center;
+  color: #fa6357;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.w-40p {
+  width: 40%;
+}
+
+.w-80p {
+  width: 80%;
+}
+
+/* Estilos generales */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+
+.solicitud-logo {
+  width: 70px;
+  height: 70px;
+  margin-right: 10px;
+}
+
+.solicitud-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.solicitud-logo {
+  width: 70px;
+  height: 70px;
+  margin-right: 10px;
+}
+
+.solicitud-title-container {
+  flex: 1;
+}
+
+.solicitud-title {
+  font-size: 18px;
+  color: #2c3e50;
+  margin: 0;
+  text-align: center; /* Centrar horizontalmente */
+  width: 100%; /* Ocupar todo el ancho */
+}
+
+.solicitud-text {
+  font-size: 14px;
+  color: #333;
+  margin-top: 10px;
+}
+
+.solicitud-actions {
+  margin-top: 10px;
+}
+
+/* Estilos de botón */
+.p-button.p-button-outlined.p-button-secondary.w-100 {
+  width: 100%;
+  text-align: center;
+}
+
+.p-button.p-button-outlined.p-button-warning.w-100 {
+  width: 100%;
+  text-align: center;
+}
+
+/* Estilos de mensaje sin solicitudes */
+.no-solicitudes-message {
+  text-align: center;
+  font-size: 16px;
+  color: #777;
+  background-color: wheat;
+  border: 2px;
+  border-color: #666;
+  margin: 2px;
+  padding: 2px;
+}
+
+.corner-element {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #555;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+.content-container {
+  max-height: 300px; /* Ajusta esta altura máxima según tus necesidades */
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+/* Estilos personalizados para componentes de PrimeNG */
+.p-accordion .p-accordion-tab {
+  background-color: #f5f5f5 !important;
+  border: none !important;
+  margin-bottom: 10px !important;
+  border-radius: 5px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.p-panel {
+  background-color: #ffffff !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 5px !important;
+  padding: 10px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+/* Ajustes para los acordeones de PrimeNG */
+::ng-deep .p-accordion .p-accordion-tab {
+  border: 1px solid #ddd;
+  border-top: none;
+  margin-bottom: 1px;
+}
+
+::ng-deep .p-accordion .p-accordion-header {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  padding: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+::ng-deep .p-accordion .p-accordion-header:hover {
+  background-color: #e9e9e9;
+}
+
+::ng-deep .p-accordion .p-accordion-content {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-top: none;
+  background-color: #fafafa;
+}
+
+.p-field {
+  margin-bottom: 1rem;
+  font-weight: bold; /* Margen inferior entre campos */
+}
+/* Estilos para el p-dialog de editar */
+.ui-dialog-editar .p-dialog-content {
+  padding: 20px;
+  background-color: #f5f5f5; /* Fondo del diálogo */
+  border-radius: 8px;
+}
+
+.ui-dialog-editar .p-dialog-header {
+  display: none; /* Ocultar el encabezado del diálogo */
+}
+
+/* Estilos para los campos de edición */
+.ui-dialog-editar .solicitud-form .p-field {
+  margin-bottom: 20px; /* Espacio entre campos */
+}
+
+.ui-dialog-editar .solicitud-form label {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+}
+
+.ui-dialog-editar .solicitud-form .p-inputtextarea,
+.ui-dialog-editar .solicitud-form .p-inputtext {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.ui-dialog-editar .solicitud-form .p-inputtextarea:focus,
+.ui-dialog-editar .solicitud-form .p-inputtext:focus {
+  border-color: #fa6357; /* Color del borde al enfocar el campo */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Sombra al enfocar */
+}
+
+.ui-dialog-editar .solicitud-form .p-inputtextarea {
+  min-height: 100px; /* Altura mínima del campo de texto */
+}
+
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centrar horizontalmente el contenido */
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #fa6357;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease-in-out;
+  text-align: center; /* Centrar horizontalmente el texto */
+}
+
+.custom-file-upload:hover {
+  background-color: #f9392b;
+}
+
+.archivo-area {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f0f0f0; /* Cambia el color de fondo a tu elección */
+  border: 1px dashed #999; /* Cambia el estilo y color del borde punteado */
+  border-radius: 4px;
+  align-items: center; /* Centra verticalmente */
+  justify-content: space-between;
+}
+
+.archivo-area span {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}

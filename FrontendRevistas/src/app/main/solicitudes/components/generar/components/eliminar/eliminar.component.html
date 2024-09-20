@@ -1,0 +1,84 @@
+<br>
+<br>
+<h2 class="solicitudes-title">SOLICITUDES - ELIMINAR</h2>
+
+<div class="view-toggle-buttons">
+    <button pButton type="button" icon="pi pi-bars" class="p-button-rounded custom-button-color"
+        (click)="toggleView('table')"></button>
+    <button pButton type="button" icon="pi pi-th-large" class="p-button-rounded custom-button-color"
+        (click)="toggleView('cards')"></button>
+</div>
+
+<div class="search-container p-inputgroup">
+    <input type="text" pInputText class="form-control p-inputtext-lg" [(ngModel)]="searchText"
+        (ngModelChange)="buscarSolicitudes()" placeholder="Buscar solicitudes...">
+    <span class="p-inputgroup-addon">
+        <button pButton type="button" icon="pi pi-search" class="p-button-rounded custom-button-color"
+            (click)="buscarSolicitudes()"></button>
+    </span>
+</div>
+
+<br>
+<br>
+
+
+<div *ngIf="viewType === 'table'">
+    <p-table [value]="filteredSolicitudes"
+        *ngIf="filteredSolicitudes && filteredSolicitudes.length > 0 || searchText === ''" [paginator]="true"
+        [rows]="10" [rowsPerPageOptions]="[5,10,20]">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Título del artículo</th>
+                <th>Autores</th>
+                <th>Fecha</th>
+                <th>Afiliacion</th>
+                <th>Eliminar</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-solicitud>
+            <tr>
+                <td>{{ solicitud.titulo_articulo }}</td>
+                <td>{{ getAutoresNombres(solicitud.autores) }}</td>
+                <td>{{ solicitud.fecha_creacion | date:'dd/MM/yyyy' }}</td>
+                <td>{{ solicitud.afiliacion }}</td>
+                <td>
+                    <button pButton pRipple type="button" class="p-button-danger p-button-outlined"
+                        (click)="eliminarSolicitud(solicitud)" icon="pi pi-trash" label="Eliminar"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<div *ngIf="viewType === 'cards'" class="cards-container">
+    <div *ngFor="let solicitud of filteredSolicitudes" class="card">
+        <div class="card-header">
+            <span class="fecha-creacion">{{ solicitud.fecha_creacion | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="card-content">
+            <h3>{{ solicitud.titulo_articulo }}</h3>
+            <p><strong>Autores:</strong> {{ getAutoresNombres(solicitud.autores) }}</p>
+            <p><strong>Afiliación:</strong> {{ solicitud.afiliacion }}</p>
+            <button pButton pRipple type="button" class="p-button-danger p-button-outlined"
+                        (click)="eliminarSolicitud(solicitud)" icon="pi pi-trash" label="Eliminar"></button>
+        </div>
+    </div>
+</div>
+
+<p-dialog header="Eliminar Solicitud" [modal]="true" [(visible)]="eliminarDialogVisible" [showHeader]="false"
+    [closable]="false" [dismissableMask]="false">
+    <ng-container *ngIf="solicitudSeleccionada">
+        <p>¿Estás seguro de que deseas eliminar la siguiente solicitud?</p>
+        <span><b>Título del artículo:</b> {{ solicitudSeleccionada.titulo_articulo }}</span><br>
+        <span><b>Autores:</b> {{ getAutoresNombres(solicitudSeleccionada.autores) }}</span>
+        <br>
+        <br>
+        <div class="p-dialog-footer">
+            <button pButton type="button" label="Eliminar" class="p-button-info" (click)="confirmarEliminar()"></button>
+            <button pButton type="button" label="Cancelar" class="p-button-danger"
+                (click)="cancelarEliminar()"></button>
+        </div>
+    </ng-container>
+</p-dialog>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>

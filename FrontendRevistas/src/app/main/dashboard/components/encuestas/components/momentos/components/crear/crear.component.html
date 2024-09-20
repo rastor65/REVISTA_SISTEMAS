@@ -1,0 +1,8 @@
+
+<form (ngSubmit)="onSubmit()" class="main m-auto p-5" [formGroup]="form"> 
+    <h1 class="m-3 text-center">Crear momentos</h1>
+    <input type="text" pInputText placeholder="Tipo momento" formControlName="tipo"> 
+    <button pButton pRipple type="submit" label="Crear momento" class="p-button-success"></button>
+</form>
+
+<p-toast></p-toast>

@@ -1,0 +1,54 @@
+.solicitudes-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #fa6357;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.table-container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.pasos-table {
+  width: 100%;
+}
+
+.custom-dialog .ui-dialog-content {
+  background-color: #f7f7f7;
+  padding: 20px;
+}
+
+.custom-dialog .p-dialog-footer {
+  text-align: right;
+  padding: 10px 20px;
+}
+
+.custom-dialog .confirm-button {
+  background-color: #fa6357;
+  color: white;
+  border: none;
+  margin-right: 10px;
+}
+
+.custom-dialog .confirm-button:hover {
+  background-color: #e55350;
+}
+
+.custom-dialog .cancel-button {
+  background-color: #cccccc;
+  color: black;
+  border: none;
+}
+
+.custom-dialog .cancel-button:hover {
+  background-color: #999999;
+}
+
+.dialog-content p {
+  font-size: 16px;
+  color: #333;
+}

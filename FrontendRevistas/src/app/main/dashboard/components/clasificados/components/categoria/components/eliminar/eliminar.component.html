@@ -1,0 +1,31 @@
+<div class="main">
+    <h1>Eliminar categorias</h1>
+    <p-table [value]="categorias" [tableStyle]="{'min-width': '60rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:10%">Indice</th>
+                <th style="width:10%">ID</th>
+                <th style="width:10%">Nombre</th>
+                <th style="width:10%">Seccion</th>
+                <th style="width:10%">Eliminar</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-categoria let-rowIndex="rowIndex">
+            <tr>
+                <td>{{ rowIndex }}</td>
+                <td>{{ categoria.id}}</td>
+                <td>{{ categoria.name}}</td>
+                <td>{{ categoria.seccionId}}</td>
+                <td> 
+                    <p-confirmPopup></p-confirmPopup>
+                    <button (click)="confirm($event, categoria.id)" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger mx-3"></button>
+                </td>
+
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-toast></p-toast>
+
+<p-confirmPopup></p-confirmPopup>

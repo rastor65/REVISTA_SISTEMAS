@@ -1,0 +1,131 @@
+.resource-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.resources-header {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+.resources-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.resource-card {
+    flex: 1;
+    max-width: calc(33.33% - 20px);
+    margin: 10px;
+}
+
+/* Estilos para los botones PrimeNG */
+.p-button-secondary {
+    background-color: #f0ad4e;
+    border-color: #eea236;
+}
+
+.p-button-danger {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+.p-button-success {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+
+.create-resource-button {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+    font-size: 14px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.custom-dialog {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.custom-dialog .ui-dialog-titlebar {
+    background-color: #4caf50;
+    color: #ffffff;
+    border: none;
+    padding: 0;
+}
+
+.recursos-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #fa6357;
+    text-transform: uppercase;
+}
+
+/* Estilo general para el p-dialog */
+.custom-dialog {
+    max-width: 400px;
+    width: 100%;
+}
+
+
+/* Contenido del diálogo */
+.dialog-content {
+    padding: 1rem;
+}
+
+/* Etiquetas y campos de entrada */
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.p-inputtext {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Pie de página del diálogo */
+.dialog-footer {
+    padding: 1rem;
+    text-align: right;
+}
+
+/* Botones */
+.p-button-outlined {
+    margin-right: 0.5rem;
+}
+
+/* Estilo para el botón de Guardar Cambios */
+.p-button-success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+/* Estilo para el botón de Cancelar */
+.p-button-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* Estilo para el botón de Confirmar Eliminación */
+.p-button-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+/* Estilo para el fondo del modal */
+.p-dialog-mask {
+    background-color: rgba(0, 0, 0, 0.6);
+}

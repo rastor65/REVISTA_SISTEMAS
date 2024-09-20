@@ -1,0 +1,32 @@
+.main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+p-accordion{
+    width: 100%;
+}
+form{
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 2px 14px -3px #000000;
+    width: 70%;
+    border: 1px solid rgba(128, 128, 128, 0.555);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+form input,textarea{
+    margin-top: 10px;
+    width: 100%;
+}
+form button{
+    margin-top: 10px;
+    width: 40%;
+}

@@ -1,0 +1,19 @@
+<div class="main">
+    <h1>Crear emprendimiento</h1>
+    <div id="form">
+        <input type="text" placeholder="Datos"  [(ngModel)]="datos" pInputText />
+        <p-dropdown [options]="secciones" optionLabel="name" placeholder="Selecciona una seccion" [(ngModel)]="seccion"
+            (ngModelChange)="onChangeSecciones($event)"></p-dropdown>
+
+        <p-dropdown [options]="categorias" optionLabel="name" placeholder="Selecciona una categoria"
+            [(ngModel)]="categoria" [disabled]="banderaCategorias"
+            (ngModelChange)="onChangeCategorias($event)"></p-dropdown>
+
+        <p-dropdown [options]="subCategorias" optionLabel="name" placeholder="Selecciona una sub-categoria"
+            [(ngModel)]="subCategoria" [disabled]="banderaSubCategorias"></p-dropdown>
+
+        <button pButton pRipple type="submit" label="Crear solicitud" class="p-button-success" (click)="onSubmit()"></button>
+    </div>
+</div>
+
+<p-toast></p-toast>

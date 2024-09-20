@@ -1,0 +1,43 @@
+<br>
+<br>
+<br>
+<h2 class="solicitudes-title">Revistas - editar</h2>
+<br>
+<div class="table-container">
+  <p-table [value]="revistas" [paginator]="true" [rows]="20" class="pasos-table">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Editar</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-revista>
+      <tr>
+        <td>{{ revista.id }}</td>
+        <td>{{ revista.nombre }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" label="Editar" (click)="editarRevista(revista)"
+            class="p-button-outlined p-button-warning"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [(visible)]="mostrarDialogo" [modal]="true" [responsive]="true" [style]="{ width: '40vw' }"
+  [showHeader]=" false" [closable]="false" [dismissableMask]="false">
+  <ng-container *ngIf="revistaeditada">
+    <h3>Editar revista seleccionado</h3>
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" pInputText [(ngModel)]="revistaeditada.nombre">
+      </div>
+    </div>
+    <div class="p-dialog-footer">
+      <button pButton type="button" label="Guardar Cambios" icon="pi pi-save" class="p-button-outlined p-button-secondary" (click)="guardarCambios()"></button>
+      <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-outlined p-button-primary" (click)="cerrarDialogo()"></button>
+    </div>
+  </ng-container>
+</p-dialog>

@@ -1,0 +1,9 @@
+<form (ngSubmit)="onSubmit()" class="main m-auto p-5" [formGroup]="form">
+    <h1 class="m-3 text-center">Crear preguntas</h1>
+    <input type="text" pInputText placeholder="Pregunta" formControlName="pregunta_nombre">
+    <p-dropdown [options]="momentos"  placeholder="Selecciona un momento" optionLabel="tipo"
+        [showClear]="false" formControlName="momento"></p-dropdown>
+    <button pButton pRipple type="submit" label="Crear pregunta" class="p-button-success" [disabled]="!form.valid"></button>
+</form>
+
+<p-toast></p-toast>

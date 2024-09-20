@@ -1,0 +1,148 @@
+<br>
+<br>
+<h2 class="solicitudes-title">SEGUIMIENTO DE SOLICITUDES - EDITAR</h2>
+
+<div class="search-container p-inputgroup">
+  <input type="text" pInputText class="form-control p-inputtext-lg" [(ngModel)]="searchText"
+    (ngModelChange)="buscarSeguimientos()" placeholder="Buscar solicitudes...">
+  <span class="p-inputgroup-addon">
+    <button pButton type="button" icon="pi pi-search" class="p-button-rounded custom-button-color"
+      (click)="buscarSeguimientos()"></button>
+  </span>
+</div>
+
+<br>
+<br>
+
+<p-table [value]="filteredSeguimientos"
+  *ngIf="filteredSeguimientos && filteredSeguimientos.length > 0 || searchText === ''" [paginator]="true" [rows]="10"
+  [rowsPerPageOptions]="[5,10,20,30]">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>ID</th>
+      <th>Solicitud</th>
+      <th>Fecha Asignación</th>
+      <th>Fecha Programación</th>
+      <th>Fecha Evaluación</th>
+      <th>Correcciones</th>
+      <th>Formato de evaluación</th>
+      <th>Pasos</th>
+      <th>Estado</th>
+      <th>Responsable</th>
+      <th>Acciones</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-seguimiento>
+    <tr>
+      <td>{{ seguimiento.id }}</td>
+      <td>{{ getSolicitudNombre(seguimiento.solicitudId)}}</td>
+      <td>{{ seguimiento.fecha_asignacion }}</td>
+      <td>{{ seguimiento.fecha_programacion }}</td>
+      <td>{{ seguimiento.fecha_evaluacion }}</td>
+      <td>
+        <ng-container *ngIf="seguimiento.correciones === null; else downloadLink">
+          <span><b>No presenta</b></span>
+        </ng-container>
+        <ng-template #downloadLink>
+          <a pTooltip="Ver archivo" tooltipPosition="top"
+            (click)="abrirCorreciones('http://localhost:8000/solicitud/seguimiento/seguimientos/' + seguimiento.id + '/descargar/correciones/')">
+            <i class="pi pi-file-pdf"></i>
+          </a>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="seguimiento.formato_evaluacion === null; else downloadLink">
+          <span><b>No presenta</b></span>
+        </ng-container>
+        <ng-template #downloadLink>
+          <a pTooltip="Ver archivo" tooltipPosition="top"
+            (click)="abrirFormato('http://localhost:8000/solicitud/seguimiento/seguimientos/' + seguimiento.id + '/descargar/formato_evaluacion/')">
+            <i class="pi pi-file-pdf"></i>
+          </a>
+        </ng-template>
+      </td>
+      <td>{{ getPasoNombre(seguimiento.pasos_seguimiento) }}</td>
+      <td>{{ getEstadoNombre(seguimiento.estado_seguimiento) }}</td>
+      <td>{{ getResponsableNombre(seguimiento.responsableId) }}</td>
+      <td>
+        <button pButton icon="pi pi-pencil" label="editar" class="p-button p-button-outlined p-bu"
+          (click)="abrirDialogo(seguimiento)"></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog [visible]="mostrarDialogo" header="Editar Seguimiento" [modal]="true"
+  [style]="{ 'width': '600px', 'top': '30px', 'height': '500px' }" [styleClass]="'custom-dialog'" [showHeader]="false"
+  [closable]="false" [dismissableMask]="false">
+  <form [formGroup]="seguimientoForm" (ngSubmit)="editarSeguimiento()">
+    <div class="p-grid p-fluid">
+      <div>
+        <label for="correciones">Correciones</label><br>
+        <div class="archivo-area">
+          <div>
+            <label for="correciones" class="custom-file-upload">
+              <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
+              <input pButton type="file" id="correciones" (change)="onCorreccionesFileSelected($event)" required
+                style="display:none">
+            </label>
+          </div>
+          <br>
+          <div *ngIf="archivoSeleccionadoCorreciones">
+            <span>Archivo seleccionado:</span>
+            {{ archivoSeleccionadoCorreciones }}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label for="formato_evaluacion">Formato de evaluación</label><br>
+        <div class="archivo-area">
+          <div>
+            <label for="formato_evaluacion" class="custom-file-upload">
+              <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
+              <input pButton type="file" id="formato_evaluacion" (change)="onFormatoFileSelected($event)" required
+                style="display:none">
+            </label>
+          </div>
+          <br>
+          <div *ngIf="archivoSeleccionadoFormato">
+            <span>Archivo seleccionado:</span>
+            {{ archivoSeleccionadoFormato }}
+          </div>
+        </div>
+      </div>
+
+      <div class="p-col-12">
+        <label for="solicitudId">Solicitud</label>
+        <p-dropdown id="solicitudId" [options]="solicitudes" optionLabel="titulo_articulo" optionValue="id"
+          formControlName="solicitudId" [readonly]="true"></p-dropdown>
+      </div>
+      <div class="p-col-12">
+        <label for="pasos_seguimiento">Pasos de seguimiento</label>
+        <p-dropdown id="pasos_seguimiento" [options]="pasos" optionLabel="nombre" optionValue="id"
+          formControlName="pasos_seguimiento" [readonly]="true"></p-dropdown>
+      </div>
+      <div class="p-col-12">
+        <label for="estado_seguimiento">Estado de seguimiento</label>
+        <p-dropdown id="estado_seguimiento" [options]="estados" optionLabel="nombre" optionValue="id"
+          formControlName="estado_seguimiento"></p-dropdown>
+      </div>
+      <div class="p-col-12">
+        <label for="responsableId">Responsable</label>
+        <p-dropdown id="responsableId" [filter]="true" [options]="responsables" placeholder="seleccionar..."
+          optionLabel="nombres" optionValue="user" formControlName="responsableId">
+          <ng-template let-responsable pTemplate="item">
+            {{ responsable.nombres }} {{ responsable.apellidos }}
+          </ng-template>
+        </p-dropdown>
+      </div>
+    </div>
+    <button type="submit" style="width: 100%; margin-bottom: 5px; margin-top: 50px;" pButton label="Guardar Cambios"
+      class="p-button-raised p-button-primary"></button>
+  </form>
+  <button pButton style="width: 100%;" label="Cancelar" class="p-button-raised p-button-outlined p-button-primary"
+    (click)="cerrarDialogo()"></button>
+</p-dialog>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>

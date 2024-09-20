@@ -1,0 +1,27 @@
+<br>
+<br>
+<br>
+<h2 class="solicitudes-title">CREAR PASOS</h2>
+
+<div class="form-container">
+    <form>
+        <div class="p-inputgroup">
+            <label for="nivel">Nivel</label>
+            <input type="number" id="nivel" [(ngModel)]="nuevoPaso.nivel" name="nivel" required>
+        </div>
+
+        <div class="p-inputgroup">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" [(ngModel)]="nuevoPaso.nombre" name="nombre" required>
+        </div>
+
+        <div class="p-inputgroup">
+            <label for="dias">Días de programación</label>
+            <input type="number" id="dias" [(ngModel)]="nuevoPaso.dias_programacion" name="dias" required>
+        </div>
+
+        <button pButton class="p-button-primary p-button-outlined custom-button" (click)="crearPaso()" label="Guardar Paso" icon="pi pi-save"></button>
+    </form>
+</div>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>

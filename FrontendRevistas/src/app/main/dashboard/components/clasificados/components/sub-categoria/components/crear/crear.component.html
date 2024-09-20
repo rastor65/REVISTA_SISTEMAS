@@ -1,0 +1,10 @@
+<div class="main">
+    <h1>Crear subCategoria</h1>
+    <form [formGroup]="form" (submit)="onSubmit()">
+        <input type="text" placeholder="Nombre" pInputText formControlName="name" />
+        <p-dropdown [options]="categorias"  placeholder="Selecciona una categoria" optionLabel="name" formControlName="categoryId" [showClear]="true"></p-dropdown>
+        <button pButton pRipple type="submit" label="Crear subCategoria" class="p-button-success" [disabled]="!form.valid" ></button>
+    </form>
+</div>
+
+<p-toast></p-toast>

@@ -1,0 +1,77 @@
+<br>
+<br>
+<br>
+<br>
+<h2 class="recursos-title">Asignar recursos</h2>
+
+<div class="role-resource-container">
+  <form (submit)="agregarRecursoRol()">
+    <div class="input-container">
+      <label for="selectRole">Seleccionar un Rol:</label>
+      <select id="selectRole" name="selectedRole" [(ngModel)]="selectedRole">
+        <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+      </select>
+    </div>
+    <div class="input-container">
+      <label for="selectResource">Seleccionar un Recurso:</label>
+      <select id="selectResource" name="selectedResource" [(ngModel)]="selectedResource">
+        <option *ngFor="let resource of flattenedResources" [value]="resource.id">{{ resource.titulo }}</option>
+      </select>
+    </div>
+    <button type="submit">Asignar recurso</button>
+  </form>
+</div>
+
+<div class="table-container">
+  <table class="resource-role-table">
+    <thead>
+      <tr>
+        <th>RECURSOS</th>
+        <th [colSpan]="roles.length">ROLES</th>
+      </tr>
+      <tr>
+        <th>Titulo</th>
+        <th *ngFor="let role of roles">{{ role.name }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let resource of resources">
+        <tr [ngClass]="{ 'row': true }">
+          <td>{{ resource.titulo }}</td>
+          <td *ngFor="let role of roles">
+            <label class="custom-checkbox">
+              <input type="checkbox" [checked]="hasAccess(role.id, resource.id)">
+              <span class="custom-label"></span>
+            </label>
+          </td>
+        </tr>
+        <!-- Mostrar "hijos" -->
+        <ng-container *ngFor="let childResource of resource.children">
+          <tr [ngClass]="{ 'child-row': true }">
+            <td>{{ childResource.titulo }}</td>
+            <td *ngFor="let role of roles">
+              <label class="custom-checkbox">
+                <input type="checkbox" [checked]="hasAccess(role.id, childResource.id)">
+                <span class="custom-label"></span>
+              </label>
+            </td>
+          </tr>
+          <!-- Mostrar "nietos" -->
+          <ng-container *ngFor="let grandchildResource of childResource.children">
+            <tr [ngClass]="{ 'grandchild-row': true }">
+              <td>{{ grandchildResource.titulo }}</td>
+              <td *ngFor="let role of roles">
+                <label class="custom-checkbox">
+                  <input type="checkbox" [checked]="hasAccess(role.id, grandchildResource.id)">
+                  <span class="custom-label"></span>
+                </label>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>

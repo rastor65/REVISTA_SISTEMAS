@@ -1,0 +1,40 @@
+<br>
+<br>
+<h2 class="formacion-title">Tipos de documento - eliminar</h2>
+
+<div class="container">
+  <p-table [value]="documento">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-documento>
+      <tr>
+        <td>{{ documento.name }}</td>
+        <td>
+          <button pButton icon="pi pi-trash" class="p-button-danger" label="Eliminar"
+            (click)="mostrarDialogoEliminacion(documento)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [(visible)]="mostrarDialogo" [modal]="true" [responsive]="true" [header]="'Confirmar Eliminación'"
+  [baseZIndex]="10000" (onHide)="cerrarDialogoEliminacion()" [styleClass]="'custom-dialog'">
+  <ng-template pTemplate="content">
+    <div class="p-dialog-message">
+      <p>¿Estás seguro de que deseas eliminar este nivel de formación?</p>
+    </div>
+    <div class="p-dialog-footer">
+      <button pButton type="button" icon="pi pi-check" label="Sí" class="p-button-rounded p-button-success"
+        (click)="eliminarDocumento()"></button>
+      <button pButton type="button" icon="pi pi-times" label="No" class="p-button-rounded p-button-secondary"
+        (click)="cerrarDialogoEliminacion()"></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>

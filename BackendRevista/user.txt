@@ -1,0 +1,19 @@
+#User Login
+{
+  "username": "yonathamendoza",
+  "password": "12345678y"
+}
+
+#Crear Persona
+{
+  "username": "ejemplo3",
+  "password": "123456789",
+  "email": "ejemplo3@gmail.com",
+  "first_name": "ejemplo3",
+  "last_name": "ejem"
+}
+
+#Pendientes !!
+{
+ 
+}

@@ -1,0 +1,47 @@
+<div class="main">
+    <h1>Editar emprendimientos</h1>
+    <p-table [value]="emprendimientos" [tableStyle]="{'min-width': '60rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th >Indice</th>
+                <th >ID</th>
+                <th >Datos</th>
+                <th >Propietario</th>
+                <th >Seccion</th>
+                <th >Categoria</th>
+                <th >Sub-Categoria</th>
+                <th >Editar</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-emprendimiento let-rowIndex="rowIndex">
+            <tr>
+                <td>{{rowIndex}}</td>
+                <td>{{emprendimiento.id}}</td>
+                <td>{{emprendimiento.datos}}</td>
+                <td>{{emprendimiento.persona_id}}</td>
+                <td>{{emprendimiento.subCategori.categoriId.seccionId}}</td>
+                <td>{{emprendimiento.subCategori.categoriId.name}}</td>
+                <td>{{emprendimiento.subCategori.name}}</td>
+                <td> <button (click)="showEditar(emprendimiento.id)"  pButton pRipple type="button" icon="pi pi-pencil"
+                    class="p-button-rounded p-button-warning mx-3"></button></td>
+
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<p-dialog header="Editar seccion" [(visible)]="display" [modal]="true" [style]="{width: '600px', height: '500px'}"
+    [draggable]="false" [resizable]="false">
+
+    <div class="grid dialog-form-crear col-12 md:col-12 lg:col-12">
+        <form (submit)="submit()" [formGroup]="form">
+                <input type="text" placeholder="Datos" pInputText formControlName="datos" />
+                <button pButton pRipple type="submit" label="Editar seccion" class="p-button-warning" [disabled]="!form.valid" ></button>
+        </form>
+    </div>
+
+
+</p-dialog>
+
+<p-toast></p-toast>

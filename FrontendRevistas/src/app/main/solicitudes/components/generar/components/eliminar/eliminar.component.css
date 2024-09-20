@@ -1,0 +1,198 @@
+ 
+  .solicitudes-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #fa6357;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .solicitudes-subtitle {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #fa6357;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  :host ::ng-deep .p-table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: none;
+  }
+  
+  :host ::ng-deep .p-table-header {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  :host ::ng-deep .p-table-thead > tr > th {
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  :host ::ng-deep .p-table-tbody > tr > td {
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  :host ::ng-deep .p-table-tbody > tr:nth-child(even) > td {
+    background-color: #f9f9f9;
+  }
+  
+  :host ::ng-deep .p-table .p-paginator {
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+  }
+  
+  :host ::ng-deep .p-button-rounded {
+    border-radius: 20px;
+  }
+  
+  :host ::ng-deep .p-button-secondary {
+    background-color: #fa6357;
+    color: #ffffff;
+    border: none;
+  }
+  
+  :host ::ng-deep .p-button-secondary:hover {
+    background-color: #fa6357;
+  }
+
+  /* prime-ng-styles.css */
+
+/* Estilo para el p-dialog header */
+:host ::ng-deep .ui-dialog .ui-dialog-titlebar {
+  background-color: #fa6357;
+  color: #fff;
+  border: none;
+  font-size: 1.2rem;
+  padding: 1rem;
+}
+
+/* Estilo para el p-dialog content */
+:host ::ng-deep .ui-dialog .ui-dialog-content {
+  padding: 1.5rem;
+}
+
+/* Estilo para el p-dialog footer */
+:host ::ng-deep .ui-dialog .ui-dialog-footer {
+  text-align: right;
+  padding: 1rem;
+  border-top: none;
+}
+
+/* Estilo para los botones del p-dialog */
+:host ::ng-deep .ui-dialog .ui-dialog-footer .p-button {
+  margin-left: 0.5rem;
+}
+
+/* Estilo para el botón de cancelar */
+:host ::ng-deep .ui-dialog .ui-dialog-footer .p-button.p-button-secondary {
+  background-color: #ccc;
+  color: #333;
+}
+
+/* Estilo para el botón de confirmar */
+:host ::ng-deep .ui-dialog .ui-dialog-footer .p-button.p-button-success {
+  background-color: #28a745;
+  color: #fff;
+}
+
+/* Ajustar el ancho del p-dialog */
+:host ::ng-deep .ui-dialog .ui-dialog-content {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.view-toggle-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 20px;
+}
+
+.view-toggle-buttons button {
+  background-color: #fa6357;
+  border-color: #fa6357;
+  color: white;
+}
+
+
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  width: calc(50% - 20px);
+  /* Para mostrar dos cards por fila */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  width: calc(50% - 20px);
+  /* Para mostrar dos cards por fila */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.card-header {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.fecha-creacion {
+  background-color: #f0f0f0;
+  color: #777777;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: calc(100% - 20px);
+    /* Para mostrar una card por fila en pantallas pequeñas */
+  }
+}
+
+.custom-button-color{
+  border-color: #fa6357 !important;
+  background-color: #fa6357 !important;
+}

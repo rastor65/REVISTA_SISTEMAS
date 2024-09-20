@@ -1,0 +1,186 @@
+<br>
+<br>
+
+<h2 class="solicitudes-title">SOLICITUDES - EDITAR</h2>
+
+<div class="view-toggle-buttons">
+    <button pButton type="button" icon="pi pi-bars" class="p-button-rounded custom-button-color"
+        (click)="toggleView('table')"></button>
+    <button pButton type="button" icon="pi pi-th-large" class="p-button-rounded custom-button-color"
+        (click)="toggleView('cards')"></button>
+</div>
+
+
+<div class="search-container p-inputgroup">
+    <input type="text" pInputText class="form-control p-inputtext-lg" [(ngModel)]="searchText"
+        (ngModelChange)="buscarSolicitudes()" placeholder="Buscar solicitudes...">
+    <span class="p-inputgroup-addon">
+        <button pButton type="button" icon="pi pi-search" class="p-button-rounded custom-button-color"
+            (click)="buscarSolicitudes()"></button>
+    </span>
+</div>
+<br>
+<br>
+
+
+<div *ngIf="viewType === 'table'">
+    <p-table [value]="filteredSolicitudes"
+        *ngIf="filteredSolicitudes && filteredSolicitudes.length > 0 || searchText === ''" [paginator]="true"
+        [rows]="10" [rowsPerPageOptions]="[5,10,20]">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Título del artículo</th>
+                <th>Autores</th>
+                <th>Fecha de creación</th>
+                <th>Afiliación</th>
+                <th>Contenido</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-solicitud>
+            <tr>
+                <td>{{ solicitud.titulo_articulo }}</td>
+                <td>{{ getAutoresNombres(solicitud.autores) }}</td>
+                <td>{{ solicitud.fecha_creacion | date:'dd/MM/yyyy' }}</td>
+                <td>{{ solicitud.afiliacion }}</td>
+                <td>
+                    <button pButton pRipple type="button" class="p-button-warning p-button-outlined"
+                        (click)="abrirEditarSolicitud(solicitud.id)" icon="pi pi-pencil" label="Editar"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<div *ngIf="viewType === 'cards'" class="cards-container">
+    <div *ngFor="let solicitud of filteredSolicitudes" class="card">
+        <div class="card-header">
+            <span class="fecha-creacion">{{ solicitud.fecha_creacion | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="card-content">
+            <h3>{{ solicitud.titulo_articulo }}</h3>
+            <p><strong>Autores:</strong> {{ getAutoresNombres(solicitud.autores) }}</p>
+            <p><strong>Afiliación:</strong> {{ solicitud.afiliacion }}</p>
+            <button pButton pRipple type="button" class="p-button-warning p-button-outlined"
+                (click)="abrirEditarSolicitud(solicitud.id)" icon="pi pi-pencil" label="Editar"></button>
+        </div>
+    </div>
+</div>
+
+<p-dialog header="Editar Solicitud" [(visible)]="mostrarDialogoEditarSolicitud" [modal]="true" [responsive]="true" [style]="{width: '50vw', top: '30px'}" [baseZIndex]="10000" styleClass="mi-dialog custom-dialog" [showHeader]="false" [closable]="false" [dismissableMask]="false">
+
+    <h3>Editar solicitud</h3>
+    <hr>
+    <br>
+    <div class="form-group">
+        <label for="titulo">Título del artículo:</label>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-pencil"></i>
+            </span>
+            <input type="text" id="titulo_articulo" class="p-inputtext" [(ngModel)]="solicitudEdicion.titulo_articulo">
+        </div>
+    </div>
+
+    <div class="form-group full-width">
+        <div class="p-field p-grid p-fluid">
+            <label for="autores">Autores</label><br>
+            <p-multiSelect [options]="usuarios" [(ngModel)]="selectedAutores" optionLabel="nombres" [filter]="true" id="autor" name="autor">
+                <ng-template let-usuarios pTemplate="item">
+                    {{ usuarios.nombres }} {{ usuarios.apellidos }}
+                </ng-template>
+            </p-multiSelect>
+        </div>
+    </div>    
+
+    <div class="form-group">
+        <label for="contenido">Contenido:</label><br>
+        <button pButton pRipple type="button" icon="pi pi-pencil" label="Editar contenido" style="width: 100%;" class="p-button-warning font-bold p-button-outlined" *ngIf="solicitudEdicion.contenidoSolicitud !== null" (click)="abrirEditarContenido(solicitudEdicion.contenidoSolicitud)"></button>
+        <p *ngIf="solicitudEdicion.contenidoSolicitud" class="contenido-cargado">
+            <i class="pi pi-check-circle"></i> Contenido cargado: {{ solicitudEdicion.contenidoSolicitud }}
+        </p>
+    </div>
+
+    <div class="form-group">
+        <label for="afiliación">AFILIACIÓN:</label>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-briefcase"></i>
+            </span>
+            <select id="afiliacion" class="p-inputtext" [(ngModel)]="solicitudEdicion.afiliacion">
+                <option *ngFor="let option of afiliacionOptions" [value]="option">{{ option }}</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="p-col-12 container-button">
+        <button pButton class=" p-button-success p-button-outlined" style="width: 100%;" (click)="guardarSolicitudEdicion()">
+            <i class="pi pi-save"></i>
+            Guardar
+        </button> <br>
+        <button pButton class="p-button-info p-button-outlined" style="width: 100%;" (click)="cerrarEditarSolicitud()">
+            <i class="pi pi-times"></i>
+            Cancelar
+        </button>
+    </div>
+</p-dialog>
+
+<p-dialog header="Editar Contenido" [(visible)]="mostrarDialogoEditarContenido" [modal]="true" [responsive]="true"
+    [style]="{width: '80%', height: '60%', top: '30px'}" [baseZIndex]="10000" styleClass="mi-dialog custom-dialog"
+    [showHeader]="false" [closable]="false" [dismissableMask]="false">
+
+    <div class="p-grid p-dir-col p-fluid solicitud-form">
+
+        <div class="p-col-12 p-md-6">
+            <label for="archivo_adjunto">Artículo</label><br>
+            <div class="archivo-area">
+                <div>
+                    <label for="archivo_adjunto" class="custom-file-upload">
+                        <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
+                        <input pButton type="file" id="archivo_adjunto" (change)="onFileChangeArticulo($event)" required
+                            style="display:none">
+                    </label>
+                </div>
+                <br>
+                <div *ngIf="archivoSeleccionado">
+                    <span>Archivo seleccionado:</span>
+                    {{ archivoSeleccionado }}
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="p-col-12 p-md-6">
+            <label for="declaracion_originalidad">Declaración de originalidad</label><br>
+            <div class="archivo-area">
+                <div>
+                    <label for="declaracion_originalidad" class="custom-file-upload">
+                        <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
+                        <input pButton type="file" id="declaracion_originalidad"
+                            (change)="onFileChangeDeclaracion($event)" required style="display:none">
+                    </label>
+                </div>
+                <br>
+                <div *ngIf="archivoSeleccionado">
+                    <span>Archivo seleccionado:</span>
+                    {{ archivoSeleccionado2 }}
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="p-col-12">
+            <button pButton class="p-button-success p-button-outlined" (click)="guardarContenidoEdicion()">
+                <i class="pi pi-save"></i>
+                Guardar contenido
+            </button>
+            <button pButton class="p-button-info p-button-outlined" (click)="cerrarEditarContenido()">
+                <i class="pi pi-times"></i>
+                Cancelar
+            </button>
+        </div>
+    </div>
+    <br>
+    <br>
+
+</p-dialog>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>

@@ -1,0 +1,19 @@
+<br>
+<br>
+<h2 class="solicitudes-title">Crear Estados de Seguimiento</h2>
+<div class="estado-form">
+    <form (ngSubmit)="crearEstado()" class="form-container">
+      <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" [(ngModel)]="estado.nombre" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="descripcion">Descripción:</label>
+        <input type="text" id="descripcion" name="descripcion" [(ngModel)]="estado.descripcion" required>
+      </div>
+  
+      <button pButton type="submit" class="p-button p-button-outlined" icon="pi pi-save" label="Crear Estado"></button>
+    </form>
+  </div>
+  

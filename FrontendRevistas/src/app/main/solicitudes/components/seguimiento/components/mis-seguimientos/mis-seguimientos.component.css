@@ -1,0 +1,114 @@
+.seguimientos-container {
+    background-color: #f5f5f5;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 2fr));
+    gap: 20px;
+}
+
+.seguimiento-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    margin-top: 60px;
+}
+
+.seguimiento-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.estado-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.completado {
+    background-color: green;
+}
+
+.en-progreso {
+    background-color: yellow;
+}
+
+.pendiente {
+    background-color: red;
+}
+
+.fecha {
+    display: flex;
+    color: #666;
+}
+
+.solicitud-nombre {
+    font-weight: bold;
+}
+
+.paso-nombre {
+    color: #888;
+}
+
+.descripcion {
+    margin-top: 10px;
+}
+
+.solicitudes-title {
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    color: #fa6357;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+.botones-container {
+    position: absolute;
+    bottom: 10px;
+    /* Ajusta la distancia desde la parte inferior */
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.no-solicitudes-message {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    position: relative;
+    text-align: center;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .seguimientos-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        /* Mostrar 2 columnas en pantallas medianas */
+    }
+}
+
+@media (max-width: 768px) {
+    .seguimiento-cards {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        /* Cambiar a una sola columna */
+    }
+
+    .botones-container {
+        flex-direction: column;
+        /* Apilar los botones en pantallas pequeñas */
+        align-items: center;
+        /* Centrar los botones */
+    }
+
+    .seguimiento-card {
+        margin-bottom: 20px;
+        /* Agregar margen inferior entre las tarjetas */
+    }
+}

@@ -1,0 +1,15 @@
+<br>
+<br>
+<br>
+<h2 class="solicitudes-title">Lista de Estados de Seguimiento</h2>
+<br>
+<div class="estado-list">
+    <ul class="estado-items">
+        <li *ngFor="let estado of estados" class="estado-item">
+            <div class="estado-content">
+                <h3>{{ estado.nombre }}</h3>
+                <p>{{ estado.descripcion }}</p>
+            </div>
+        </li>
+    </ul>
+</div>

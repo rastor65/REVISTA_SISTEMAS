@@ -1,0 +1,144 @@
+<br>
+<br>
+<br>
+
+<h2 class="solicitudes-title">Generar solicitud</h2>
+<br>
+
+<p-dialog header="Cargando..." [(visible)]="solicitudEnProceso" [modal]="true" [responsive]="true"
+    [style]="{ width: '40%', height: '30%' }" [baseZIndex]="10000" styleClass="mi-dialog custom-dialog"
+    [showHeader]="false" [closable]="false" [dismissableMask]="false">
+    <div style="text-align: center;">
+        <p-progressSpinner [style]="{ 'width.px': 50, 'height.px': 50 }" strokeWidth="8" fill="#fff"></p-progressSpinner>
+        <h2>Su solicitud esta siendo generada...</h2>
+    </div>
+</p-dialog>
+
+<div class="form-container">
+    <div class="p-grid p-dir-col p-fluid">
+        <div class="p-col-12 p-md-6">
+            <div class="p-field">
+                <label for="titulo">Título del artículo</label>
+                <div class="p-inputgroup">
+                    <input type="text" id="titulo_articulo" class="p-inputtext" [(ngModel)]="solicitud.titulo_articulo">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-bookmark"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-col-12 p-md-6">
+            <div class="p-field">
+                <label for="autores">Autores</label>
+                <p-multiSelect [options]="autores" [(ngModel)]="selectedAutores" optionLabel="nombres" [filter]="true"
+                    id="autor" name="autor" class="custom-dropdown" dropdownIcon="pi pi-user">
+                    <ng-template let-autores pTemplate="item">
+                        {{ autores.nombres }} {{ autores.apellidos }}
+                    </ng-template>
+                </p-multiSelect>
+            </div>
+        </div>
+
+        <div class="p-col-12">
+            <div class="p-field">
+                <label for="contenido">Contenido</label>
+                <button pButton class="p-button-warning font-bold p-button-outlined button-icon-right" (click)="abrirContenido()"
+                    label="{{textoBoton}}">
+                    <i class="pi pi-plus"></i>
+                </button>
+
+                <p *ngIf="solicitud.contenidoSolicitud">
+                    <i class="pi pi-check-circle"></i> Contenido cargado: {{ solicitud.contenidoSolicitud }}
+                </p>
+            </div>
+        </div>
+        <div class="p-grid p-dir-col p-fluid">
+            <div class="p-grid p-col-12 p-md-6">
+                <div class="p-field">
+                    <label for="afiliación">Afiliación</label>
+                    <div class="p-inputgroup">
+                        <select id="afiliacion" class="p-inputtext" [(ngModel)]="solicitud.afiliacion">
+                            <option *ngFor="let option of afiliacionOptions" [value]="option">{{ option }}</option>
+                        </select>
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-link"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-grid p-col-12 p-md-6">
+                <div class="p-field">
+                    <label for="afiliación">Revista a la cual someter el artículo</label>
+                    <p-dropdown id="revista" [options]="revistas" dropdownIcon="pi pi-book" [filter]="true"
+                        placeholder="seleccionar..." optionLabel="nombre" [(ngModel)]="solicitud.revista"
+                        optionValue="id"></p-dropdown>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-col-12">
+            <button pButton class="p-button p-button-outlined p-button-success p-button-rounded" label="Guardar"
+                icon="pi pi-save" (click)="guardarSolicitud()">
+            </button>
+        </div>
+    </div>
+</div>
+
+<br>
+<br>
+
+<p-dialog header="Agregar Contenido" [(visible)]="mostrarDialogoAgregarContenido" [modal]="true" [responsive]="true"
+    [style]="{width: '50vw', top: '30px'}" [baseZIndex]="10000" styleClass="mi-dialog custom-dialog"
+    [showHeader]="false" [closable]="false" [dismissableMask]="false">
+
+    <div class="p-grid p-dir-col p-fluid">
+        <div class="p-col-12 p-md-6">
+            <div class="p-field">
+                <label for="archivo_adjunto">Artículo</label>
+                <div class="archivo-area">
+                    <div>
+                        <label for="archivo_adjunto" class="custom-file-upload">
+                            <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
+                            <input pButton type="file" id="archivo_adjunto" accept=".pdf"
+                                (change)="handleFileInput($event)" required style="display:none">
+                        </label>
+                    </div>
+                    <br>
+                    <div *ngIf="archivoSeleccionado">
+                        <span>Archivo seleccionado:</span>
+                        {{ archivoSeleccionado }}
+                    </div>
+                </div>
+            </div>
+            <div class="p-field">
+                <label for="declaracion_originalidad">Declaración de originalidad</label>
+                <div class="archivo-area">
+                    <div>
+                        <label for="declaracion_originalidad" class="custom-file-upload">
+                            <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
+                            <input pButton type="file" id="declaracion_originalidad" accept=".pdf"
+                                (change)="handleFileInputOriginalidad($event)" required style="display:none">
+                        </label>
+                    </div>
+                    <br>
+                    <div *ngIf="originalidadSeleccionada">
+                        <span>Archivo seleccionado:</span>
+                        {{ originalidadSeleccionada }}
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="p-col-12">
+                <button pButton class="p-button-success p-button-outlined" (click)="guardarContenido()"
+                    icon="pi pi-save" label="Guardar contenido">
+                </button>
+                <button pButton class="p-button-secondary p-button-outlined" (click)="cerrarContenido()"
+                    icon="pi pi-times" label="Cancelar">
+                </button>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>

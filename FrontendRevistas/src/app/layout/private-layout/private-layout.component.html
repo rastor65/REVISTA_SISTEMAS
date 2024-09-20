@@ -1,0 +1,297 @@
+<ng-template [ngIf]="isLoggedIn === true">
+  <div class="grid main-header" [style]="{'background':' #fa6357',
+  'color':'#fff','font-weight':'bold','margin':'0',
+  'border':'1px solid gray','border-radius':'0px'}">
+    <div class="col-12 sm:col-2 md:col-3 lg:col-3 xl:col-3">
+      <p-button styleClass="p-button-danger p-button-outlined" (click)="display = true" class="mr-3">
+        <i class="pi pi-align-justify" style="font-size: 1.5rem; margin-top: 5px;color:whitesmoke"></i>
+        <span class="ml-2 font-bold" style="color:whitesmoke">GERUG</span>
+      </p-button>
+    </div>
+    <div class="col-12 sm:col-2 md:col-3 lg:col-4 xl:col-5 "></div>
+    <div class="col-12 sm:col-7 md:col-6 lg:col-5 xl:col-4">
+      <div class="grid">
+        <div class="col-12 sm:col-12 md:col-9 lg:col-9 xl:col-9 clock">
+          <button pButton pRipple type="button" [disabled]="false" class="p-button-danger p-button-outlined"
+            style="padding: 7px;">
+            <div class="clock" style="color:whitesmoke">
+              {{dia | titlecase}} {{fecha | titlecase}} [<span class="mishoras">{{hora}}:{{minutos}}:<span
+                  class="segundos">{{segundos}}</span></span><span class="ampm">{{ampm}}</span>]
+            </div>
+          </button>
+        </div>
+        <div class="col-12 sm:col-12 md:col-2 lg:col-2 xl:col-2 avatar">
+          <button type="button" pButton pRipple class="p-button-rounded p-button-text centered-avatar" icon="pi pi-plus"
+            (click)="menu.toggle($event)">
+            <p-avatar image="{{profileImage}}" styleClass="ml-3" [ngStyle]="{'height': '100%', 'button': '10px'}"
+              shape="circle"></p-avatar>
+          </button>
+        </div>
+      </div>
+      <p-menu #menu [popup]="true" [model]="items" [style]="{'width':'200px','margin-top':'5px'}"></p-menu>
+      <div #menu2 class="box hidden" header="Anuncios" style="display: inline-block;margin:0px">
+      </div>
+    </div>
+  </div>
+
+  <div class="container margen">
+    <p-sidebar [(visible)]="display" [style]="{'width':'345px','min-height': '88vh'}" [showCloseIcon]="false"
+      [blockScroll]="false">
+      <br>
+      <br>
+      <br>
+      <div class="grid">
+        <div class="col-11">
+          <a routerLink="/landing" (click)="display=false">
+            <img alt="logo" src="assets/Uniguajira_logo.png" width="260px" height="92px"
+              style="margin-left: 20px ;margin-top: -5px;" styleClass="p-button-outlined" />
+          </a>
+        </div>
+        <div class="col-1">
+          <a pripple="" (click)="display=false" class="p-ripple p-element 
+          cursor-pointer inline-flex align-items-center 
+            justify-content-center text-white border-2 surface-border
+            hover:bg-gray-600 text-600 transition-colors transition-duration-150 border-circle" style="width: 40px; height: 40px;margin-left: -20px;margin-top:22px;
+            background-color:  #fa6357;"><i class="pi pi-align-justify text-xl"></i>
+            <span class="p-ink"></span>
+          </a>
+        </div>
+      </div>
+      <div>
+        <hr>
+        <h4 class="fondebabutton" style="text-align: center;margin-bottom:-5px">{{nombre}}</h4>
+        <hr>
+      </div>
+      <app-menu [menu]="menu1" (funcion)="ocultarMenu($event)"></app-menu>
+      <span style="margin:5px"></span>
+    </p-sidebar>
+    <div class="content">
+      <router-outlet></router-outlet>
+      <br>
+      <br>
+      <hr>
+      <footer class="footer" style="padding-top: 20px;">
+        <br>
+        <br>
+        <br>
+        <div class="footer__copyright">
+          <p style="color:gray;font-size: 1.1rem">© 2024 Desarrollo <b>Universidad de La Guajira</b></p>
+        </div>
+        <div class="footer__copyright">
+          <p style="color:gray;font-size: 1rem">Todos los derechos reservados - <b>Semillero SETEC - RASTOR.INC</b></p>
+        </div>
+      </footer>
+    </div>
+    <div>
+      <img src="assets/Revista_banner_i.jpeg" height="300px" width="100%">
+    </div>
+  </div>
+</ng-template>
+
+<div style="display:relative;">
+  <p-menu #menu [popup]="true" [model]="items" [style]="{'width':'200px','margin-top':'5px'}"></p-menu>
+</div>
+
+<!-- CERRAR CESION -->
+<p-dialog [(visible)]="Dialog" [style]="{'width': '40vw'}" [resizable]="false" zindex="10000" [showHeader]="false"
+  [closeOnEscape]="false" [closable]="false" [modal]="true">
+  <div class="flex flex-column " style="flex: 1">
+    <div class="text-center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+      <h4>Esta seguro de Cerrar la Sesion?</h4>
+      <p>Si para continuar</p>
+    </div>
+  </div>
+  <ng-template pTemplate="footer" class="titleCard">
+    <div style="text-align: center;">
+      <button pButton pRipple label="No" icon="pi pi-times" style="color: rgb(31, 45, 64);" class="p-button-text"
+        (click)="hideDialog()"></button>
+      <button pButton pRipple label="Si" style="background: #fa6357; border-color: #F16257;"
+        class=" p-button-raised p-button-rounded" icon="pi pi-check" (click)="cerrarSesion()"></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- CAMBIAR CONTRASEÑA -->
+<p-dialog [(visible)]="DialogContra" [style]="{'width': '30vw'}" [resizable]="false" zIndex="10000" [showHeader]="false"
+  [closeOnEscape]="false" [closable]="false" [modal]="true" [contentStyle]="{'padding': '2rem'}">
+
+  <div class="p-d-flex p-flex-column p-ai-center">
+    <div class="p-mb-4 text-center">
+      <i class="pi pi-key" style="font-size: 3rem; color: #F16257;"></i>
+    </div>
+    <br>
+    <form (ngSubmit)="cambiarContrasena()" [formGroup]="formCambioContrasena" class="p-fluid">
+      <div class="p-field p-mb-3 p-input-icon-right">
+        <label for="contrasenaActual" class="p-d-block">Contraseña Actual</label>
+        <input id="contrasenaActual" [type]="passwordFieldType" formControlName="contrasenaActual"
+          class="p-inputtext p-d-block" required>
+        <i [ngClass]="passwordFieldIcon" (click)="togglePasswordVisibility()" class="pi pi-eye"></i>
+      </div>
+      <div class="p-field p-mb-3 p-input-icon-right">
+        <label for="nuevaContrasena" class="p-d-block">Nueva Contraseña</label>
+        <input id="nuevaContrasena" [type]="passwordFieldType" formControlName="nuevaContrasena"
+          class="p-inputtext p-d-block" required>
+        <i [ngClass]="passwordFieldIcon" (click)="togglePasswordVisibility()" class="pi pi-eye"></i>
+      </div>
+      <div class="p-field p-mb-4 p-input-icon-right">
+        <label for="confirmarContrasena" class="p-d-block">Confirmar Contraseña</label>
+        <input id="confirmarContrasena" [type]="passwordFieldType" formControlName="confirmarContrasena"
+          class="p-inputtext p-d-block" required>
+        <i [ngClass]="passwordFieldIcon" (click)="togglePasswordVisibility()" class="pi pi-eye"></i>
+      </div>
+      <div class="p-d-flex p-jc-center">
+        <button pButton pRipple label="Guardar" class="p-button p-button-outlined p-button-warning p-mr-2"
+          icon="pi pi-check" style="font-weight: bold;"></button>
+        <button pButton pRipple label="Cancelar" class="p-button-secondary p-button-outlined" icon="pi pi-times"
+          style="font-weight: bold;" (click)="cerrarEditarContra()"></button>
+      </div>
+    </form>
+  </div>
+</p-dialog>
+
+<!-- EDITAR DATOS BASICOS Y DE FORMACION DE UN USUARIO -->
+<p-dialog [(visible)]="Dialog2" [style]="{'width': '60vw', 'top': '40px'}" [resizable]="false" zindex="10000"
+  [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true">
+  <div class="p-grid p-nogutter p-align-center"
+    style="padding: 0px; text-align: center; border: 2px solid #F16257; border-radius: 10px;">
+    <div class="p-col">
+      <h3 class="p-text-2xl font-weight-bold"><i class="pi pi-pencil"></i>editar perfil</h3>
+    </div>
+  </div>
+  <br>
+  <section>
+    <p-accordion *ngIf="usuario" [activeIndex]="[0, 1]" [multiple]="true" class="p-accordion-rounded">
+      <p-accordionTab header="Datos básicos" [selected]="0">
+        <div class="p-grid p-fluid">
+          <div class="p-col-12 p-md-6">
+            <div class="p-grid">
+              <div class="p-col-12 p-md-6">
+                <label for="nombres">Nombres:</label>
+                <input type="text" id="nombres" pInputText class="p-inputtext" [(ngModel)]="usuario.nombres">
+              </div>
+              <div class="p-col-12 p-md-6">
+                <label for="apellidos">Apellidos:</label>
+                <input type="text" id="apellidos" pInputText class="p-inputtext" [(ngModel)]="usuario.apellidos">
+              </div>
+            </div>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <div class="p-grid">
+              <div class="p-col-12">
+                <label for="identificacion">Número de documento:</label>
+                <input type="text" id="identificacion" pInputText class="p-inputtext"
+                  [(ngModel)]="usuario.identificacion">
+              </div>
+            </div>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <label for="nacionalidad">País de residencia:</label>
+            <input type="text" id="nacionalidad" pInputText class="p-inputtext" [(ngModel)]="usuario.pais">
+          </div>
+          <div class="p-col-12 p-md-6">
+            <label for="orcid">Orcid:</label>
+            <input type="text" id="orcid" pInputText class="p-inputtext" [(ngModel)]="usuario.orcid">
+          </div>
+          <div class="p-col-12 p-md-6">
+            <label for="url_orcid">URL de su Orcid:</label>
+            <input type="text" id="url_orcid" pInputText class="p-inputtext" [(ngModel)]="usuario.url_orcid">
+          </div>
+        </div>
+      </p-accordionTab>
+      <br>
+      <p-accordionTab header="Datos de formación" [selected]="1" class="custom-accordion-tab">
+        <div class="p-grid p-fluid">
+          <div class="p-col-12 p-md-6">
+            <form>
+              <div class="p-field">
+                <label for="nombreInstitucion">Nombre de la institución</label>
+                <input type="text" id="nombreInstitucion" name="nombreInstitucion" class="p-inputtext"
+                  [(ngModel)]="formacion.nombre_institucion">
+              </div>
+              <div class="p-field">
+                <label for="nivelFormacion">Nivel de formación</label>
+                <p-dropdown placeholder="Seleccionar..." id="nivelFormacion" name="nivelFormacion"
+                  [options]="niveles_formacion" optionLabel="nombre" [(ngModel)]="formacion.nivel_formacion"
+                  optionValue="id">
+                </p-dropdown>
+              </div>
+              <div class="p-field">
+                <label for="nombre">Título de formación</label>
+                <input type="text" id="nombre" name="nombre" class="p-inputtext" [(ngModel)]="formacion.nombre">
+              </div>
+              <div class="p-field custom-checkbox">
+                <label for="esEstudiante">¿Aún es estudiante?</label>
+                <input type="checkbox" id="esEstudiante" name="esEstudiante" [(ngModel)]="esEstudiante"
+                  (click)="toggleCampos()">
+              </div>
+              <div class="p-field">
+                <label for="fechaGrado">Fecha de grado</label>
+                <input type="date" id="fechaGrado" name="fechaGrado" class="p-inputtext"
+                  [(ngModel)]="formacion.fecha_grado" [disabled]="esEstudiante">
+              </div>
+              <div class="p-field">
+                <label for="certGradoSin">Diploma de grado</label>
+                <div class="archivo-area">
+                  <div>
+                    <label for="archivo_adjunto" class="custom-file-upload">
+                      <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
+                      <input pButton type="file" id="archivo_adjunto" (change)="handleFileInput($event)"
+                        [disabled]="esEstudiante" style="display:none">
+                    </label>
+                  </div>
+                  <br>
+                  <div *ngIf="archivoCargado">
+                    <span>Archivo cargado:</span>
+                    {{ archivoCargado }}
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+  </section>
+  <ng-template pTemplate="footer" class="titleCard">
+    <div style="text-align: center;">
+      <button pButton pRipple label="Cancelar" style="background: gray; border-color: gray"
+        class="p-button-raised p-button-rounded" icon="pi pi-times" (click)="cerrarEditarPerfil()"></button>
+      <button pButton pRipple label="Guardar datos" style="background: #fa6357; border-color: #F16257;"
+        class="p-button-raised p-button-rounded" icon="pi pi-check"
+        (click)="guardarDatos(); guardarFormacion()"></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- EDITAR IMAGEN DE PERFIL -->
+<p-dialog [visible]="displayDialog2" [modal]="true" [style]="{ width: '50%' }" [showHeader]="false">
+  <div class="edit-profile-dialog">
+    <h3>Editar Imagen de Perfil</h3>
+    <form (ngSubmit)="guardarImagenPerfil()">
+      <div class="form-group">
+        <div class="profile-image-container">
+          <img [src]="profileImage" alt="Imagen de perfil" class="profile-image">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="newImage">Seleccionar nueva imagen:</label>
+        <label class="file-input-label">
+          <i class="pi pi-upload file-input-icon"></i> Seleccionar archivo
+          <input type="file" id="newImage" (change)="onFileSelected($event)" accept="image/*" class="input-file">
+        </label>
+      </div>
+      <div class="button-container-imagen">
+        <button type="submit" class="btn btn-primary">
+          <i class="pi pi-check"></i> Guardar Cambios
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="cerrarEditarImagen()">
+          <i class="pi pi-times"></i> Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</p-dialog>
+
+<!-- MENSAJE TEMPORAL -->
+<p-toast [style]="{ top: '80px' }"></p-toast>

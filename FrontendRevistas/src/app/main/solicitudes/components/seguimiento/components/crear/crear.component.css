@@ -1,0 +1,116 @@
+
+  .solicitudes-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #fa6357;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .crear-seguimiento-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .crear-seguimiento-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .crear-seguimiento-form {
+    display: grid;
+    gap: 16px;
+  }
+  
+  .crear-seguimiento-form label {
+    font-weight: bold;
+  }
+  
+  .crear-seguimiento-form input[type="date"],
+  .crear-seguimiento-form select,
+  .crear-seguimiento-form input[type="checkbox"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .crear-seguimiento-form input[type="checkbox"] {
+    width: auto;
+  }
+  
+  /* Estilos para el contenedor principal */
+.crear-seguimiento-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el título */
+.crear-seguimiento-title {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/* Estilos para el formulario */
+.crear-seguimiento-form {
+  display: grid;
+  gap: 20px;
+}
+
+/* Estilos para los mensajes de toast */
+.p-toast {
+  font-size: 16px;
+}
+
+.custom-dropdown {
+  width: 100% !important;
+}
+
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centrar horizontalmente el contenido */
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease-in-out;
+  text-align: center; /* Centrar horizontalmente el texto */
+}
+
+.custom-file-upload:hover {
+  background-color: #0056b3;
+}
+
+
+.archivo-area {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f0f0f0; /* Cambia el color de fondo a tu elección */
+  border: 1px dashed #999; /* Cambia el estilo y color del borde punteado */
+  border-radius: 4px;
+  align-items: center; /* Centra verticalmente */
+  justify-content: space-between;
+}
+
+.archivo-area span {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}

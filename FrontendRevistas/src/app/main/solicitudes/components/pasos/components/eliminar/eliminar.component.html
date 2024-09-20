@@ -1,0 +1,41 @@
+<br>
+<br>
+<h2 class="solicitudes-title">Eliminar Pasos</h2>
+<br>
+
+<div class="table-container">
+  <p-table [value]="pasos" [paginator]="true" [rows]="5" class="pasos-table" sortField="nivel" [sortOrder]="1">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="nivel">Nivel <p-sortIcon field="nivel"></p-sortIcon></th>
+        <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
+        <th pSortableColumn="dias_programacion">Días <p-sortIcon field="dias_programacion"></p-sortIcon></th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-paso>
+      <tr>
+        <td>{{ paso.nivel }}</td>
+        <td>{{ paso.nombre }}</td>
+        <td>{{ paso.dias_programacion }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-trash" label="Desactivar" (click)="mostrarDialogoConfirmacion(paso)"
+            class="p-button-outlined p-button-danger"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog header="Confirmar Desactivación" [(visible)]="mostrarDialogo" [modal]="true" [responsive]="true"
+  [style]="{ width: '40vw' }" [showHeader]="false" [closable]="false" [dismissableMask]="false" class="custom-dialog">
+  <ng-container *ngIf="pasoSeleccionado">
+    <div class="dialog-content">
+      <p>¿Estás seguro de que deseas desactivar el paso?</p>
+      <div class="p-dialog-footer">
+        <button pButton type="button" label="Sí, Desactivar" (click)="desactivarPaso()" class="confirm-button"></button>
+        <button pButton type="button" label="Cancelar" (click)="cerrarDialogo()" class="cancel-button"></button>
+      </div>
+    </div>
+  </ng-container>
+</p-dialog>

@@ -1,0 +1,21 @@
+<div class="document-list">
+    <h2 class="formacion-title">GENEROS</h2>
+  
+    <div class="container">
+      <p-table class="p-datatable" [value]="generos" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,15]">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nombre</th>
+            <th>Estado</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-genero>
+          <tr>
+            <td>{{ genero.name }}</td>
+            <td>{{ genero.status ? 'Activo' : 'Inactivo' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  

@@ -1,0 +1,20 @@
+
+<br>
+<br>
+
+<h2 class="formacion-title">NIVEL DE FORMACIÓN - CREAR</h2>
+
+<div class="form-container">
+  
+    <form class="form" name="nivelForm" (ngSubmit)="crearNivelFormacion()" #nivelForm="ngForm">
+      <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <input pInputText type="text" id="nombre" name="nombre" [(ngModel)]="nivel.nombre" required>
+      </div>
+  
+      <button pButton type="submit" [disabled]="!nivelForm.form.valid" icon="pi pi-save" label="Crear" class="submit-button"></button>
+    </form>
+  
+    <p-messages class="messages"></p-messages>
+  </div>
+  

@@ -1,0 +1,145 @@
+.recursos-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #fa6357;
+    text-transform: uppercase;
+}
+
+.resources-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.role-resource-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-container {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #fa6357;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Estilos para la tabla y los encabezados */
+.table-container {
+  margin-top: 20px;
+}
+
+.resource-role-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.resource-role-table th,
+.resource-role-table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+.resource-role-table th {
+  background-color: gray; /* Color de fondo para encabezados (azul) */
+  color: #fff;
+}
+
+/* Estilos mejorados para los diferentes niveles de recursos */
+.row {
+  background-color: #ccc; /* Color de fondo para recursos principales (gris claro) */
+}
+
+.child-row {
+  background-color: #e1e1e1; /* Color de fondo para recursos hijos (gris más claro) */
+}
+
+.grandchild-row {
+  background-color: #f5f5f5; /* Color de fondo para recursos nietos (gris aún más claro) */
+}
+
+/* Estilos mejorados para los checkboxes personalizados */
+.custom-checkbox {
+  position: relative;
+  cursor: pointer;
+}
+
+.custom-checkbox input[type="checkbox"] {
+  opacity: 0;
+  position: absolute;
+}
+
+.custom-checkbox .custom-label {
+  position: relative;
+  padding-left: 25px; /* Espacio para el diseño del checkbox personalizado */
+  margin-bottom: 10px; /* Espacio entre los checkboxes */
+  display: inline-block;
+  font-size: 16px; /* Tamaño de texto para la etiqueta */
+  color: #333; /* Color de texto para la etiqueta */
+}
+
+/* Diseño del checkbox personalizado */
+.custom-checkbox .custom-label:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1px; /* Alinea verticalmente el checkbox personalizado */
+  width: 18px; /* Ancho del checkbox personalizado */
+  height: 18px; /* Altura del checkbox personalizado */
+  border: 2px solid #3498db; /* Color del borde */
+  background-color: #fff; /* Fondo del checkbox no marcado */
+  border-radius: 4px; /* Bordes redondeados */
+}
+
+/* Estilo cuando el checkbox está marcado */
+.custom-checkbox input[type="checkbox"]:checked + .custom-label:before {
+  background-color: #3498db; /* Cambia el fondo cuando está marcado */
+  border-color: #3498db; /* Cambia el color del borde cuando está marcado */
+}
+
+/* Cambia el estilo del tick del checkbox */
+.custom-checkbox input[type="checkbox"]:checked + .custom-label:after {
+  content: "\2713"; /* Caracter de verificación (✓) */
+  font-size: 14px;
+  position: absolute;
+  top: 0px; /* Alinea verticalmente el tick */
+  left: 4px;
+  color: #fff; /* Color del tick */
+}

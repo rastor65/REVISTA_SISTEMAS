@@ -1,0 +1,117 @@
+.solicitudes-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #fa6357;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.p-datatable {
+  margin-bottom: 20px;
+}
+
+.p-datatable thead th {
+  background-color: #f7f7f7;
+  font-weight: bold;
+  text-align: left;
+  padding: 10px;
+}
+
+.p-datatable tbody tr:nth-child(odd) td {
+  background-color: #f7f7f7;
+}
+
+.p-dialog-content {
+  padding: 0;
+}
+
+.p-dialog-footer {
+  text-align: right;
+  padding: 10px 20px;
+  background-color: #f7f7f7;
+}
+
+.p-dialog-footer button {
+  width: 100%;
+}
+
+.p-button-rounded {
+  background-color: #ffffff;
+  color: #007ad9;
+}
+
+.p-button-success {
+  background-color: #ffffff;
+  color: #4caf50;
+}
+
+
+.p-button-rounded:hover {
+  background-color: #007ad9;
+  color: #ffffff;
+}
+
+.p-button-info:hover {
+  background-color: #007ad9;
+  color: #ffffff;
+}
+
+.p-button-success:hover {
+  background-color: #4caf50;
+  color: #ffffff;
+}
+
+.p-button-secondary:hover {
+  background-color: #9e9e9e;
+  color: #ffffff;
+}
+
+label {
+  font-weight: bold;
+}
+
+.custom-dialog .ui-dialog-titlebar {
+  background-color: #007ad9;
+  color: #ffffff;
+}
+
+
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centrar horizontalmente el contenido */
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease-in-out;
+  text-align: center; /* Centrar horizontalmente el texto */
+}
+
+.custom-file-upload:hover {
+  background-color: #0056b3;
+}
+
+
+.archivo-area {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f0f0f0; /* Cambia el color de fondo a tu elección */
+  border: 1px dashed #999; /* Cambia el estilo y color del borde punteado */
+  border-radius: 4px;
+  align-items: center; /* Centra verticalmente */
+  justify-content: space-between;
+}
+
+.archivo-area span {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}

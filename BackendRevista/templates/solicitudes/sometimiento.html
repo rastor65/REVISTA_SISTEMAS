@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitud de Sometimiento de Artículo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #dddddd;
+        }
+
+        .header,
+        .footer {
+            background-color: #10abbf;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px 0;
+            height: 30px;
+        }
+
+        .content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .content h1 {
+            color: #333333;
+        }
+
+        .content p {
+            color: #666666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+        </div>
+        <div class="content">
+            <img src="https://revistas.uniguajira.edu.co/rev/public/journals/2/pageHeaderLogoImage_es_ES.jpg"  style="width: 50%; align-items: center;">
+            <h2>¡Estimados Autores!</h2>
+            <p>Hemos recibido una nueva Solicitud de Revisión de Artículo. Con los siguientes detalles:</p>
+            <p><strong>Título del Artículo: {{ titulo_articulo }}</strong></p>
+            <p><strong>Fecha de Creación:</strong> {{ fecha_creacion }}</p>
+            <p><strong>Autores:</strong> {{ autores }}</p>
+            <p>Gracias por su contribución y participación en nuestro proceso de revisión de artículos.</p>
+            <p>Lo invitamos a ingresar a nuestra plataforma para realizar las revisiones pertinentes.</p>
+            <h3><b>ESTE ES UN CORREO ENVIADO AUTOMÁTICAMENTE<br> FAVOR NO RESPONDER.</b></h3>
+        </div>
+        <div class="footer">
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+
+.solicitudes-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #fa6357;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+:host ::ng-deep .pasos-table {
+  margin-bottom: 20px;
+}
+
+:host ::ng-deep .pasos-dialog {
+  max-width: 400px;
+}
+
+:host ::ng-deep .pasos-dialog .p-dialog-header {
+  background-color: #fa6357 !important;
+  color: #fff !important;
+}
+
+:host ::ng-deep .pasos-dialog .p-dialog-content {
+  background-color: #f5f5f5 !important;
+}
+
+:host ::ng-deep .pasos-dialog .p-dialog-footer {
+  background-color: #f5f5f5 !important;
+  border-top: 1px solid #ccc !important;
+}
+
+:host ::ng-deep .pasos-dialog .p-dialog-footer button {
+  margin-right: 10px;
+}
+
+:host ::ng-deep .pasos-dialog form {
+  margin: 0;
+  padding: 20px;
+}
+
+:host ::ng-deep .pasos-dialog label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+:host ::ng-deep .pasos-dialog input[type="text"],
+:host ::ng-deep .pasos-dialog textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+:host ::ng-deep .pasos-dialog button[type="submit"]:disabled {
+  background-color: #cccccc !important;
+  cursor: not-allowed;
+}
+
+/* Estilos para el contenedor de la tabla */
+.table-container {
+  width: 80%;
+  margin: 0 auto;
+  }
+  

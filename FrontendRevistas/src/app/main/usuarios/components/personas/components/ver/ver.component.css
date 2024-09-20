@@ -1,0 +1,56 @@
+  
+  
+
+/* Estilos personalizados para el título */
+  .personas-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #fa6357;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+/* Estilos personalizados para la tabla */
+.p-personas-title {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.p-table {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.p-table thead th {
+  background-color: #f2f2f2;
+  color: #333;
+  font-weight: bold;
+  padding: 10px;
+  text-align: left;
+}
+
+.p-table tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Personaliza los estilos de PrimeNG según tus preferencias */
+.p-personas-search input {
+  width: 750px; /* Ajusta el ancho según tus necesidades */
+  
+}
+
+.p-personas-filter{
+  width: 200px; /* Ajusta el ancho según tus necesidades */
+  /* margin-left: 5rem; */
+}
+
+.p-personas-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}

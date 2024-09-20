@@ -1,0 +1,49 @@
+<div class="main">
+    <h1>Atender solicitudes</h1>
+    <p-table [value]="solicitudes" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Indice</th>
+                <th>ID</th>
+                <th>Titulo</th>
+                <th>Tipo</th>
+                <th>Persona</th>
+                <th>Detalles</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-solicitud let-rowIndex="rowIndex">
+            <tr>
+                <td>{{rowIndex}}</td>
+                <td>{{solicitud.id}}</td>
+                <td>{{solicitud.titulo}}</td>
+                <td>{{solicitud.tipopqrs}}</td>
+                <td>{{solicitud.persona}}</td>
+                <td>
+                    <button pButton pRipple type="button" icon="pi pi-eye" (click)="verDetalles(solicitud)"
+                        class="p-button-rounded p-button-secondary"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-toast></p-toast>
+
+<p-dialog header="Detalles de solicitud" [(visible)]="display" [modal]="true" [style]="{width: '50vw', height: '70vh'}"
+    [draggable]="false" [resizable]="false">
+    <div class="grid dialog-form-crear col-12 md:col-12 lg:col-12">
+        <div class="content">
+            <div class="body">
+                <h4>Persona: </h4>
+                <p>{{ solicitud.persona}}</p>
+                <h4>Tipo: </h4>
+                <p> {{ solicitud.tipopqrs}} </p>
+                <h4>Titulo: </h4>
+                <p>{{ solicitud.titulo}}</p>
+                <h4>Descripcion: </h4>
+                <p>{{ solicitud.description}}</p>
+            </div>
+            <p-button label="Atender" icon="pi pi-check" (click)="atender(solicitud.id)"></p-button>
+        </div>
+    </div>
+</p-dialog>

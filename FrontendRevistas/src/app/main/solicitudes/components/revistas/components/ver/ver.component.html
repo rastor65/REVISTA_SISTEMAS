@@ -1,0 +1,21 @@
+<br>
+<br>
+<br>
+<h2 class="solicitudes-title">Revistas - ver</h2>
+
+<div class="table-container">
+    <p-table [value]="revistas" [paginator]="true" [rows]="5" class="custom-table">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-revista>
+            <tr>
+                <td>{{ revista.id }}</td>
+                <td>{{ revista.nombre }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

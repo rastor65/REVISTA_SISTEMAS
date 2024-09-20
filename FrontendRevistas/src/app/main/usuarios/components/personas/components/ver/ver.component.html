@@ -1,0 +1,50 @@
+<br>
+<br>
+<h2 class="personas-title">USUARIOS</h2>
+<br>
+<br>
+<div style="background-color: #f2f2f2; padding: 5px; border-radius: 5px;">
+  <p style="font-size: 16px; color: #333; text-align: center;">
+    Tenga en cuenta que en este listado solo aparecerán usuarios que tengan roles asignados (que no sean usuarios
+    anónimos).
+  </p>
+</div>
+
+<br>
+
+<div class="p-personas-controls">
+
+  <div class="p-personas-search">
+    <input type="text" pInputText placeholder="Buscar" [(ngModel)]="searchValue" (input)="filterTable()">
+  </div>
+
+  <div class="p-personas-filter">
+    <p-dropdown [options]="filterOptions" placeholder="seleccionar..." optionLabel="name" optionValue="name"
+      [showClear]="true" (onChange)="filterByRole($event.value)"></p-dropdown>
+  </div>
+
+</div>
+<p-table #dt [value]="roles" [rows]="10" [paginator]="true" [responsive]="true" [globalFilterFields]="globalFilterFields">
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="id">ID</th>
+      <th pSortableColumn="userId.first_name">Nombres</th>
+      <th pSortableColumn="userId.last_name">Apellidos</th>
+      <th pSortableColumn="userId.email">Email</th>
+      <th pSortableColumn="userId.username">Usuario</th>
+      <th pSortableColumn="rolesId.name">Rol</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-role>
+    <tr pSelectableRow>
+      <td>{{ role.id }}</td>
+      <td>{{ role.userId.first_name }}</td>
+      <td>{{ role.userId.last_name }}</td>
+      <td>{{ role.userId.email }}</td>
+      <td>{{ role.userId.username }}</td>
+      <td>{{role.rolesId.name }}</td>
+    </tr>
+  </ng-template>
+</p-table>

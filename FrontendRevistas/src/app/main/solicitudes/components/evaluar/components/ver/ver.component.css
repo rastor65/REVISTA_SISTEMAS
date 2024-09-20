@@ -1,0 +1,342 @@
+.solicitudes-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #fa6357;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+/* Estilo base para los checkboxes */
+input[type="checkbox"] {
+  display: none;
+  /* Oculta el checkbox nativo */
+}
+
+/* Estilo para el checkbox personalizado */
+.custom-checkbox {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* Estilo para el marcado del checkbox */
+input[type="checkbox"]:checked+.custom-checkbox::before {
+  opacity: 0;
+  /* Oculta la "X" cuando está marcado */
+  transform: translate(-50%, -50%) scale(0);
+}
+
+/* Estilo para el desmarcado del checkbox */
+input[type="checkbox"]:checked+.custom-checkbox::after {
+  opacity: 1;
+  /* Muestra el chulito cuando está marcado */
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.evaluacion-text {
+  margin-left: 10px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.alert-message {
+  background-color: #ffe4b5;
+  /* Color de fondo */
+  border: 1px solid #ffc966;
+  /* Borde */
+  padding: 10px;
+  /* Espaciado interno */
+  margin-bottom: 20px;
+  /* Margen inferior para separar del contenido siguiente */
+  border-radius: 5px;
+  /* Bordes redondeados */
+  font-size: 14px;
+  /* Tamaño de fuente */
+  color: #666;
+  /* Color del texto */
+}
+
+.evaluacion-title {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.seguimiento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.fecha {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 0;
+}
+
+.solicitud-info {
+  margin-bottom: 10px;
+}
+
+.solicitud-title {
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 5px;
+}
+
+.descripcion {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.estado-info {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.estado {
+  font-size: 18px;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-button {
+  width: 150px;
+  border: 1px solid #fa6357;
+  background-color: transparent;
+  color: #fa6357;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.custom-button:hover {
+  border-color: #fa6357;
+  background: linear-gradient(15deg, #F91616, #F97316);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.custom-button-descargar {
+  width: 100%;
+  border: 2px solid #fa6357;
+  align-items: center;
+  background-color: transparent;
+  color: #fa6357;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.custom-button-descargar:hover {
+  border-color: #fa6357;
+  background: linear-gradient(15deg, #F91616, #F97316);
+  color: #fff;
+  transform: scale(1.01);
+}
+
+.seguimiento-item {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.seguimiento-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  transform: scaleY(1.02);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Estilo para el campo de correcciones */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.custom-file {
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-file-input {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: calc(1.5em + 1rem + 2px);
+  margin: 0;
+  opacity: 0;
+}
+
+.custom-file-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  display: block;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+.custom-file-input:focus~.custom-file-label {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Estilo para el campo de fecha de evaluación */
+.input-group {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-group-prepend,
+.input-group-append {
+  flex: 0 0 auto;
+}
+
+.input-group .form-control {
+  position: relative;
+  flex: 1 1 auto;
+  width: 1%;
+  margin-bottom: 0;
+}
+
+.input-group-append {
+  margin-left: -1px;
+}
+
+.input-group-append .input-group-text {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.input-group-prepend .input-group-text {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.no-solicitudes-message {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  position: relative;
+  text-align: center;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.input-group .form-control {
+  border-radius: 0.25rem;
+  /* Bordes ligeramente redondeados */
+}
+
+.input-group-append .input-group-text {
+  background-color: #e9ecef;
+  /* Fondo gris claro para el ícono */
+  border-color: #ced4da;
+  /* Borde gris */
+  cursor: pointer;
+}
+
+.input-group-append .input-group-text i {
+  color: #343a40;
+  /* Color del ícono */
+}
+
+/* Estilo al pasar el ratón sobre el ícono */
+.input-group-append .input-group-text:hover {
+  background-color: #d3d9df;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  /* Centra los botones horizontalmente */
+  gap: 10px;
+  /* Espacio entre los botones */
+}
+
+.button-container button {
+  margin: 0;
+}
+
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Centrar horizontalmente el contenido */
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #fa6357;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease-in-out;
+  text-align: center;
+  /* Centrar horizontalmente el texto */
+}
+
+.custom-file-upload:hover {
+  background-color: #f92e20;
+}
+
+.archivo-area {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  /* Cambia el color de fondo a tu elección */
+  border: 1px dashed #999;
+  /* Cambia el estilo y color del borde punteado */
+  border-radius: 4px;
+  align-items: center;
+  /* Centra verticalmente */
+  justify-content: space-between;
+}
+
+.archivo-area span {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+.contenedor{
+  background: linear-gradient(15deg, #F91616, #F97316);
+  border-left: 10px solid transparent; 
+  margin: 10px;
+}

@@ -1,0 +1,9 @@
+<div class="main">
+    <h1>Crear seccion</h1>
+    <form [formGroup]="form" (submit)="onSubmit()">
+        <input type="text" placeholder="Nombre" pInputText formControlName="name" />
+        <button pButton pRipple type="submit" label="Crear solicitud" class="p-button-success" [disabled]="!form.valid" ></button>
+    </form>
+</div>
+
+<p-toast></p-toast>

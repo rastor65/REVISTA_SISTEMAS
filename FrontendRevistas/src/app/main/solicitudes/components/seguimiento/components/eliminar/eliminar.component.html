@@ -1,0 +1,87 @@
+<br>
+<br>
+<br>
+<br>
+<h2 class="solicitudes-title">Eliminar Seguimiento</h2>
+
+<div class="search-container p-inputgroup">
+    <input type="text" pInputText class="form-control p-inputtext-lg" [(ngModel)]="searchText"
+      (ngModelChange)="buscarSeguimientos()" placeholder="Buscar solicitudes...">
+    <span class="p-inputgroup-addon">
+      <button pButton type="button" icon="pi pi-search" class="p-button-rounded custom-button-color"
+        (click)="buscarSeguimientos()"></button>
+    </span>
+  </div>
+  
+  <br>
+  <br>
+  
+  <p-table [value]="filteredSeguimientos"
+    *ngIf="filteredSeguimientos && filteredSeguimientos.length > 0 || searchText === ''" [paginator]="true" [rows]="10"
+    [rowsPerPageOptions]="[5,10,20,30]">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>ID</th>
+            <th>Solicitud</th>
+            <th>Fecha Asignación</th>
+            <th>Fecha Programación</th>
+            <th>Fecha Evaluación</th>
+            <th>Correcciones</th>
+            <th>Formato de evaluación<th>
+            <th>Paso</th>
+            <th>Estado</th>
+            <th>Responsable</th>
+            <th>Acciones</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-seguimiento>
+        <tr>
+            <td>{{ seguimiento.id }}</td>
+            <td>{{ getSolicitudNombre(seguimiento.solicitudId)}}</td>
+            <td>{{ seguimiento.fecha_asignacion }}</td>
+            <td>{{ seguimiento.fecha_programacion }}</td>
+            <td>{{ seguimiento.fecha_evaluacion }}</td>
+            <td>
+                <ng-container *ngIf="seguimiento.correciones === null; else downloadLink">
+                  <span><b>No presenta</b></span>
+                </ng-container>
+                <ng-template #downloadLink>
+                  <a pTooltip="Ver archivo" tooltipPosition="top"
+                    (click)="abrirCorreciones('http://localhost:8000/solicitud/seguimiento/seguimientos/' + seguimiento.id + '/descargar/correciones/')">
+                    <i class="pi pi-file-pdf"></i>
+                  </a>
+                </ng-template>
+              </td>
+              <td>
+                <ng-container *ngIf="seguimiento.formato_evaluacion === null; else downloadLink">
+                  <span><b>No presenta</b></span>
+                </ng-container>
+                <ng-template #downloadLink>
+                  <a pTooltip="Ver archivo" tooltipPosition="top"
+                    (click)="abrirFormato('http://localhost:8000/solicitud/seguimiento/seguimientos/' + seguimiento.id + '/descargar/formato_evaluacion/')">
+                    <i class="pi pi-file-pdf"></i>
+                  </a>
+                </ng-template>
+              </td>
+            <td>{{ getPasoNombre(seguimiento.pasos_seguimiento) }}</td>
+            <td>{{ getEstadoNombre(seguimiento.estado_seguimiento) }}</td>
+            <td>{{ getResponsableNombre(seguimiento.responsableId) }}</td>
+            <td>
+                <button pButton type="button" label="Eliminar" icon="pi pi-trash"
+                    class="p-button-danger p-button-outlined" (click)="confirmarEliminacion(seguimiento)"></button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog header="Confirmar Eliminación" [(visible)]="mostrarDialogo" [modal]="true" [responsive]="true">
+    <p>¿Estás seguro de que quieres eliminar este seguimiento?</p>
+    <p-footer>
+        <button pButton type="button" label="Cancelar" (click)="mostrarDialogo = false"
+            class="ui-button-secondary"></button>
+        <button pButton type="button" label="Eliminar" (click)="eliminarSeguimiento()"
+            class="ui-button-danger"></button>
+    </p-footer>
+</p-dialog>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>

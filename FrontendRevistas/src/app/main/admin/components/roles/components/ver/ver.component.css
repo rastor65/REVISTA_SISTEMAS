@@ -1,0 +1,176 @@
+body, html {
+    margin: 0;
+}
+
+.roles-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #fa6357;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+.roles-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.create-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.create-role-button {
+    width: 300px;
+}
+
+.roles-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.role-card {
+    flex-basis: calc(40% - 20px);
+    margin: 10px;
+}
+
+.p-card {
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.p-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Estilos para los botones PrimeNG */
+.p-button-secondary {
+    
+    margin-right: 5%;
+    margin-left: 30%;
+    background-color: #f0ad4e;
+    border-color: #eea236;
+}
+
+.p-button-danger {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+.p-button-success {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+
+.custom-dialog {
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.custom-dialog .ui-dialog-titlebar {
+    background-color: #4285f4;
+    color: #ffffff;
+    border: none;
+    padding: 1rem;
+}
+
+.custom-dialog .ui-dialog-content {
+    padding: 1.5rem;
+}
+
+.custom-dialog .ui-dialog-footer {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 1rem;
+    text-align: right;
+}
+
+.custom-dialog .ui-dialog-footer button {
+    margin-left: 0.5rem;
+}
+
+/* Estilos para el diálogo personalizado */
+.custom-dialog {
+    max-width: 400px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+}
+
+.custom-dialog .ui-dialog-titlebar {
+    background-color: #4285f4;
+    color: #ffffff;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px 8px 0 0;
+}
+
+.custom-dialog .ui-dialog-content {
+    padding: 1.5rem;
+    border-radius: 0 0 8px 8px;
+    background-color: #f8f8f8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-dialog .ui-dialog-footer {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 1rem;
+    text-align: right;
+    border-radius: 0 0 8px 8px;
+}
+
+.custom-dialog .ui-dialog-footer button {
+    margin-left: 0.5rem;
+}
+
+/* Estilos para los botones PrimeNG en el diálogo */
+.p-button-success.custom-dialog-button {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+    color: #ffffff;
+}
+
+.p-button-danger.custom-dialog-button {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    color: #ffffff;
+}
+
+/* Estilos para los inputs en el diálogo */
+.p-inputtext {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.p-input-with-icon {
+    padding-left: 2rem; /* Ajusta el espacio a la izquierda para el icono */
+}
+
+.p-button-rounded {
+    border-radius: 20px;
+    margin: 10px;
+}
+
+.p-inputtext.p-input-with-icon {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.role-actions{
+    margin: 0px;
+}

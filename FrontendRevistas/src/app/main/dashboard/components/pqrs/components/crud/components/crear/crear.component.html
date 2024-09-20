@@ -1,0 +1,11 @@
+<div class="main">
+    <h1>Crear solicitud</h1>
+    <form [formGroup]="form" (submit)="onSubmit()">
+        <p-dropdown [options]="tipoSolicitudes" formControlName="tipopqrs" placeholder="Tipo de solicitud" optionLabel="tipo" [showClear]="true"></p-dropdown>
+        <input type="text" placeholder="Titulo" pInputText formControlName="titulo" />
+        <textarea rows="5" cols="10" placeholder="Descripcion" formControlName="description" pInputTextarea></textarea>
+        <button pButton pRipple type="submit" label="Crear solicitud" class="p-button-success" [disabled]="!form.valid" ></button>
+    </form>
+</div>
+
+<p-toast></p-toast>

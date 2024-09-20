@@ -1,0 +1,123 @@
+/* Estilos personalizados para el título */
+.formacion-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #fa6357;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.nivel-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.nivel-table th,
+.nivel-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+
+.edit-button {
+    background-color: transparent;
+    cursor: pointer;
+    transition: color 0.3s;
+    color: #007bff;
+    border: 1px solid #007bff;
+}
+
+.edit-button:hover {
+    color: #fff;
+    background-color: #007bff;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-footer button {
+    margin-left: 10px;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-footer button.p-button-lg {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 1px solid #4CAF50;
+    color: #4CAF50;
+    width: max-content;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-footer button.p-button-lg:hover {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+/* Estilos personalizados para PrimeNG */
+:host ::ng-deep .p-dialog .p-dialog-header {
+    background-color: #fa6357;
+    color: #fff;
+    padding: 1rem;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-title {
+    font-size: 24px;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+    padding: 1rem;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-footer {
+    background-color: #f2f2f2;
+    padding: 1rem;
+    border-top: 1px solid #ccc;
+}
+
+:host ::ng-deep .p-dialog .p-button {
+    min-width: 100px;
+    margin-left: 0.5rem;
+}
+
+:host ::ng-deep .p-dialog .p-inputtext {
+    width: 100%;
+    padding: 0.5rem;
+}
+
+:host ::ng-deep .p-dialog .p-inputtext:focus {
+    border-color: #007bff;
+    box-shadow: none;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-footer.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-footer.button-container button {
+    margin-left: 10px;
+    width: 100%;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-footer button.p-button-lg {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 1px solid #4CAF50;
+    color: #4CAF50;
+    width: 100%; /* Cambia "max-content" a "100%" */
+    box-sizing: border-box; /* Añade esta línea para incluir el padding en el ancho */
+}
+

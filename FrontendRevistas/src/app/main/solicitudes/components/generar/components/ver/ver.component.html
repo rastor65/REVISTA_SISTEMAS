@@ -1,0 +1,105 @@
+<br>
+<br>
+<br>
+<h2 class="solicitudes-title">SOLICITUDES - VER</h2>
+
+<div class="view-toggle-buttons">
+  <button pButton type="button" icon="pi pi-bars" (click)="toggleView('table')"></button>
+  <button pButton type="button" icon="pi pi-th-large" (click)="toggleView('cards')"></button>
+</div>
+
+<div class="search-container p-inputgroup">
+  <input type="text" pInputText class="form-control p-inputtext-lg" [(ngModel)]="searchText"
+    (ngModelChange)="buscarSolicitudes()" placeholder="Buscar solicitudes...">
+  <span class="p-inputgroup-addon">
+    <button pButton type="button" icon="pi pi-search" class="p-button-rounded custom-button-color"
+      (click)="buscarSolicitudes()"></button>
+  </span>
+</div>
+
+<div *ngIf="currentView === 'table'">
+  <p-table [value]="filteredSolicitudes"
+    *ngIf="filteredSolicitudes && filteredSolicitudes.length > 0 || searchText === ''" [paginator]="true" [rows]="10"
+    [rowsPerPageOptions]="[5,10,20,30]">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Título del artículo</th>
+        <th>Autores</th>
+        <th>Fecha de creación</th>
+        <th>Afiliación</th>
+        <th>Revista</th>
+        <th>Contenido</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-solicitud>
+      <tr>
+        <td>{{ solicitud.titulo_articulo }}</td>
+        <td>{{ getAutoresNombres(solicitud.autores) }}</td>
+        <td>{{ solicitud.fecha_creacion | date:'dd/MM/yyyy' }}</td>
+        <td>{{ solicitud.afiliacion }}</td>
+        <td>{{ getRevistaNombre(solicitud.revista) }}</td>
+        <td>
+          <button pButton type="button" label="Ver" icon="pi pi-search" class="p-button-outlined p-button-warning w-100 font-bold"
+            (click)="mostrarContenido(solicitud)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+      <tr>
+        <td colspan="4">No se encontraron solicitudes, por favor genere una nueva solicitud.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div *ngIf="currentView === 'cards'" class="cards-container">
+  <div class="card" *ngFor="let solicitud of filteredSolicitudes">
+    <div class="card-header">{{ solicitud.titulo_articulo }}</div>
+    <div class="card-date">{{ solicitud.fecha_creacion | date:'dd/MM/yyyy' }}</div>
+    <div class="card-body">
+      <p><strong>Autores:</strong> {{ getAutoresNombres(solicitud.autores) }}</p>
+      <p><strong>Afiliación:</strong> {{ solicitud.afiliacion }}</p>
+      <p><strong>Revista:</strong> {{ getRevistaNombre(solicitud.revista) }}</p>
+      <button pButton type="button" label="Ver" icon="pi pi-search" class="p-button-outlined p-button-warning w-100 font-bold"
+        (click)="mostrarContenido(solicitud)"></button>
+    </div>
+  </div>
+</div>
+
+<p-dialog *ngIf="solicitudSeleccionada" header="{{ solicitudSeleccionada.titulo_articulo }}"
+  [(visible)]="DisplayContenido" [modal]="true" [style]="{ width: '80%', top: '30px' }" [showHeader]="false"
+  [closable]="true" [dismissableMask]="true">
+  <div class="solicitud-content">
+    <div class="solicitud-header">
+      <img src="assets/logo_r.jpg" class="solicitud-logo">
+      <div class="solicitud-title-container">
+        <h3 class="solicitud-title">{{ solicitudSeleccionada.titulo_articulo }}</h3>
+        <p class="solicitud-title">{{ getAutoresNombres(solicitudSeleccionada.autores) }}</p>
+      </div>
+    </div>
+    <hr>
+    <ng-container *ngIf="contenidoSeleccionado">
+      <p-accordion>
+        <p-accordionTab header="Previsualización del Archivo Adjunto">
+          <embed *ngIf="fileURL" [src]="fileURL" width="100%" height="400px" type="application/pdf">
+        </p-accordionTab>
+        <p-accordionTab header="Previsualización de la Declaración de Originalidad">
+          <embed *ngIf="originalidadURL" [src]="originalidadURL" width="100%" height="400px" type="application/pdf">
+        </p-accordionTab>
+      </p-accordion>
+      <br>
+      <div style="display: flex; justify-content: space-around;">
+        <button pButton type="button" label="Descargar Archivo Adjunto" icon="pi pi-download" class="p-button-warning font-bold"
+          (click)="descargarArchivo(contenidoSeleccionado.id, 'archivo_adjunto')"></button>
+        <button pButton type="button" label="Descargar Declaración de Originalidad" icon="pi pi-download"
+          class="p-button-warning font-bold" (click)="descargarArchivo(contenidoSeleccionado.id, 'originalidad')"></button>
+      </div>
+      <br>
+      <div style="display: flex; justify-content: center; align-items: center;">
+        <button pButton type="button" label="Cerrar" icon="pi pi-times" class="p-button-outlined p-button-warning font-bold"
+          (click)="ocultarContenido()"></button>
+      </div>
+      <br>
+    </ng-container>
+  </div>
+</p-dialog>
