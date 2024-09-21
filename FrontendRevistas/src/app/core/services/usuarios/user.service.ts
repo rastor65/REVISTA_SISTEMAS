@@ -22,7 +22,7 @@ export class UserService {
   base_nivel_formacion = `${this.API_URI}/nivel_f/nivel_formacion/`;
   base_personas = `${this.API_URI}/persons/`;
   base_documentos = `${this.API_URI}/documents/`;
-  base_usuario = `${this.API_URI}api/user/`;
+  base_usuario = `${this.API_URI}/api/user/`;
   base_editar_user = `${this.API_URI}/api/user/update/`;
   base_gender = `${this.API_URI}/genders/`;
   base_usuario_rol = `${this.API_URI}/roles/user_roles/create/`;
