@@ -1,14 +1,3 @@
-
-.solicitudes-title {
-  font-size: 36px;
-  font-weight: bold;
-  margin: 20px 0;
-  text-align: center;
-  color: #fa6357;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
 .form-container {
   max-width: 400px;
   margin: 0 auto;
@@ -18,13 +7,16 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
 }
+
 .p-inputgroup {
   margin-bottom: 15px;
-  display: block; /* Cambia la visualización a bloque */
+  display: block;
+  /* Cambia la visualización a bloque */
 }
 
 .p-inputgroup label {
-  display: block; /* Cambia la visualización a bloque */
+  display: block;
+  /* Cambia la visualización a bloque */
   margin-bottom: 5px;
 }
 

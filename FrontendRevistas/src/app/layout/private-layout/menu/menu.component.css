@@ -34,29 +34,29 @@
     border-width: 0;
   }
   .hijo:hover{
-    border-left: 5px solid #5780f1;
-    text-decoration-color: #5780f1;
+    border-left: 5px solid #02b1bc;
+    text-decoration-color: #02b1bc;
     cursor: pointer;
     /* color:#F16257 */
     /* background-color: #F16257; */
   }
   .nieto:hover{
-    border-left: 5px solid #5780f1;
-    text-decoration-color: #5780f1;
+    border-left: 5px solid #02b1bc;
+    text-decoration-color: #02b1bc;
     cursor: pointer;
     /* color:#F16257 */
     /* background-color: #F16257; */
   }
   .padre:hover{
-    border-left: 5px solid #5780f1;
-    text-decoration-color: #5780f1;
+    border-left: 5px solid #02b1bc;
+    text-decoration-color: #02b1bc;
     cursor: pointer;
     /* color:#F16257 */
     /* background-color: #F16257; */
   }
   .padre:focus{
-    border-left: 5px solid #5780f1;
-    text-decoration-color: #5780f1;
+    border-left: 5px solid #02b1bc;
+    text-decoration-color: #02b1bc;
     cursor: pointer;
     /* color:#F16257 */
     /* background-color: #F16257; */

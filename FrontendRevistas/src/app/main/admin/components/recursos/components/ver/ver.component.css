@@ -60,15 +60,6 @@
     padding: 0;
 }
 
-.recursos-title {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #fa6357;
-    text-transform: uppercase;
-}
-
 /* Estilo general para el p-dialog */
 .custom-dialog {
     max-width: 400px;

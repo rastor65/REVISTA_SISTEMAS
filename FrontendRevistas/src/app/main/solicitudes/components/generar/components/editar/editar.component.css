@@ -1,19 +1,11 @@
-.solicitudes-title {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #fa6357;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
+
 
 .solicitudes-subtitle {
   font-size: 30px;
   font-weight: bold;
   margin-bottom: 20px;
   text-align: center;
-  color: #fa6357;
+  color: #02b1bc;
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -23,17 +15,17 @@
 }
 
 :host ::ng-deep .p-button-secondary {
-  background-color: #fa6357;
+  background-color: #02b1bc;
   color: #ffffff;
   border: none;
 }
 
 :host ::ng-deep .p-button-secondary:hover {
-  background-color: #fa6357;
+  background-color: #02b1bc;
 }
 
 :host ::ng-deep .custom-dialog .p-dialog-header {
-  background-color: #fa6357;
+  background-color: #02b1bc;
   color: #ffffff;
   border: none;
   padding: 1rem;
@@ -72,7 +64,7 @@
 }
 
 .mi-dialog .p-dialog-header {
-  background-color: #fa6357;
+  background-color: #02b1bc;
   color: #fff;
   border: none;
   padding: 1rem;
@@ -96,7 +88,7 @@
 button.p-button {
   padding: 8px 16px;
   border-radius: 4px;
-  background-color: #fa6357;
+  background-color: #02b1bc;
   color: #fff;
   font-weight: bold;
   cursor: pointer;
@@ -104,7 +96,7 @@ button.p-button {
 }
 
 button.p-button:hover {
-  background-color: #fa6357;
+  background-color: #02b1bc;
 }
 
 .custom-file-upload {
@@ -114,7 +106,7 @@ button.p-button:hover {
   /* Centrar horizontalmente el contenido */
   padding: 6px 12px;
   cursor: pointer;
-  background-color: #fa6357;
+  background-color: #02b1bc;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -124,7 +116,7 @@ button.p-button:hover {
 }
 
 .custom-file-upload:hover {
-  background-color: #fa6357;
+  background-color: #02b1bc;
 }
 
 .archivo-area {
@@ -219,8 +211,8 @@ button.p-button:hover {
 }
 
 .view-toggle-buttons button {
-  background-color: #fa6357;
-  border-color: #fa6357;
+  background-color: #02b1bc;
+  border-color: #02b1bc;
   color: white;
 }
 
@@ -251,6 +243,6 @@ label {
 }
 
 .custom-button-color{
-  border-color: #fa6357 !important;
-  background-color: #fa6357 !important;
+  border-color: #02b1bc !important;
+  background-color: #02b1bc !important;
 }

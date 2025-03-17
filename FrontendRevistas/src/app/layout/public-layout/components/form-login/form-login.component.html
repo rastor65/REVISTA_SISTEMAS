@@ -4,7 +4,8 @@
     contentStyleClass="overflow-y-hidden" [closable]="false" [closeOnEscape]="false" [resizable]="false" zindex="10000"
     [showHeader]="false">
     <div class="grid grid-nogutter surface-section text-800">
-      <div class="col-12 sm:col-6 md:col-6 lg:col-4 xl:col-4 pl-3 pr-3 pb-6 text-center md:text-center align-items-center">
+      <div
+        class="col-12 sm:col-6 md:col-6 lg:col-4 xl:col-4 pl-3 pr-3 pb-6 text-center md:text-center align-items-center">
         <section class="mr-1 md:mt-4 md:mb-3">
           <span class="block text-6xl font-bold mb-3" style="color:black">Revista
             <strong class="block" style="color:gray;font-size: 0.8rem;">
@@ -25,17 +26,22 @@
                 </div>
               </div>
               <div class="p-col-12 p-md-6">
-                <div class="form-field">
-                  <span class="pi pi-key"></span>
-                  <input type="password" pInputText formControlName="password" placeholder="Contraseña">
+                <div class="password-container">
+                  <i class="pi pi-key"></i>
+                  <input [type]="passwordVisible ? 'text' : 'password'" pInputText formControlName="password"
+                    placeholder="Contraseña">
+                  <i class="pi" [ngClass]="passwordVisible ? 'pi pi-eye-slash' : 'pi pi-eye'" class="toggle-password"
+                    (click)="togglePassword()"></i>
                 </div>
               </div>
             </div>
           </div>
           <ng-template [ngIf]="motrar == false">
             <div fxLayout="row" class="titleCard">
-              <button pButton pRipple type="submit" icon="pi pi-check" label="Entrar" [disabled]="!form.valid" style="width:auto" styleClass="mr-2" class="mr-3 p-button-raised mt-3"></button>
-              <button pButton pRipple type="button" routerLink="/register" icon="pi pi-users" styleClass="p-button-text" style="width:auto" label="Registrarse" class="p-button-outlined mt-3"></button>
+              <button pButton pRipple type="submit" icon="pi pi-check" label="Entrar" [disabled]="!form.valid"
+                style="width:auto" styleClass="mr-2" class="mr-3 p-button-raised mt-3"></button>
+              <button pButton pRipple type="button" routerLink="/register" icon="pi pi-users" styleClass="p-button-text"
+                style="width:auto" label="Registrarse" class="p-button-outlined mt-3"></button>
             </div>
           </ng-template>
           <ng-template [ngIf]="motrar == true">
@@ -48,7 +54,7 @@
         <img src="assets/revista_principal.jpeg" alt="Image" class="md:ml-auto block revista-img">
       </div>
     </div>
-    
+
   </p-dialog>
 </form>
 <img width="100%" height="45%" src="assets/Revista_c.jpeg">

@@ -1,20 +1,9 @@
- 
-  .solicitudes-title {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #fa6357;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-  }
-
   .solicitudes-subtitle {
     font-size: 30px;
     font-weight: bold;
     margin-bottom: 20px;
     text-align: center;
-    color: #fa6357;
+    color: #02b1bc;
     text-transform: uppercase;
     letter-spacing: 2px;
   }
@@ -61,20 +50,20 @@
   }
   
   :host ::ng-deep .p-button-secondary {
-    background-color: #fa6357;
+    background-color: #02b1bc;
     color: #ffffff;
     border: none;
   }
   
   :host ::ng-deep .p-button-secondary:hover {
-    background-color: #fa6357;
+    background-color: #02b1bc;
   }
 
   /* prime-ng-styles.css */
 
 /* Estilo para el p-dialog header */
 :host ::ng-deep .ui-dialog .ui-dialog-titlebar {
-  background-color: #fa6357;
+  background-color: #02b1bc;
   color: #fff;
   border: none;
   font-size: 1.2rem;
@@ -124,8 +113,8 @@
 }
 
 .view-toggle-buttons button {
-  background-color: #fa6357;
-  border-color: #fa6357;
+  background-color: #02b1bc;
+  border-color: #02b1bc;
   color: white;
 }
 
@@ -193,6 +182,6 @@
 }
 
 .custom-button-color{
-  border-color: #fa6357 !important;
-  background-color: #fa6357 !important;
+  border-color: #02b1bc !important;
+  background-color: #02b1bc !important;
 }

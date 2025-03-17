@@ -1,12 +1,3 @@
-.solicitudes-title {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #fa6357;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
 /* Agrega estos estilos al archivo CSS correspondiente */
 .solicitudes-container {
   display: grid;
@@ -38,9 +29,12 @@
 
 .button-container-acciones {
   display: flex;
-  flex-direction: column; /* Coloca los botones uno debajo del otro */
-  justify-content: center; /* Centra verticalmente */
-  align-items: center; /* Centra horizontalmente */
+  flex-direction: column;
+  /* Coloca los botones uno debajo del otro */
+  justify-content: center;
+  /* Centra verticalmente */
+  align-items: center;
+  /* Centra horizontalmente */
   padding: 10px;
 }
 
@@ -55,24 +49,29 @@
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
   margin-right: 30px;
-  white-space: nowrap; /* Evita el salto de línea en el texto */
+  white-space: nowrap;
+  /* Evita el salto de línea en el texto */
 }
 
 .custom-button-acciones {
   /* Agrega estilos personalizados para los botones si es necesario */
   background-color: #fff;
   color: #f91616;
-  border: 1px solid #f91616; /* Agrega un borde de 2px de ancho y color rojo (#f91616) */
+  border: 1px solid #f91616;
+  /* Agrega un borde de 2px de ancho y color rojo (#f91616) */
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
-  margin-bottom: 10px; /* Agrega espacio entre los botones */
+  margin-bottom: 10px;
+  /* Agrega espacio entre los botones */
 }
 
 .custom-button-acciones:hover {
-  background-color: #f91616; 
-  border-color: #f91616;/* Cambia el color de fondo al pasar el ratón sobre el botón */
-  color: #fff; /* Cambia el color del texto al pasar el ratón sobre el botón */
+  background-color: #f91616;
+  border-color: #f91616;
+  /* Cambia el color de fondo al pasar el ratón sobre el botón */
+  color: #fff;
+  /* Cambia el color del texto al pasar el ratón sobre el botón */
 }
 
 .custom-button:last-child {
@@ -84,17 +83,6 @@
   background: linear-gradient(15deg, #F91616, #F97316);
   color: #fff;
   transform: scale(1.05);
-}
-
-
-.solicitudes-title {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #fa6357;
-  text-transform: uppercase;
-  text-align: center;
-  letter-spacing: 2px;
 }
 
 .seguimiento-list {
@@ -175,7 +163,7 @@
   font-weight: bold;
 }
 
-label{
+label {
   font-weight: bold;
 }
 
@@ -329,7 +317,8 @@ label{
 .custom-file-upload {
   display: flex;
   align-items: center;
-  justify-content: center; /* Centrar horizontalmente el contenido */
+  justify-content: center;
+  /* Centrar horizontalmente el contenido */
   padding: 6px 12px;
   cursor: pointer;
   background-color: #fa6357;
@@ -337,7 +326,8 @@ label{
   border: none;
   border-radius: 4px;
   transition: background-color 0.3s ease-in-out;
-  text-align: center; /* Centrar horizontalmente el texto */
+  text-align: center;
+  /* Centrar horizontalmente el texto */
 }
 
 .custom-file-upload:hover {
@@ -348,10 +338,13 @@ label{
 .archivo-area {
   margin-top: 10px;
   padding: 10px;
-  background-color: #f0f0f0; /* Cambia el color de fondo a tu elección */
-  border: 1px dashed #999; /* Cambia el estilo y color del borde punteado */
+  background-color: #f0f0f0;
+  /* Cambia el color de fondo a tu elección */
+  border: 1px dashed #999;
+  /* Cambia el estilo y color del borde punteado */
   border-radius: 4px;
-  align-items: center; /* Centra verticalmente */
+  align-items: center;
+  /* Centra verticalmente */
   justify-content: space-between;
 }
 

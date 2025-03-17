@@ -1,13 +1,3 @@
-.solicitudes-title {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #fa6357;
-  text-transform: uppercase;
-  text-align: center;
-  letter-spacing: 2px;
-}
-
 /* Estilo base para los checkboxes */
 input[type="checkbox"] {
   display: none;
@@ -120,9 +110,9 @@ input[type="checkbox"]:checked+.custom-checkbox::after {
 
 .custom-button {
   width: 150px;
-  border: 1px solid #fa6357;
+  border: 1px solid #02b1bc;
   background-color: transparent;
-  color: #fa6357;
+  color: #02b1bc;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   font-size: 1rem;
@@ -131,7 +121,7 @@ input[type="checkbox"]:checked+.custom-checkbox::after {
 }
 
 .custom-button:hover {
-  border-color: #fa6357;
+  border-color: #02b1bc;
   background: linear-gradient(15deg, #F91616, #F97316);
   color: #fff;
   transform: scale(1.05);
@@ -139,10 +129,10 @@ input[type="checkbox"]:checked+.custom-checkbox::after {
 
 .custom-button-descargar {
   width: 100%;
-  border: 2px solid #fa6357;
+  border: 2px solid #02b1bc;
   align-items: center;
   background-color: transparent;
-  color: #fa6357;
+  color: #02b1bc;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   font-size: 1rem;
@@ -151,7 +141,7 @@ input[type="checkbox"]:checked+.custom-checkbox::after {
 }
 
 .custom-button-descargar:hover {
-  border-color: #fa6357;
+  border-color: #02b1bc;
   background: linear-gradient(15deg, #F91616, #F97316);
   color: #fff;
   transform: scale(1.01);
@@ -300,7 +290,7 @@ input[type="checkbox"]:checked+.custom-checkbox::after {
   /* Centrar horizontalmente el contenido */
   padding: 6px 12px;
   cursor: pointer;
-  background-color: #fa6357;
+  background-color: #02b1bc;
   color: #fff;
   border: none;
   border-radius: 4px;

@@ -56,16 +56,6 @@
     margin-top: 10px;
 }
 
-.solicitudes-title {
-    font-size: 36px;
-    font-weight: bold;
-    text-align: center;
-    color: #fa6357;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 20px;
-}
-
 .botones-container {
     position: absolute;
     bottom: 10px;

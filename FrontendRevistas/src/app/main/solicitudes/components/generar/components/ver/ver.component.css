@@ -12,8 +12,8 @@
 }
 
 .custom-button-color {
-  background-color: #fa6357;
-  border-color: #fa6357;
+  background-color: #02b1bc;
+  border-color: #02b1bc;
   color: white;
 }
 
@@ -37,15 +37,6 @@
   margin-bottom: 20px;
 }
 
-.solicitudes-title {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 70px;
-  text-align: center;
-  color: #fa6357;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
 
 /* Estilos para el contenedor de búsqueda */
 .search-container {
@@ -239,7 +230,7 @@
 }
 
 .view-toggle-buttons button {
-  background-color: #fa6357;
-  border-color: #fa6357;
+  background-color: #02b1bc;
+  border-color: #02b1bc;
   color: white;
 }

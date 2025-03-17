@@ -1,9 +1,9 @@
 <ng-template [ngIf]="isLoggedIn === true">
-  <div class="grid main-header" [style]="{'background':' #fa6357',
+  <div class="grid main-header" [style]="{'background':' #02b1bc',
   'color':'#fff','font-weight':'bold','margin':'0',
   'border':'1px solid gray','border-radius':'0px'}">
     <div class="col-12 sm:col-2 md:col-3 lg:col-3 xl:col-3">
-      <p-button styleClass="p-button-danger p-button-outlined" (click)="display = true" class="mr-3">
+      <p-button styleClass="p-button p-button-outlined" (click)="display = true" class="mr-3">
         <i class="pi pi-align-justify" style="font-size: 1.5rem; margin-top: 5px;color:whitesmoke"></i>
         <span class="ml-2 font-bold" style="color:whitesmoke">GERUG</span>
       </p-button>
@@ -12,7 +12,7 @@
     <div class="col-12 sm:col-7 md:col-6 lg:col-5 xl:col-4">
       <div class="grid">
         <div class="col-12 sm:col-12 md:col-9 lg:col-9 xl:col-9 clock">
-          <button pButton pRipple type="button" [disabled]="false" class="p-button-danger p-button-outlined"
+          <button pButton pRipple type="button" [disabled]="false" class="p-button p-button-outlined"
             style="padding: 7px;">
             <div class="clock" style="color:whitesmoke">
               {{dia | titlecase}} {{fecha | titlecase}} [<span class="mishoras">{{hora}}:{{minutos}}:<span
@@ -52,7 +52,7 @@
           cursor-pointer inline-flex align-items-center 
             justify-content-center text-white border-2 surface-border
             hover:bg-gray-600 text-600 transition-colors transition-duration-150 border-circle" style="width: 40px; height: 40px;margin-left: -20px;margin-top:22px;
-            background-color:  #fa6357;"><i class="pi pi-align-justify text-xl"></i>
+            background-color:  #02b1bc;"><i class="pi pi-align-justify text-xl"></i>
             <span class="p-ink"></span>
           </a>
         </div>
@@ -106,7 +106,7 @@
     <div style="text-align: center;">
       <button pButton pRipple label="No" icon="pi pi-times" style="color: rgb(31, 45, 64);" class="p-button-text"
         (click)="hideDialog()"></button>
-      <button pButton pRipple label="Si" style="background: #fa6357; border-color: #F16257;"
+      <button pButton pRipple label="Si" style="background: #02b1bc; border-color: #F16257;"
         class=" p-button-raised p-button-rounded" icon="pi pi-check" (click)="cerrarSesion()"></button>
     </div>
   </ng-template>
@@ -257,7 +257,7 @@
     <div style="text-align: center;">
       <button pButton pRipple label="Cancelar" style="background: gray; border-color: gray"
         class="p-button-raised p-button-rounded" icon="pi pi-times" (click)="cerrarEditarPerfil()"></button>
-      <button pButton pRipple label="Guardar datos" style="background: #fa6357; border-color: #F16257;"
+      <button pButton pRipple label="Guardar datos" style="background: #02b1bc; border-color: #F16257;"
         class="p-button-raised p-button-rounded" icon="pi pi-check"
         (click)="guardarDatos(); guardarFormacion()"></button>
     </div>

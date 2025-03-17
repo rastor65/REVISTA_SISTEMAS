@@ -71,7 +71,7 @@ body {
 }
 
 .app-sidebar-11::-webkit-scrollbar-thumb {
-  background: #F16257;
+  background: #02b1bc;
   border-radius: 4px;
 }
 
@@ -269,18 +269,18 @@ footer {
 }
 
 .button-container-imagen button.btn-primary {
-  background-color: #fa6357; /* Color de fondo del botón Guardar Cambios */
+  background-color: #02b1bc; /* Color de fondo del botón Guardar Cambios */
   color: #fff; /* Color del texto del botón Guardar Cambios */
 }
 
 .button-container-imagen button.btn-primary:hover {
-  background-color: #f16257; /* Color de fondo del botón Guardar Cambios al pasar el cursor */
+  background-color: #02b1bc; /* Color de fondo del botón Guardar Cambios al pasar el cursor */
 }
 
 /* Estilo mejorado para el botón "Seleccionar archivo" */
 .file-input-label {
   display: inline-block;
-  background-color: #fa6357; /* Color de fondo del botón Seleccionar archivo */
+  background-color: #02b1bc; /* Color de fondo del botón Seleccionar archivo */
   color: #fff; /* Color del texto del botón Seleccionar archivo */
   padding: 10px 20px;
   border: none;
@@ -289,7 +289,7 @@ footer {
 }
 
 .file-input-label:hover {
-  background-color: #f16257; /* Color de fondo del botón Seleccionar archivo al pasar el cursor */
+  background-color: #02b1bc; /* Color de fondo del botón Seleccionar archivo al pasar el cursor */
 }
 
 /* Estilos para iconos en los botones */
@@ -301,7 +301,7 @@ footer {
 /* Estilo mejorado para el botón "Seleccionar archivo" */
 .file-input-label {
   display: inline-block;
-  background-color: #fa6357; /* Color de fondo del botón Seleccionar archivo */
+  background-color: #02b1bc; /* Color de fondo del botón Seleccionar archivo */
   color: #fff; /* Color del texto del botón Seleccionar archivo */
   padding: 10px 20px;
   border: none;
@@ -312,7 +312,7 @@ footer {
 }
 
 .file-input-label:hover {
-  background-color: #f16257; /* Color de fondo del botón Seleccionar archivo al pasar el cursor */
+  background-color: #02b1bc; /* Color de fondo del botón Seleccionar archivo al pasar el cursor */
 }
 
 /* Estilo para el ícono en el botón "Seleccionar archivo" */
@@ -427,7 +427,7 @@ label {
 }
 
 .p-accordion-tab-header[data-header="Datos de formación"] {
-  background-color: #fa6357 !important; /* Cambia este color al que desees */
+  background-color: #02b1bc !important; /* Cambia este color al que desees */
   color: #ffffff; /* Cambia este color al que desees */
 }
 

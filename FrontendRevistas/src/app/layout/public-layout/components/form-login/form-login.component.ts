@@ -18,7 +18,7 @@ export class FormLoginComponent implements OnInit {
     password: ['', [Validators.required]],
   });
   public motrar: boolean = false
-
+  passwordVisible: boolean = false;
   public image3: string = 'assets/demo.png'
 
   constructor(
@@ -38,6 +38,10 @@ export class FormLoginComponent implements OnInit {
     } else {
       this.router.navigateByUrl('/login');
     }
+  }
+
+  togglePassword() {
+    this.passwordVisible = !this.passwordVisible;
   }
 
   onSubmit() {
