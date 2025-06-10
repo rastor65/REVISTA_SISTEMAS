@@ -34,6 +34,14 @@
                     (click)="togglePassword()"></i>
                 </div>
               </div>
+              <div class="p-col-12 p-md-6">
+                <div class="form-field">
+                  <label style="display:block; color:black; margin-bottom:5px;">
+                    ¿Cuánto es {{numero1}} + {{numero2}}?
+                  </label>
+                  <input type="number" pInputText formControlName="captcha" placeholder="Resultado">
+                </div>
+              </div>
             </div>
           </div>
           <ng-template [ngIf]="motrar == false">

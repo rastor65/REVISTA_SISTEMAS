@@ -16,10 +16,13 @@ export class FormLoginComponent implements OnInit {
   public form: FormGroup = this.formBuilder.group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required]],
+    captcha: ['', [Validators.required]]
   });
   public motrar: boolean = false
   passwordVisible: boolean = false;
   public image3: string = 'assets/demo.png'
+  public numero1: number = 0;
+  public numero2: number = 0;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -30,6 +33,8 @@ export class FormLoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.generarCaptcha();
+
     const token: string | null = localStorage.getItem('token');
     const user: string | null = localStorage.getItem('user');
     if (token !== null && user !== null) {
@@ -40,17 +45,31 @@ export class FormLoginComponent implements OnInit {
     }
   }
 
+  generarCaptcha(): void {
+    this.numero1 = Math.floor(Math.random() * 10) + 1;
+    this.numero2 = Math.floor(Math.random() * 10) + 1;
+  }
+
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
   }
 
   onSubmit() {
-    const form: UserLoginI = this.form.value;
-    const requestBody = JSON.stringify(form);
+    const form = this.form.value;
+
+    const captchaInput = parseInt(form.captcha);
+    const captchaCorrecto = !isNaN(captchaInput) && captchaInput === (this.numero1 + this.numero2);
+
+    if (!captchaCorrecto) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Captcha incorrecto' });
+      this.generarCaptcha();
+      return;
+    }
 
     this.authService.login(form).subscribe((result) => {
       if (result)
         this.motrar = true;
+      
       if (result && result.data && result.data.user && result.data.user.name) {
         this.messageService.add({ severity: 'success', summary: `Bienvenido ${result.data.user.name}` });
       }
