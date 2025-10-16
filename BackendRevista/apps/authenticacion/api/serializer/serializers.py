@@ -29,7 +29,7 @@ class GenderSerializers(ModelSerializer):
 class DocumentSerializers(ModelSerializer):
     class Meta:
         model = DocumentType
-        fields = '__all__'   
+        fields = '__all__'  
                  
 #PERSON
 

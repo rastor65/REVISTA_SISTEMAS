@@ -15,8 +15,6 @@
           position: relative; top: 0px; left: 0px; right: 10px; bottom: 0px;">
         <i class="mr-0  pi pi-angle-down"></i>
       </span>
-
-
     </ng-container>
   </span>
   <div *ngIf="item.menu && !item.collapsed">
@@ -41,7 +39,6 @@
           <span class="mat-list-item" [routerLink]="item3.link" (click)="clickHandler($event, item3)"
             style="margin-top: 5px;padding-left: 10px;">
             <i class="ml-4 pi pi-angle-right" style="font-size: 1.5rem; margin-top: 5px;"></i>
-
             <span class="ml-4 " style="font-size: 18px;">{{ item3.titulo }}</span>
           </span>
         </div>

@@ -28,7 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost','192.168.8.240']
 
-
 #### ORIGIN
 
 CORS_ORIGIN_WHITELIST = (

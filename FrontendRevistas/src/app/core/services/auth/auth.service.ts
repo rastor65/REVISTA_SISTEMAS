@@ -132,6 +132,7 @@ export class AuthService {
       })
     );
   }
+
   login(dataLogin: UserLoginI): Observable<UserLoginResponseI> {
     return this.http.post<UserLoginResponseI>(this.base_path_get_login, dataLogin).pipe(tap(
       (res: UserLoginResponseI) => {
@@ -204,7 +205,6 @@ export class AuthService {
           return true;
         }
       }
-
 
       this.router.navigateByUrl('/landing');
       return false
