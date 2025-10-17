@@ -31,6 +31,12 @@ export class SolicitudesService {
 
   // generar solicitudes y contenidos
 
+  // solicitudes.service.ts
+  reemplazarSolicitud(id: number, solicitudCompleta: any) {
+    return this.http.put(`${this.API_URI}/solicitud/solicitud/solicitudes/${id}/`, solicitudCompleta);
+  }
+
+
   obtenerSolicitudesPorUsuario(usuarioId: number): Observable<Solicitud[]> {
     return this.http.get<Solicitud[]>(this.base_solicitud).pipe(
       map((solicitudes: Solicitud[]) => {
@@ -59,7 +65,7 @@ export class SolicitudesService {
       map((response: any) => response)
     );
   }
-  
+
   guardarContenido(contenido: FormData): Observable<any> {
     return this.http.post(`${this.base_contenido}`, contenido);
   }
@@ -90,7 +96,7 @@ export class SolicitudesService {
     headers.append('Accept', 'application/json');
     return this.http.put(url, formData, { headers });
   }
-   
+
 
   obtenerContenidoPorId(contenidoId: number): Observable<Contenido> {
     const url = `${this.base_contenido}${contenidoId}`;
@@ -125,7 +131,7 @@ export class SolicitudesService {
     return this.http.patch<Pasos>(url, data);
   }
 
-   //////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////
   // revistas solicitud
 
   obtenerRevistas(): Observable<Revistas[]> {
@@ -182,7 +188,7 @@ export class SolicitudesService {
     const url = `${this.base_seguimiento}${id}/`;
     return this.http.delete(url);
   }
-  
+
   actualizarSeguimientoConArchivo(formData: FormData): Observable<any> {
     const url = `${this.base_seguimiento}${formData.get('id')}/`;
     const headers = new HttpHeaders();
@@ -279,4 +285,10 @@ export class SolicitudesService {
     return this.http.delete(url);
   }
 
+  marcarVistoBueno(solicitudId: number, visto: boolean) {
+    return this.http.patch(
+      `${this.API_URI}/solicitud/solicitudes/${solicitudId}/visto_bueno/`,
+      { visto_bueno: visto }
+    );
+  }
 }

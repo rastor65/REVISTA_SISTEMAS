@@ -7,6 +7,7 @@ import { Seguimiento, Pasos, Solicitud, Estado } from 'src/app/models/solicitude
 import { Person } from 'src/app/models/user/person';
 import { UserService } from 'src/app/core/services/usuarios/user.service';
 import { environment } from 'src/environments/environment';
+import { map } from 'rxjs/operators';
 
 interface GroupedSeguimientos {
   [key: number]: Seguimiento[];
@@ -65,6 +66,8 @@ export class VerComponent implements OnInit {
       responsableId: [''],
     });
   }
+  isEditorJefe = false;
+  isAsistenteEditorial = false;
 
   ngOnInit() {
     this.obtenerResponsables();
@@ -72,6 +75,20 @@ export class VerComponent implements OnInit {
     this.obtenerPasos();
     this.obtenerSolicitudes();
     this.obtenerEstados();
+
+    this.userService.getMyRoleFlagsFast().subscribe({
+      next: ({ isEditorJefe, isAsistenteEditorial, roleNamesUser, user }) => {
+        this.isEditorJefe = isEditorJefe;
+        this.isAsistenteEditorial = isAsistenteEditorial;
+        console.log('Usuario:', user?.username, 'Roles:', roleNamesUser);
+        this.groupSeguimientos();
+      },
+      error: (err) => {
+        console.error('No se pudieron obtener roles del usuario (fast):', err);
+        this.isEditorJefe = false;
+        this.isAsistenteEditorial = false;
+      }
+    });
   }
 
   getAccordionHeaderClass(solicitudId: number): string {
@@ -102,6 +119,7 @@ export class VerComponent implements OnInit {
     this.solicitudesService.obtenerSolicitudes().subscribe(
       (solicitudes: any[]) => {
         this.solicitudes = solicitudes;
+        console.log("solicitudes: ", this.solicitudes);
       },
       (error: any) => {
         console.error('Error al obtener las solicitudes', error);
@@ -134,6 +152,11 @@ export class VerComponent implements OnInit {
   getSolicitudNombre(solicitudId: number): string {
     const solicitud = this.solicitudes.find(s => s.id === solicitudId);
     return solicitud ? solicitud.titulo_articulo : '';
+  }
+
+  getSolicitudVistoBueno(solicitudId: number): boolean {
+    const solicitud = this.solicitudes.find(s => s.id === solicitudId);
+    return solicitud ? solicitud.visto_bueno : false;
   }
 
   getPasoNombre(pasoId?: number): string {
@@ -331,37 +354,37 @@ export class VerComponent implements OnInit {
         ...this.seguimientoSeleccionado,
         ...this.seguimientoForm.value
       };
-  
+
       const pasoId = seguimientoEditado.pasos_seguimiento;
       const pasoContenido = this.obtenerContenidoPaso(pasoId); // Función que obtiene el contenido del paso
-  
+
       if (pasoContenido) {
-        
+
         const diasProgramacion = parseInt(pasoContenido.dias_programacion);
         console.log("dias: ", diasProgramacion)
         const fechaActual = new Date();
-  
+
         // Sumar los días de programación a la fecha actual
-        
+
         const fechaProgramacion = new Date(new Date().getTime() + (diasProgramacion * 24 * 60 * 60 * 1000));
         console.log("dias progra: ", fechaProgramacion)
-  
+
         const fechaProgramacionISO = fechaProgramacion.toISOString().split('T')[0];
         console.log("dias programacion: ", fechaProgramacionISO)
 
         const fechaActualISO = fechaActual.toISOString().split('T')[0];
-  
+
         const formData = new FormData();
-  
+
         // Agregar el archivo adjunto si está presente
         if (this.correccionesFile) {
           formData.append('correciones', this.correccionesFile);
         }
-  
+
         if (this.FormatoFile) {
           formData.append('formato_evaluacion', this.FormatoFile);
         }
-  
+
         // Agregar los otros campos al formData
         formData.append('id', seguimientoEditado.id.toString());
         formData.append('fecha_asignacion', fechaActualISO);
@@ -371,11 +394,11 @@ export class VerComponent implements OnInit {
         formData.append('estado_seguimiento', seguimientoEditado.estado_seguimiento.toString());
         formData.append('responsableId', seguimientoEditado.responsableId.toString());
         formData.append('status', 'true');
-  
+
         if (seguimientoEditado.pasos_seguimiento === 2) {
           formData.append('fecha_evaluacion', fechaActualISO);
         }
-  
+
         // Realizar llamada al servicio para actualizar el seguimiento
         this.solicitudesService.actualizarSeguimientoConArchivo(formData).subscribe(
           (response: any) => {
@@ -396,7 +419,7 @@ export class VerComponent implements OnInit {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa los campos requeridos correctamente' });
     }
   }
-  
+
   obtenerContenidoPaso(pasoId: number): any {
     return this.pasos.find(paso => paso.id === pasoId);
   }
@@ -425,6 +448,38 @@ export class VerComponent implements OnInit {
           }
         );
     }
+  }
+
+  toggleVistoBueno(solicitudId: number, checked: boolean) {
+    const s = this.solicitudes.find(x => x.id === solicitudId);
+    if (!s) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Solicitud no encontrada en memoria' });
+      return;
+    }
+
+    // IMPORTANTE: arma el objeto con todos los campos que tu API espera en PUT
+    const payload = {
+      ...s,
+      visto_bueno: checked,
+      // Si tu API permite nulls, respétalos; si no, ajusta.
+      // Puedes omitir campos no-required si tu serializer lo permite.
+    };
+
+    this.solicitudesService.reemplazarSolicitud(solicitudId, payload).subscribe({
+      next: (data: any) => {
+        s.visto_bueno = !!data?.visto_bueno; // sincroniza por si el backend devuelve el recurso
+        this.groupSeguimientos();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Actualizado',
+          detail: checked ? 'Visto bueno concedido' : 'Visto bueno retirado'
+        });
+      },
+      error: (err) => {
+        console.error('Error PUT visto_bueno:', err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el visto bueno' });
+      }
+    });
   }
 
 }

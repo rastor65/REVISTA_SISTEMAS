@@ -26,11 +26,10 @@ import { MisSolicitudesComponent } from './components/mis-solicitudes/mis-solici
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-
 import { AccordionModule } from 'primeng/accordion';
 import { PanelModule } from 'primeng/panel';
 import { FileUploadModule } from 'primeng/fileupload';
-
+import { Card, CardModule } from 'primeng/card';
 
 @NgModule({
   declarations: [
@@ -38,11 +37,13 @@ import { FileUploadModule } from 'primeng/fileupload';
     EditarComponent,
     EliminarComponent,
     CrearComponent, 
-    VerComponent, MisSolicitudesComponent
+    VerComponent, MisSolicitudesComponent,
   ],
   imports: [
     CommonModule,
     GenerarRoutingModule,
+    CardModule,
+    MessageModule,
     
     FormsModule,
     ReactiveFormsModule,
@@ -68,6 +69,7 @@ import { FileUploadModule } from 'primeng/fileupload';
     DatePipe, 
     SolicitudesService, 
     AuthService,
+    Card,
   ],
 })
 export class GenerarModule { }

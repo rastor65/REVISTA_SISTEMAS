@@ -35,6 +35,7 @@ export class CrearComponent implements OnInit {
   originalidadSeleccionada: string = '';
   editarContenido: boolean = false;
   solicitudEnProceso = false;
+  mostrarCampoRevista = false;
 
   solicitud: Solicitud = {
     id: 0,
@@ -45,6 +46,7 @@ export class CrearComponent implements OnInit {
     contenidoSolicitud: 0,
     revista: 0,
     status: true,
+    visto_bueno: false,
   };
   contenido: Contenido = {
     id: 0,
@@ -142,7 +144,7 @@ export class CrearComponent implements OnInit {
 
   async guardarSolicitud() {
     if (!this.solicitud.contenidoSolicitud) {
-      this.solicitud.contenidoSolicitud = 0; // Asignar un valor por defecto si es null o undefined
+      this.solicitud.contenidoSolicitud = 0;
     }
 
     if (this.solicitud.fecha_creacion) {
@@ -308,7 +310,6 @@ export class CrearComponent implements OnInit {
     }
   }
 
-
   handleFileInput(event: any) {
     this.selectedFile = event.target.files[0];
     this.archivoSeleccionado = event.target.files[0].name;
@@ -329,6 +330,7 @@ export class CrearComponent implements OnInit {
       contenidoSolicitud: 0,
       revista: 0,
       status: true,
+      visto_bueno: false,
     };
     this.contenido = {
       id: 0,

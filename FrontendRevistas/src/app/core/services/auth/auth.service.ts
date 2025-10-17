@@ -156,7 +156,6 @@ export class AuthService {
     localStorage.setItem(KEY_MENU, JSON.stringify(loginData.menu));
     // simulando la peiicion del backend
     // localStorage.setItem(KEY_MENU, JSON.stringify(listMenu));
-
   }
 
   public logout(): void {

@@ -48,6 +48,9 @@ export interface Solicitud {
     contenidoSolicitud: number;
     revista: number;
     status: boolean;
+    visto_bueno: boolean;
+    visto_bueno_por?: number | null;
+    visto_bueno_fecha?: string | null;
 }
 
 export interface Contenido {

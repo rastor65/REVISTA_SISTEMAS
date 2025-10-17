@@ -16,7 +16,6 @@ const routes: Routes = [
     component: NivelFormacionComponent,
     loadChildren: ()=> import('./components/nivel-formacion/nivel-formacion.module').then(m => m.NivelFormacionModule)
   },
-
 ];
 
 @NgModule({

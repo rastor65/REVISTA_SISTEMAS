@@ -26,6 +26,9 @@ import { TooltipModule } from 'primeng/tooltip';
 
 import { AccordionModule } from 'primeng/accordion';
 import { CardModule } from 'primeng/card';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TagModule } from 'primeng/tag';
+
 
 @NgModule({
   declarations: [
@@ -57,6 +60,8 @@ import { CardModule } from 'primeng/card';
     CalendarModule,
     TooltipModule,
     CardModule,
+    InputSwitchModule,
+    TagModule,
   ]
 })
 export class SeguimientoModule { }

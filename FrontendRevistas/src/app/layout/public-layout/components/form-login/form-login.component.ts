@@ -11,6 +11,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './form-login.component.html',
   styleUrls: ['./form-login.component.css']
 })
+
 export class FormLoginComponent implements OnInit {
   displayMaximizable: boolean = true
   public form: FormGroup = this.formBuilder.group({

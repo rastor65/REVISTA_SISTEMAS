@@ -9,6 +9,7 @@ class SolicitudSerializer(serializers.ModelSerializer):
     fecha_asignacion = forms.DateField(input_formats=['%Y-%m-%d'])
     fecha_programacion = forms.DateField(input_formats=['%Y-%m-%d'])
     fecha_evaluacion = forms.DateField(input_formats=['%Y-%m-%d'])
+    read_only_fields = ('visto_bueno_por', 'visto_bueno_fecha')
     
     class Meta:
         model = Solicitud

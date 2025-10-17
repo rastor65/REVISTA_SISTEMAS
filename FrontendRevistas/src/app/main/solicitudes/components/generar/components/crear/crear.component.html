@@ -3,13 +3,12 @@
 <br>
 
 <h2 class="solicitudes-title">Generar solicitud</h2>
-<br>
-
 <p-dialog header="Cargando..." [(visible)]="solicitudEnProceso" [modal]="true" [responsive]="true"
     [style]="{ width: '40%', height: '30%' }" [baseZIndex]="10000" styleClass="mi-dialog custom-dialog"
     [showHeader]="false" [closable]="false" [dismissableMask]="false">
     <div style="text-align: center;">
-        <p-progressSpinner [style]="{ 'width.px': 50, 'height.px': 50 }" strokeWidth="8" fill="#fff"></p-progressSpinner>
+        <p-progressSpinner [style]="{ 'width.px': 50, 'height.px': 50 }" strokeWidth="8"
+            fill="#fff"></p-progressSpinner>
         <h2>Su solicitud esta siendo generada...</h2>
     </div>
 </p-dialog>
@@ -18,33 +17,30 @@
     <div class="p-grid p-dir-col p-fluid">
         <div class="p-col-12 p-md-6">
             <div class="p-field">
-                <label for="titulo">Título del artículo</label>
+                <label for="titulo_articulo">Título del artículo</label>
                 <div class="p-inputgroup">
-                    <input type="text" id="titulo_articulo" class="p-inputtext" [(ngModel)]="solicitud.titulo_articulo">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-bookmark"></i>
-                    </span>
+                    <span class="p-inputgroup-addon"><i class="pi pi-bookmark"></i></span>
+                    <input pInputText id="titulo_articulo" [(ngModel)]="solicitud.titulo_articulo"
+                        placeholder="Escribe un título claro y conciso…" />
                 </div>
             </div>
         </div>
 
-        <div class="p-col-12 p-md-6">
-            <div class="p-field">
-                <label for="autores">Autores</label>
-                <p-multiSelect [options]="autores" [(ngModel)]="selectedAutores" optionLabel="nombres" [filter]="true"
-                    id="autor" name="autor" class="custom-dropdown" dropdownIcon="pi pi-user">
-                    <ng-template let-autores pTemplate="item">
-                        {{ autores.nombres }} {{ autores.apellidos }}
-                    </ng-template>
-                </p-multiSelect>
-            </div>
+        <div class="p-field">
+            <label for="autores">Autores</label>
+            <p-multiSelect id="autores" [options]="autores" [(ngModel)]="selectedAutores" optionLabel="nombres"
+                [filter]="true" display="chip" appendTo="body">
+                <ng-template let-autor pTemplate="item">
+                    {{ autor.nombres }} {{ autor.apellidos }}
+                </ng-template>
+            </p-multiSelect>
         </div>
 
         <div class="p-col-12">
             <div class="p-field">
                 <label for="contenido">Contenido</label>
-                <button pButton class="p-button-warning font-bold p-button-outlined button-icon-right" (click)="abrirContenido()"
-                    label="{{textoBoton}}">
+                <button pButton class="p-button-warning font-bold p-button-outlined button-icon-right"
+                    (click)="abrirContenido()" label="{{textoBoton}}">
                     <i class="pi pi-plus"></i>
                 </button>
 
@@ -53,30 +49,23 @@
                 </p>
             </div>
         </div>
-        <div class="p-grid p-dir-col p-fluid">
-            <div class="p-grid p-col-12 p-md-6">
-                <div class="p-field">
-                    <label for="afiliación">Afiliación</label>
-                    <div class="p-inputgroup">
-                        <select id="afiliacion" class="p-inputtext" [(ngModel)]="solicitud.afiliacion">
-                            <option *ngFor="let option of afiliacionOptions" [value]="option">{{ option }}</option>
-                        </select>
-                        <span class="p-inputgroup-addon">
-                            <i class="pi pi-link"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="p-grid p-col-12 p-md-6">
-                <div class="p-field">
-                    <label for="afiliación">Revista a la cual someter el artículo</label>
-                    <p-dropdown id="revista" [options]="revistas" dropdownIcon="pi pi-book" [filter]="true"
-                        placeholder="seleccionar..." optionLabel="nombre" [(ngModel)]="solicitud.revista"
-                        optionValue="id"></p-dropdown>
-                </div>
+        <div class="p-field">
+            <label for="afiliacion">Afiliación</label>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon"><i class="pi pi-link"></i></span>
+                <p-dropdown id="afiliacion" [options]="afiliacionOptions" [(ngModel)]="solicitud.afiliacion"
+                    [filter]="false" [showClear]="true" placeholder="Seleccionar afiliación…" appendTo="body">
+                </p-dropdown>
             </div>
         </div>
-
+        <div class="p-grid p-col-12 p-md-6">
+            <div class="p-field">
+                <label for="afiliación">Revista a la cual someter el artículo</label>
+                <p-dropdown id="revista" [options]="revistas" dropdownIcon="pi pi-book" [filter]="true"
+                    placeholder="seleccionar..." optionLabel="nombre" [(ngModel)]="solicitud.revista"
+                    optionValue="id"></p-dropdown>
+            </div>
+        </div>
         <div class="p-col-12">
             <button pButton class="p-button p-button-outlined p-button-success p-button-rounded" label="Guardar"
                 icon="pi pi-save" (click)="guardarSolicitud()">

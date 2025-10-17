@@ -1,222 +1,474 @@
+/* ===========================
+   Tokens (paleta + radii + sombras)
+   =========================== */
+:root{
+  --surface:        #ffffff;
+  --surface-2:      #f6f8fc;
+  --line:           #cbd5e1;     /* borde base */
+  --line-strong:    #94a3b8;     /* borde fuerte en hover */
+  --ink-1:          #0f172a;     /* título */
+  --ink-2:          #334155;     /* labels */
+  --ink-3:          #64748b;     /* secundario */
+  --placeholder:    #8aa1b8;
+  --brand:          #2563eb;     /* azul primario */
+  --brand-weak:     #eef2ff;
+  --success:        #16a34a;
 
-.form-container {
+  --radius:         14px;
+  --radius-sm:      12px;
+  --shadow-1:       0 10px 26px rgba(15,23,42,.08);
+  --ring:           0 0 0 3px rgba(37,99,235,.15);
+}
+
+/* ===========================
+   CONTENEDOR PRINCIPAL (mantiene tu layout)
+   =========================== */
+.form-container{
   width: 70%;
   margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f5f5f5;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
 }
 
-.p-field {
-  margin-bottom: 20px;
+/* Labels & campos */
+.p-field{ margin-bottom: 18px; }
+.p-field label{
+  display:block; margin-bottom: 6px;
+  font-weight: 800; color: var(--ink-2);
+  letter-spacing:.2px;
 }
 
-.p-field label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+/* ===========================
+   INPUT TEXT / TEXTAREA
+   =========================== */
+.form-container .p-inputtext,
+.form-container .p-inputtextarea{
+  width:100%;
+  min-height: 46px;
+  border-radius: var(--radius-sm);
+  border:1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink-1);
+  padding: .65rem .85rem;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.form-container .p-inputtextarea{ min-height: 110px; resize: vertical; }
+
+.form-container .p-inputtext::placeholder,
+.form-container .p-inputtextarea::placeholder{
+  color: var(--placeholder);
 }
 
-.p-inputtext,
-.p-inputtextarea {
+.form-container .p-inputtext:focus,
+.form-container .p-inputtextarea:focus{
+  outline: none;
+  border-color: var(--brand);
+  background: #fff;
+  box-shadow: var(--ring);
+}
+
+/* ===========================
+   INPUT GROUP (icono/añadidos)
+   =========================== */
+.form-container .p-inputgroup{
+  display:flex; align-items:center;
+  border:1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow:hidden;
+  background: var(--surface-2);
+}
+.form-container .p-inputgroup .p-inputtext{
+  border:none; background:transparent; min-height: 46px;
+}
+.form-container .p-inputgroup:focus-within{
+  border-color: var(--brand);
+  box-shadow: var(--ring);
+  background:#fff;
+}
+.form-container .p-inputgroup-addon{
+  background: transparent;
+  border:none; color: var(--ink-3);
+  padding: 0 .8rem;
+}
+.form-container .p-inputgroup-addon .pi{ font-size: 1.05rem; }
+
+/* ===========================
+   DROPDOWN / MULTISELECT
+   =========================== */
+.form-container .p-dropdown,
+.form-container .p-multiselect{
   width: 100%;
+  border-radius: var(--radius-sm);
+  border:1px solid var(--line);
+  background: var(--surface-2);
+  min-height: 46px;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
 }
 
-button[type="submit"] {
-  margin-top: 20px;
-  border-radius: 20px;
-  padding: 8px 16px;
+.form-container .p-dropdown:not(.p-disabled).p-focus,
+.form-container .p-multiselect:not(.p-disabled).p-focus{
+  border-color: var(--brand);
+  box-shadow: var(--ring);
+  background:#fff;
 }
 
-.p-inputgroup-addon {
-  background-color: #f4f4f4;
-  border-color: #6c757d;
-  color: #6c757d;
+.form-container .p-dropdown .p-dropdown-label,
+.form-container .p-multiselect .p-multiselect-label{
+  padding: .65rem .85rem;
+  color: var(--ink-1);
+}
+.form-container .p-dropdown .p-dropdown-label.p-placeholder,
+.form-container .p-multiselect .p-multiselect-label.p-placeholder{
+  color: var(--placeholder);
 }
 
-.p-inputgroup-addon .pi {
-  font-size: 1rem;
+/* Tokens “chip” del multiselect (cuando display=chip) */
+.form-container .p-multiselect-token{
+  border-radius: 999px;
+  background: var(--brand-weak);
+  border:1px solid #c7d2fe;
+  color:#1d4ed8;
+  font-weight:800;
 }
 
-.mi-dialog .p-dialog-header {
-  background-color: #f0f0f0;
-  color: #333333;
+/* Paneles desplegados: mayor legibilidad */
+.p-dropdown-panel, .p-multiselect-panel{
+  border-radius: 12px !important;
+  border:1px solid var(--line) !important;
+  box-shadow: 0 16px 36px rgba(2,6,23,.18) !important;
 }
 
-.mi-dialog .p-dialog-content {
-  background-color: #ffffff;
+/* Hover de opciones */
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-highlight):hover,
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item:not(.p-highlight):hover{
+  background: #eef2ff;
+  color: #1d4ed8;
 }
 
-.mi-dialog .p-dialog-footer {
-  background-color: #f0f0f0;
+/* ===========================
+   BOTONES
+   =========================== */
+.p-button{
+  border-radius: 999px;
+  font-weight: 900;
+  letter-spacing:.2px;
+}
+.p-button.p-button-outlined{
+  background: var(--brand-weak);
+  color:#1d4ed8;
+  border-color:#c7d2fe;
+}
+.p-button.p-button-outlined:hover{ filter: brightness(1.03); }
+.p-button-success{
+  background: var(--success);
+  border-color: var(--success);
+}
+.p-button-success:hover{ filter: brightness(1.06); }
+
+/* Botón con icono a la derecha (tu clase) */
+.button-icon-right{
+  display:flex; flex-direction: row-reverse; align-items:center; gap:.5rem;
 }
 
-.mi-dialog .p-dialog-header {
-  background-color: #02b1bc;
-  color: #ffffff;
-  border: none;
-  padding: 1rem;
+/* ===========================
+   ZONA DE ARCHIVOS (dropzone)
+   =========================== */
+.archivo-area{
+  margin-top:10px; padding:14px;
+  background: linear-gradient(180deg,#f8fbff 0%, #f3f6fc 100%);
+  border:1px dashed var(--line-strong);
+  border-radius: var(--radius-sm);
+  display:flex; align-items:center; gap:12px;
+}
+.archivo-area span{
+  font-weight: 800; color: var(--ink-2);
 }
 
-.mi-dialog .p-dialog-header .p-dialog-title {
-  font-size: 20px;
-  margin: 0;
+/* Botón seleccionar archivo (tu clase) */
+.custom-file-upload{
+  display:inline-flex; align-items:center; gap:8px;
+  padding: 8px 14px; cursor:pointer;
+  background: var(--brand-weak);
+  color:#1d4ed8; border:1px solid #c7d2fe;
+  border-radius: 999px; font-weight: 900;
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+  user-select:none;
+}
+.custom-file-upload:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(29,78,216,.18);
+  filter: brightness(1.03);
+}
+.custom-file-upload input[type="file"]{ display:none; }
+
+/* ===========================
+   DIÁLOGOS (siguen tus clases)
+   =========================== */
+.mi-dialog .p-dialog-header{
+  background: linear-gradient(180deg, #02b1bc, #0799a2);
+  color:#fff; border:none; padding:1rem;
+}
+.mi-dialog .p-dialog-content{ background:#fff; }
+.mi-dialog .p-dialog-footer{
+  background:#f8fafc; border-top:1px solid var(--line);
 }
 
-.mi-dialog .p-dialog-header .p-dialog-title .pi {
-  margin-right: 0.5rem;
+/* Centrado */
+.custom-dialog{ position:fixed; inset:0; display:flex; justify-content:center; align-items:center; }
+.p-dialog.custom-dialog .p-dialog-wrapper{ max-width:80%; width:auto; }
+.p-dialog.custom-dialog .p-dialog-content{ text-align:center; }
+
+/* ===========================
+   Ajustes menores
+   =========================== */
+.solicitudes-title, .page-title{ text-align:center; font-weight:900; color:var(--ink-1); }
+.p-inputgroup .p-inputtext::placeholder{ color:var(--placeholder); }
+
+/* ---------- Tokens rápidos ---------- */
+:root{
+  --line:#cbd5e1; --line-strong:#94a3b8;
+  --bg:#fff; --bg-2:#f6f8fc;
+  --ink:#0f172a; --ink-2:#334155; --muted:#64748b; --ph:#8aa1b8;
+  --brand:#2563eb; --ring:0 0 0 3px rgba(37,99,235,.15);
+  --r:12px;
 }
 
-.custom-dialog .p-dialog-titlebar {
-  background-color: #02b1bc;
-  color: #ffffff;
-  border: none;
-  padding: 1rem;
+/* ---------- Contenedor (igual que tenías) ---------- */
+.form-container{
+  width:70%; margin:0 auto; padding:22px;
+  background:var(--bg); border:1px solid var(--line); border-radius:14px;
+  box-shadow:0 10px 26px rgba(15,23,42,.08);
+}
+.p-field{ margin-bottom:18px; }
+.p-field label{ display:block; margin-bottom:6px; font-weight:800; color:var(--ink-2); }
+
+/* ===================================================
+   1) FIX CRÍTICO: p-inputgroup (inputs se expanden)
+   =================================================== */
+.form-container .p-inputgroup{
+  display:flex; align-items:center; gap:0;
+  border:1px solid var(--line); border-radius: var(--r);
+  background: var(--bg-2); overflow:hidden;
+}
+.form-container .p-inputgroup:focus-within{
+  border-color: var(--brand); box-shadow: var(--ring); background:#fff;
+}
+/* hijos que deben crecer: input, textarea, dropdown, multiselect, wrappers */
+.form-container .p-inputgroup > .p-inputtext,
+.form-container .p-inputgroup > input,
+.form-container .p-inputgroup > textarea,
+.form-container .p-inputgroup > .p-dropdown,
+.form-container .p-inputgroup > .p-multiselect,
+.form-container .p-inputgroup > .p-inputwrapper,
+.form-container .p-inputgroup > .p-component{
+  flex:1 1 auto !important;
+  width:1% !important;            /* truco de Prime para crecer */
+  border:0 !important;            /* borde lo lleva el group */
+  background:transparent !important;
+  min-height:46px;
+  padding:.65rem .85rem;
+  color: var(--ink);
+}
+/* addon a la derecha/izquierda */
+.form-container .p-inputgroup-addon{
+  display:flex; align-items:center; justify-content:center;
+  min-height:46px; padding:0 .9rem; border:0; background:transparent; color:var(--muted);
+}
+.form-container .p-inputgroup-addon .pi{ font-size:1.05rem; }
+
+/* ===================================================
+   2) Input text / textarea (fuera de inputgroup)
+   =================================================== */
+.form-container .p-inputtext,
+.form-container .p-inputtextarea{
+  width:100%; min-height:46px;
+  border:1px solid var(--line); border-radius: var(--r);
+  background: var(--bg-2); color: var(--ink);
+  padding:.65rem .85rem; transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.form-container .p-inputtextarea{ min-height:110px; resize:vertical; }
+.form-container .p-inputtext::placeholder,
+.form-container .p-inputtextarea::placeholder{ color:var(--ph); }
+.form-container .p-inputtext:focus,
+.form-container .p-inputtextarea:focus{
+  outline:none; border-color:var(--brand); box-shadow: var(--ring); background:#fff;
 }
 
-.custom-dialog .p-dialog-title {
-  font-size: 20px;
-  margin: 0;
+/* ===================================================
+   3) p-dropdown / p-multiselect (fuera de inputgroup)
+   =================================================== */
+.form-container .p-dropdown,
+.form-container .p-multiselect{
+  width:100%; min-height:46px;
+  border:1px solid var(--line); border-radius: var(--r);
+  background: var(--bg-2); transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.form-container .p-dropdown.p-focus,
+.form-container .p-multiselect.p-focus{
+  border-color:var(--brand); box-shadow: var(--ring); background:#fff;
+}
+.form-container .p-dropdown .p-dropdown-label,
+.form-container .p-multiselect .p-multiselect-label{
+  padding:.65rem .85rem; color: var(--ink);
+}
+.form-container .p-dropdown .p-dropdown-label.p-placeholder,
+.form-container .p-multiselect .p-multiselect-label.p-placeholder{ color:var(--ph); }
+
+/* Paneles desplegables más modernos */
+.p-dropdown-panel, .p-multiselect-panel{
+  border-radius:12px !important;
+  border:1px solid var(--line) !important;
+  box-shadow:0 16px 36px rgba(2,6,23,.18) !important;
+}
+.p-dropdown-panel .p-dropdown-item:not(.p-highlight):hover,
+.p-multiselect-panel .p-multiselect-item:not(.p-highlight):hover{
+  background:#eef2ff; color:#1d4ed8;
 }
 
-.custom-dialog .p-dialog-title .pi {
-  margin-right: 0.5rem;
+/* ===================================================
+   4) Select nativo con clase .p-inputtext (tu caso)
+   =================================================== */
+select.p-inputtext{
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  width:100%; min-height:46px;
+  border:1px solid var(--line); border-radius: var(--r);
+  background: var(--bg-2) url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right .75rem center/16px;
+  color: var(--ink); padding:.65rem 2.25rem .65rem .85rem;
+  transition:border-color .15s, box-shadow .15s, background .15s;
+}
+select.p-inputtext:focus{ outline:none; border-color:var(--brand); box-shadow: var(--ring); background:#fff; }
+
+/* ===================================================
+   5) Botones y dropzone (igual que antes, pulidos)
+   =================================================== */
+.p-button{ border-radius:999px; font-weight:900; letter-spacing:.2px; }
+.p-button.p-button-outlined{ background:#eef2ff; color:#1d4ed8; border-color:#c7d2fe; }
+.p-button.p-button-outlined:hover{ filter:brightness(1.03); }
+
+.archivo-area{
+  margin-top:10px; padding:14px; border-radius: var(--r);
+  background:linear-gradient(180deg,#f8fbff 0%, #f3f6fc 100%);
+  border:1px dashed var(--line-strong);
+  display:flex; align-items:center; gap:12px;
+}
+.custom-file-upload{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 14px; cursor:pointer; user-select:none;
+  background:#eef2ff; color:#1d4ed8; border:1px solid #c7d2fe; border-radius:999px; font-weight:900;
+  transition:transform .12s, box-shadow .12s, filter .12s;
+}
+.custom-file-upload:hover{ transform:translateY(-1px); box-shadow:0 10px 24px rgba(29,78,216,.18); filter:brightness(1.03); }
+.custom-file-upload input[type="file"]{ display:none; }
+
+/* Hace que los hijos del inputgroup ocupen todo el ancho */
+:host ::ng-deep .p-inputgroup > input.p-inputtext,
+:host ::ng-deep .p-inputgroup > .p-dropdown,
+:host ::ng-deep .p-inputgroup > .p-multiselect,
+:host ::ng-deep .p-inputgroup > .p-inputwrapper,
+:host ::ng-deep .p-inputgroup > .p-component {
+  flex: 1 1 auto !important;
+  width: 1% !important;
+  min-width: 0 !important;
+  border: 0 !important;            /* el borde lo lleva el grupo */
+  background: transparent !important;
+  min-height: 46px;
 }
 
-.p-dropdown-fullwidth {
+/* Altura y estilo del addon */
+:host ::ng-deep .p-inputgroup-addon {
+  min-height: 46px;
+  padding: 0 .9rem;
+}
+
+/* --- InputGroup: forzar que Prime custom elements crezcan --- */
+:host ::ng-deep .p-inputgroup { 
+  display: flex; align-items: stretch; 
+  border-radius: 12px;
+}
+
+/* El hijo real es <p-dropdown> / <p-multiselect>, no el div interno */
+:host ::ng-deep .p-inputgroup > p-dropdown,
+:host ::ng-deep .p-inputgroup > p-multiselect {
+  flex: 1 1 auto !important;
+  width: 1% !important;
+  min-width: 0 !important;
+  display: flex !important;          /* clave: que el wrapper sea flexible */
+}
+
+/* El contenedor visual interno debe ocupar 100% y sin borde duplicado */
+:host ::ng-deep .p-inputgroup > p-dropdown .p-dropdown,
+:host ::ng-deep .p-inputgroup > p-multiselect .p-multiselect {
+  flex: 1 1 auto !important;
   width: 100% !important;
+  border: 0 !important;
+  background: transparent !important;
+  min-height: 46px;
 }
 
-.p-button-rounded:hover {
-  background-color: #4caf50 !important;
-  border-color: #4caf50 !important;
-  color: white !important;
+/* Uniformar altura de addons e inputs dentro del group */
+:host ::ng-deep .p-inputgroup-addon { 
+  min-height: 46px; 
+  padding: 0 .9rem; 
+  display:flex; align-items:center; 
+}
+:host ::ng-deep .p-inputgroup > input.p-inputtext {
+  flex: 1 1 auto !important;
+  width: 1% !important;
+  min-width: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  min-height: 46px;
 }
 
-.p-button-rounded {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Contenedor y campos */
+.form-container{ width:70%; margin:0 auto; padding:22px; background:#fff;
+  border:1px solid #cbd5e1; border-radius:14px; box-shadow:0 10px 26px rgba(15,23,42,.08); }
+.p-field{ margin-bottom:18px; }
+.p-field label{ display:block; margin-bottom:6px; font-weight:800; color:#334155; }
+
+/* InputGroup: que los hijos se estiren correctamente */
+:host ::ng-deep .p-inputgroup{
+  display:flex; align-items:center; gap:0; background:#f6f8fc;
+  border:1px solid #cbd5e1; border-radius:12px; overflow:hidden;
+}
+:host ::ng-deep .p-inputgroup:focus-within{
+  border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.15); background:#fff;
+}
+:host ::ng-deep .p-inputgroup-addon{
+  min-height:46px; padding:0 .9rem; border:0; background:transparent; color:#64748b;
 }
 
-.file-input-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* ¡CLAVE! Forzar que los componentes crezcan dentro del group */
+:host ::ng-deep .p-inputgroup > input.p-inputtext,
+:host ::ng-deep .p-inputgroup > p-dropdown,
+:host ::ng-deep .p-inputgroup > p-multiselect,
+:host ::ng-deep .p-inputgroup > .p-inputwrapper,
+:host ::ng-deep .p-inputgroup > .p-component{
+  flex:1 1 auto !important; width:1% !important; min-width:0 !important;
+  border:0 !important; background:transparent !important; min-height:46px;
 }
 
-.file-input-label {
-  padding: 6px 12px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
+/* Dropdown / Multiselect (fuera o dentro del group) */
+.form-container :is(.p-dropdown,.p-multiselect){
+  width:100%; min-height:46px; border:1px solid #cbd5e1; border-radius:12px; background:#f6f8fc;
+  transition:border-color .15s, box-shadow .15s, background .15s;
 }
-
-.file-input-label:hover {
-  background-color: #e0e0e0;
+.form-container :is(.p-dropdown.p-focus,.p-multiselect.p-focus){
+  border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.15); background:#fff;
 }
+.form-container .p-dropdown .p-dropdown-label,
+.form-container .p-multiselect .p-multiselect-label{ padding:.65rem .85rem; color:#0f172a; }
+.form-container .p-dropdown .p-dropdown-label.p-placeholder,
+.form-container .p-multiselect .p-multiselect-label.p-placeholder{ color:#8aa1b8; }
 
-.file-input {
-  display: none;
+/* Input simple */
+.form-container .p-inputtext{
+  width:100%; min-height:46px; border:1px solid #cbd5e1; border-radius:12px;
+  background:#f6f8fc; padding:.65rem .85rem;
 }
-
-.file-drop-container {
-  border: 2px dashed #ccc;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  position: relative;
-}
-
-.file-drop-message {
-  font-size: 14px;
-  margin-top: 10px;
-  color: #777;
-}
-
-
-
-.loading-bar {
-  width: 100%;
-  height: 40px;
-  background-color: #fff;
-  position: relative;
-  display: none;
-}
-
-.bar {
-  height: 100%;
-  width: 0;
-  background-color: #fff;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transition: width 0.3s ease;
-}
-
-.custom-dialog {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.p-dialog.custom-dialog .p-dialog-wrapper {
-  max-width: 80%;
-  width: auto;
-}
-
-.p-dialog.custom-dialog .p-dialog-content {
-  text-align: center;
-}
-
-.button-icon-right {
-  display: flex;
-  flex-direction: row-reverse; /* Cambia la dirección del icono a la derecha */
-  align-items: center; /* Alinea verticalmente el texto e icono en el centro */
-}
-
-  
-.custom-file-upload {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Centrar horizontalmente el contenido */
-  padding: 6px 12px;
-  cursor: pointer;
-  background-color: #02b1bc;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  transition: background-color 0.3s ease-in-out;
-  text-align: center; /* Centrar horizontalmente el texto */
-}
-
-.custom-file-upload:hover {
-  background-color: #02b1bc;
-}
-
-.archivo-area {
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #f0f0f0; /* Cambia el color de fondo a tu elección */
-  border: 1px dashed #999; /* Cambia el estilo y color del borde punteado */
-  border-radius: 4px;
-  align-items: center; /* Centra verticalmente */
-  justify-content: space-between;
-}
-
-.archivo-area span {
-  font-weight: bold;
-  margin-right: 10px;
-}
-
-.custom-file-upload input[type="file"] {
-  display: none;
+.form-container .p-inputtext:focus{
+  outline:none; border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.15); background:#fff;
 }

@@ -13,6 +13,7 @@ from django.db.models import F
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from rest_framework.decorators import action
 
 class SolicitudList(generics.ListCreateAPIView):
     queryset = Solicitud.objects.filter(status=True)
@@ -49,6 +50,20 @@ class SolicitudDetail(generics.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         instance.status = False
         instance.save()
+
+    @action(detail=True, methods=['patch'])
+    def visto_bueno(self, request, pk=None):
+        solicitud = self.get_object()
+        flag = bool(request.data.get('visto_bueno', True))
+        solicitud.visto_bueno = flag
+        if flag:
+            solicitud.visto_bueno_por = request.user
+            solicitud.visto_bueno_fecha = timezone.now()
+        else:
+            solicitud.visto_bueno_por = None
+            solicitud.visto_bueno_fecha = None
+        solicitud.save(update_fields=['visto_bueno', 'visto_bueno_por', 'visto_bueno_fecha'])
+        return Response(self.get_serializer(solicitud).data)
 
 @receiver(post_save, sender=Solicitud)
 def enviar_correo_cuando_se_crea_solicitud(sender, instance, created, **kwargs):

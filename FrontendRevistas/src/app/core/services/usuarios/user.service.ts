@@ -7,6 +7,9 @@ import { UserI } from 'src/app/models/authorization/usr_User';
 import { environment } from 'src/environments/environment';
 import { Person, NivelFormacion } from 'src/app/models/user/person';
 import { User } from 'src/app/models/user/person';
+import { forkJoin } from 'rxjs';
+
+type RolSistema = { id: number; key?: string; nombre?: string; name?: string };
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +34,65 @@ export class UserService {
   constructor(private http: HttpClient,) { }
 
   //lista de usuarios
+
+  // 1) Obtiene el id del usuario desde localStorage
+  private getMyIdFromStorage(): number | null {
+    try {
+      const raw = localStorage.getItem('user');
+      if (!raw) return null;
+      const u = JSON.parse(raw);
+      const ids = [u?.id, u?.user?.id, u?.user_id, u?.usuario_id, u?.pk, u?.pkid]
+        .map((x: any) => Number(x))
+        .filter((n: number) => !isNaN(n));
+      return ids[0] ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  // 2) Usuario logeado SIN headers custom (si usas cookies de sesión: activa withCredentials)
+  getLoggedUserSimple() {
+    const myId = this.getMyIdFromStorage();
+    if (!myId) throw new Error('No hay usuario en localStorage con id');
+
+    // IMPORTANTE: NO añadimos x-token ni 'user' aquí para evitar preflight
+    return this.http.get<any>(`${this.base_usuario}${myId}/`, {
+      // withCredentials: true, // <-- descomenta si usas sesión/cookies
+    });
+  }
+
+  // 3) Todos los roles del sistema (ajusta la URL real si es diferente)
+  getAllRolesSimple() {
+    // intenta /roles/ y fallback a /roles/roles/
+    return this.http.get<any[]>(`${this.API_URI}/roles/`).pipe(
+      catchError(() => this.http.get<any[]>(`${this.API_URI}/roles/roles/`)),
+      catchError(() => of<any[]>([]))
+    );
+  }
+
+  // 4) Normalizador y flags
+  private normalizeRoleName(s: any): string {
+    return (s ?? '').toString()
+      .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+      .toUpperCase().replace(/[^A-Z0-9]+/g, '_')
+      .replace(/^_|_$/g, '');
+  }
+
+  getMyRoleFlagsFast() {
+    return forkJoin([this.getLoggedUserSimple(), this.getAllRolesSimple()]).pipe(
+      map(([user, roles]) => {
+        const idsUsuario: number[] = Array.isArray(user?.roles) ? user.roles : [];
+        const nombres = idsUsuario
+          .map(id => roles.find(r => r?.id === id))
+          .map(r => (r?.key ?? r?.nombre ?? r?.name ?? '').toString())
+          .filter(Boolean);
+        const keys = nombres.map(n => this.normalizeRoleName(n));
+        const isEditorJefe = keys.includes('EDITOR_JEFE') || keys.includes('EDITORJEFE')|| keys.includes('Editor_Jefe')|| keys.includes('Editor Jefe');
+        const isAsistenteEditorial = keys.includes('ASISTENTE_EDITORIAL') || keys.includes('ASISTENTEEDITORIAL') || keys.includes('Asistente_Editorial')|| keys.includes('Asistente Editorial');
+        return { user, roleNamesUser: nombres, isEditorJefe, isAsistenteEditorial };
+      })
+    );
+  }
 
   ObtenerUsuarios(): Observable<any> {
     return this.http.get<any>(`${this.base_personas}`);
@@ -246,7 +308,7 @@ export class UserService {
     return this.http.get<any[]>(this.base_usuario).pipe(
       map((users) => users.find((user) => user.email === email))
     );
-  }  
+  }
 
 
   actualzarContraseña(contraseña: CambiarPasswordI): Observable<{ user: CambiarPasswordI }> {
@@ -413,7 +475,7 @@ export class UserService {
 
   getPeopleByUserId(userId: number): Observable<Person[]> {
     const url = `${this.base_personas}?user=${userId}`;
-    
+
     return this.http.get<Person[]>(url).pipe(
       catchError(error => {
         console.error("Error in getPeopleByUserId:", error);
@@ -427,7 +489,7 @@ export class UserService {
   }
 
   obtenerEditores(): Observable<any[]> {
-    const url = `${this.base_usuario}`; 
+    const url = `${this.base_usuario}`;
     return this.http.get<any[]>(url);
   }
 
@@ -437,17 +499,17 @@ export class UserService {
   }
 
   // USUARIO IMAGEN
-  
+
   updateUserProfile(userId: number, user: User, image: File): Observable<any> {
     const formData = new FormData();
     formData.append('avatar', image);
     formData.append('password', user.password)
     formData.append('username', user.username);
     formData.append('email', user.email);
-  
+
     return this.http.put(`${this.base_editar_user}${userId}/`, formData);
   }
-  
+
   ///////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////USUARIO_X_FORMACION///////////////////////////////////////////////
 
@@ -478,7 +540,7 @@ export class UserService {
     return this.http.put<any>(url, formacionData);
   }
 
-  
+
   ///////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////CAMBIAR CONTRASEÑA///////////////////////////////////////////////
 
@@ -494,7 +556,7 @@ export class UserService {
 
   updatePassword(usuarioId: number, currentPassword: string, newPassword: string): Observable<any> {
     const url = `${this.base_usuario}${usuarioId}/change-password/`;
-    
+
     const body = {
       current_password: currentPassword,
       new_password: newPassword

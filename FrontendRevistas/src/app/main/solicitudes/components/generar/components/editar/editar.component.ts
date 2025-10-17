@@ -38,6 +38,7 @@ export class EditarComponent {
     contenidoSolicitud: 0,
     revista: 0,
     status: true,
+    visto_bueno: false
   };
   contenidoEdicion: Contenido = {
     id: 0,
