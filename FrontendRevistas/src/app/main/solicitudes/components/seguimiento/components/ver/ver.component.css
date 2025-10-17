@@ -58,7 +58,6 @@ body { background: #f3f6fb; }
 .search-input::placeholder{ color: var(--muted); }
 
 .btn-accent{
-  background: var(--accent);
   border: 1px solid transparent !important;
   font-weight:700;
   padding: .5rem 1rem;
