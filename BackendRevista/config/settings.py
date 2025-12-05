@@ -26,13 +26,14 @@ SECRET_KEY = 'django-insecure-a#xmneb=v#5y@$2c*sxhl3s2q58i1x8r*7(l8#!(4-4wp37^g&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost','192.168.8.240', 'https://apprevista.uniguajira.edu.co/']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','192.168.8.240','192.168.8.32', 'https://apprevista.uniguajira.edu.co/']
 
 #### ORIGIN
 
 CORS_ORIGIN_WHITELIST = (
     "http://localhost:4200",
     "http://192.168.8.240:10780",
+    "http://192.168.8.32:10780",
     "https://apprevista.uniguajira.edu.co/"
 )
 
