@@ -7,24 +7,12 @@
   <div class="toolbar-inner">
     <div class="search">
       <i class="pi pi-search search-icon" aria-hidden="true"></i>
-      <input
-        pInputText
-        type="text"
-        class="search-input"
-        placeholder="Buscar por título o responsable…"
-        [(ngModel)]="searchText"
-        (ngModelChange)="buscarSeguimientos()"
-        aria-label="Buscar solicitudes"
-      />
+      <input pInputText type="text" class="search-input" placeholder="Buscar por título o responsable…"
+        [(ngModel)]="searchText" (ngModelChange)="buscarSeguimientos()" aria-label="Buscar solicitudes" />
     </div>
 
-    <button
-      pButton
-      type="button"
-      label="Buscar"
-      class="p-button-rounded btn-accent"
-      (click)="buscarSeguimientos()"
-    ></button>
+    <button pButton type="button" label="Buscar" class="p-button-rounded btn-accent"
+      (click)="buscarSeguimientos()"></button>
   </div>
 </section>
 
@@ -33,10 +21,8 @@
     <ng-container *ngFor="let solicitudId of getSortedGroupedKeys()">
 
       <!-- Editor jefe: solo ver si hay visto bueno -->
-      <p-card
-        *ngIf="!isEditorJefe || getSolicitudVistoBueno(solicitudId)"
-        class="folio-card"
-      >
+      <p-card *ngIf="canSeeSolicitud(solicitudId)" class="folio-card">
+
         <ng-template pTemplate="header">
           <header class="folio-header" (click)="toggleExpand(solicitudId)">
             <!-- IZQUIERDA: branding + título + meta -->
@@ -52,16 +38,10 @@
                     {{ getPasoNombre(recentSeguimientos[solicitudId].pasos_seguimiento) }}
                   </span>
 
-                  <span
-                    class="badge"
-                    [class.badge-success]="getSolicitudVistoBueno(solicitudId)"
-                    [class.badge-warning]="!getSolicitudVistoBueno(solicitudId)"
-                  >
-                    <i
-                      class="pi"
-                      [ngClass]="getSolicitudVistoBueno(solicitudId) ? 'pi-check-circle' : 'pi-clock'"
-                      aria-hidden="true"
-                    ></i>
+                  <span class="badge" [class.badge-success]="getSolicitudVistoBueno(solicitudId)"
+                    [class.badge-warning]="!getSolicitudVistoBueno(solicitudId)">
+                    <i class="pi" [ngClass]="getSolicitudVistoBueno(solicitudId) ? 'pi-check-circle' : 'pi-clock'"
+                      aria-hidden="true"></i>
                     {{ getSolicitudVistoBueno(solicitudId) ? 'Visto bueno' : 'Pendiente' }}
                   </span>
 
@@ -82,10 +62,8 @@
             <div class="folio-center">
               <div class="progress">
                 <div class="progress-track">
-                  <div
-                    class="progress-value"
-                    [style.width.%]="getPorcentaje(recentSeguimientos[solicitudId].pasos_seguimiento)"
-                  ></div>
+                  <div class="progress-value"
+                    [style.width.%]="getPorcentaje(recentSeguimientos[solicitudId].pasos_seguimiento)"></div>
                 </div>
                 <div class="progress-meta">
                   <span class="progress-strong">
@@ -102,14 +80,9 @@
             <div class="folio-right" (click)="$event.stopPropagation()">
               <!-- Toggle visto bueno: solo para Asistente editorial -->
               <div *ngIf="isAsistenteEditorial" class="approve-control">
-                <input
-                  type="checkbox"
-                  class="switch-input"
-                  id="vb-{{solicitudId}}"
+                <input type="checkbox" class="switch-input" id="vb-{{solicitudId}}"
                   [ngModel]="getSolicitudVistoBueno(solicitudId)"
-                  (ngModelChange)="toggleVistoBueno(solicitudId, $event)"
-                  aria-label="Dar visto bueno"
-                />
+                  (ngModelChange)="toggleVistoBueno(solicitudId, $event)" aria-label="Dar visto bueno" />
                 <label class="switch" for="vb-{{solicitudId}}">
                   <span class="switch-handle"></span>
                 </label>
@@ -118,14 +91,9 @@
                 </span>
               </div>
 
-              <button
-                pButton
-                type="button"
-                class="p-button-rounded p-button-text btn-icon"
-                [ngClass]="{ rotated: expandedCard === solicitudId }"
-                (click)="toggleExpand(solicitudId)"
-                aria-label="Expandir/contraer"
-              >
+              <button pButton type="button" class="p-button-rounded p-button-text btn-icon"
+                [ngClass]="{ rotated: expandedCard === solicitudId }" (click)="toggleExpand(solicitudId)"
+                aria-label="Expandir/contraer">
                 <i class="pi pi-chevron-down"></i>
               </button>
             </div>
@@ -170,14 +138,10 @@
                         <span class="tag empty"><i class="pi pi-ban" aria-hidden="true"></i> No presenta</span>
                       </ng-container>
                       <ng-template #downloadLink>
-                        <button
-                          pButton
-                          type="button"
-                          icon="pi pi-download"
+                        <button pButton type="button" icon="pi pi-download"
                           class="p-button-rounded p-button-outlined p-button-plain"
                           [label]="obtenerNombreArchivo(seguimiento.correciones)"
-                          (click)="abrirDescarga(seguimiento.id)"
-                        ></button>
+                          (click)="abrirDescarga(seguimiento.id)"></button>
                       </ng-template>
                     </td>
 
@@ -186,33 +150,19 @@
                         <span class="tag empty"><i class="pi pi-ban" aria-hidden="true"></i> No presenta</span>
                       </ng-container>
                       <ng-template #formatLink>
-                        <button
-                          pButton
-                          type="button"
-                          icon="pi pi-download"
+                        <button pButton type="button" icon="pi pi-download"
                           class="p-button-rounded p-button-outlined p-button-plain"
                           [label]="obtenerNombreArchivo(seguimiento.formato_evaluacion)"
-                          (click)="abrirFormato(seguimiento.id)"
-                        ></button>
+                          (click)="abrirFormato(seguimiento.id)"></button>
                       </ng-template>
                     </td>
 
                     <td class="actions">
-                      <button
-                        pButton
-                        icon="pi pi-pencil"
-                        class="p-button-rounded p-button-text p-button-warning"
-                        (click)="ShowEditarSeguimiento(seguimiento)"
-                        aria-label="Editar"
-                      ></button>
+                      <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning"
+                        (click)="ShowEditarSeguimiento(seguimiento)" aria-label="Editar"></button>
 
-                      <button
-                        pButton
-                        icon="pi pi-trash"
-                        class="p-button-rounded p-button-text p-button-danger"
-                        (click)="ShowEliminarSeguimiento(seguimiento)"
-                        aria-label="Eliminar"
-                      ></button>
+                      <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
+                        (click)="ShowEliminarSeguimiento(seguimiento)" aria-label="Eliminar"></button>
                     </td>
                   </tr>
                 </ng-template>
@@ -227,16 +177,9 @@
 </section>
 
 <!-- DIÁLOGO EDITAR -->
-<p-dialog
-  header="Editar seguimiento"
-  [(visible)]="displayEditar"
-  [responsive]="true"
-  [style]="{ 'width': '50%', 'min-height': '300px', 'top': '30px'}"
-  [showHeader]="false"
-  [closable]="false"
-  [dismissableMask]="false"
-  [modal]="true"
->
+<p-dialog header="Editar seguimiento" [(visible)]="displayEditar" [responsive]="true"
+  [style]="{ 'width': '50%', 'min-height': '300px', 'top': '30px'}" [showHeader]="false" [closable]="false"
+  [dismissableMask]="false" [modal]="true">
   <form [formGroup]="seguimientoForm" (ngSubmit)="EditarSeguimiento()">
     <div class="p-grid p-fluid">
       <div class="p-col-12" style="text-align: center;">
@@ -254,26 +197,14 @@
 
       <div class="p-col-12">
         <label for="estado_seguimiento">Estado de seguimiento</label>
-        <p-dropdown
-          id="estado_seguimiento"
-          [options]="estados"
-          optionLabel="nombre"
-          optionValue="id"
-          formControlName="estado_seguimiento"
-        ></p-dropdown>
+        <p-dropdown id="estado_seguimiento" [options]="estados" optionLabel="nombre" optionValue="id"
+          formControlName="estado_seguimiento"></p-dropdown>
       </div>
 
       <div class="p-col-12">
         <label for="responsableId">Responsable</label>
-        <p-dropdown
-          id="responsableId"
-          [filter]="true"
-          [options]="responsables"
-          placeholder="Seleccionar…"
-          optionLabel="nombres"
-          optionValue="user"
-          formControlName="responsableId"
-        >
+        <p-dropdown id="responsableId" [filter]="true" [options]="responsables" placeholder="Seleccionar…"
+          optionLabel="nombres" optionValue="user" formControlName="responsableId">
           <ng-template let-responsable pTemplate="item">
             {{ responsable.nombres }} {{ responsable.apellidos }}
           </ng-template>
@@ -285,14 +216,8 @@
         <div class="archivo-area">
           <label for="correciones" class="btn-upload">
             <i class="pi pi-upload"></i><span>Seleccionar archivo</span>
-            <input
-              pButton
-              type="file"
-              id="correciones"
-              (change)="onCorreccionesFileSelected($event)"
-              required
-              style="display:none"
-            />
+            <input pButton type="file" id="correciones" (change)="onCorreccionesFileSelected($event)" required
+              style="display:none" />
           </label>
           <div *ngIf="archivoSeleccionadoCorreciones" class="file-name">
             <strong>Archivo: </strong>{{ archivoSeleccionadoCorreciones }}
@@ -305,14 +230,8 @@
         <div class="archivo-area">
           <label for="formato_evaluacion" class="btn-upload">
             <i class="pi pi-upload"></i><span>Seleccionar archivo</span>
-            <input
-              pButton
-              type="file"
-              id="formato_evaluacion"
-              (change)="onFormatoFileSelected($event)"
-              required
-              style="display:none"
-            />
+            <input pButton type="file" id="formato_evaluacion" (change)="onFormatoFileSelected($event)" required
+              style="display:none" />
           </label>
           <div *ngIf="archivoSeleccionadoFormato" class="file-name">
             <strong>Archivo: </strong>{{ archivoSeleccionadoFormato }}
@@ -321,35 +240,19 @@
       </div>
     </div>
 
-    <button
-      pButton
-      type="submit"
-      icon="pi pi-check"
-      label="Guardar Cambios"
-      class="p-button-rounded p-button-outlined p-button-success btn-wide"
-    ></button>
+    <button pButton type="submit" icon="pi pi-check" label="Guardar Cambios"
+      class="p-button-rounded p-button-outlined p-button-success btn-wide"></button>
   </form>
 
-  <button
-    pButton
-    icon="pi pi-times"
-    label="Cancelar"
+  <button pButton icon="pi pi-times" label="Cancelar"
     class="p-button-rounded p-button-outlined p-button-secondary btn-wide"
-    (click)="OcultarEditarSeguimiento()"
-  ></button>
+    (click)="OcultarEditarSeguimiento()"></button>
 </p-dialog>
 
 <!-- DIÁLOGO ELIMINAR -->
-<p-dialog
-  header="Eliminar seguimiento"
-  [(visible)]="displayEliminar"
-  [responsive]="true"
-  [style]="{ 'width': '55%', 'min-height': '100px', 'top': '30px', 'text-align': 'center'}"
-  [showHeader]="false"
-  [closable]="false"
-  [dismissableMask]="false"
-  [modal]="true"
->
+<p-dialog header="Eliminar seguimiento" [(visible)]="displayEliminar" [responsive]="true"
+  [style]="{ 'width': '55%', 'min-height': '100px', 'top': '30px', 'text-align': 'center'}" [showHeader]="false"
+  [closable]="false" [dismissableMask]="false" [modal]="true">
   <div class="dialog-body">
     <div class="dialog-summary">
       <p><b>¿Seguro que desea eliminar este paso?</b></p>
@@ -360,21 +263,11 @@
     <hr />
 
     <div class="dialog-actions">
-      <button
-        pButton
-        icon="pi pi-trash"
-        label="Eliminar"
-        class="p-button-rounded p-button-outlined p-button-danger"
-        (click)="EliminarSeguimiento()"
-      ></button>
+      <button pButton icon="pi pi-trash" label="Eliminar" class="p-button-rounded p-button-outlined p-button-danger"
+        (click)="EliminarSeguimiento()"></button>
 
-      <button
-        pButton
-        icon="pi pi-times"
-        label="Cancelar"
-        class="p-button-rounded p-button-outlined p-button-secondary"
-        (click)="OcultarEliminarSeguimiento()"
-      ></button>
+      <button pButton icon="pi pi-times" label="Cancelar" class="p-button-rounded p-button-outlined p-button-secondary"
+        (click)="OcultarEliminarSeguimiento()"></button>
     </div>
   </div>
 </p-dialog>

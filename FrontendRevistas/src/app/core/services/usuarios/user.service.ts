@@ -70,6 +70,20 @@ export class UserService {
     );
   }
 
+  getAllRolesSimple2() {
+    const url1 = `${this.API_URI}/roles/`;
+    const url2 = `${this.API_URI}/roles/roles/`;
+
+    const normalize = (res: any) => Array.isArray(res) ? res : (res?.results ?? res?.data ?? []);
+
+    return this.http.get<any>(url1).pipe(
+      map(normalize),
+      catchError(() => this.http.get<any>(url2).pipe(map(normalize))),
+      catchError(() => of<any[]>([]))
+    );
+  }
+
+
   // 4) Normalizador y flags
   private normalizeRoleName(s: any): string {
     return (s ?? '').toString()
@@ -78,18 +92,99 @@ export class UserService {
       .replace(/^_|_$/g, '');
   }
 
+  private toId(x: any): number | null {
+    const n = Number(x?.id ?? x?.rol ?? x?.role ?? x?.rol_id ?? x?.role_id ?? x);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  private normalizeList(res: any): any[] {
+    if (Array.isArray(res)) return res;
+    if (Array.isArray(res?.results)) return res.results;
+    if (Array.isArray(res?.data)) return res.data;
+    return [];
+  }
+
+  // Trae roles del usuario desde la tabla intermedia user_roles (si existe)
+  getUserRoleIdsFromUserRolesEndpoint(userId: number): Observable<number[]> {
+    const try1 = `${this.API_URI}/roles/user_roles/?user=${userId}`;
+    const try2 = `${this.API_URI}/roles/user_roles/?usuario=${userId}`;
+    const try3 = `${this.API_URI}/roles/user_roles/?userId=${userId}`;
+    const try4 = `${this.API_URI}/roles/user_roles/${userId}/`; // por si tu api usa detalle por usuario
+
+    return this.http.get<any>(try1).pipe(
+      catchError(() => this.http.get<any>(try2)),
+      catchError(() => this.http.get<any>(try3)),
+      catchError(() => this.http.get<any>(try4)),
+      map(res => this.normalizeList(res)),
+      map(items => {
+        // intenta extraer IDs de rol de varias estructuras posibles
+        const ids = items
+          .map((it: any) => this.toId(it?.rol ?? it?.role ?? it?.rolId ?? it?.roleId ?? it?.role_id ?? it?.rol_id))
+          .filter((id: number | null) => id !== null) as number[];
+        return Array.from(new Set(ids));
+      }),
+      catchError(() => of<number[]>([]))
+    );
+  }
+
+  private extractRoleIds(input: any): number[] {
+    if (!Array.isArray(input)) return [];
+    const ids = input
+      .map((x: any) => Number(x?.id ?? x?.rol_id ?? x?.role_id ?? x))
+      .filter((n: number) => Number.isFinite(n));
+    return Array.from(new Set(ids));
+  }
+
   getMyRoleFlagsFast() {
-    return forkJoin([this.getLoggedUserSimple(), this.getAllRolesSimple()]).pipe(
-      map(([user, roles]) => {
-        const idsUsuario: number[] = Array.isArray(user?.roles) ? user.roles : [];
-        const nombres = idsUsuario
-          .map(id => roles.find(r => r?.id === id))
-          .map(r => (r?.key ?? r?.nombre ?? r?.name ?? '').toString())
-          .filter(Boolean);
-        const keys = nombres.map(n => this.normalizeRoleName(n));
-        const isEditorJefe = keys.includes('EDITOR_JEFE') || keys.includes('EDITORJEFE')|| keys.includes('Editor_Jefe')|| keys.includes('Editor Jefe');
-        const isAsistenteEditorial = keys.includes('ASISTENTE_EDITORIAL') || keys.includes('ASISTENTEEDITORIAL') || keys.includes('Asistente_Editorial')|| keys.includes('Asistente Editorial');
+    const myId = this.getMyIdFromStorage();
+    if (!myId) {
+      return of({ user: null, roleNamesUser: [] as string[], isEditorJefe: false, isAsistenteEditorial: false });
+    }
+
+    return forkJoin([
+      this.getLoggedUserSimple(),
+      this.getAllRolesSimple2(), // ✅ usa la versión que normaliza results/data
+      this.getUserRoleIdsFromUserRolesEndpoint(myId),
+    ]).pipe(
+      map(([user, rolesList, userRoleIds]: [any, any[], number[]]) => {
+        const roles = Array.isArray(rolesList) ? rolesList : [];
+
+        const idsDesdeUserRoles: number[] = Array.isArray(userRoleIds) ? userRoleIds : [];
+        const idsDesdeUser: number[] = this.extractRoleIds(user?.roles);
+
+        const idsUsuario: number[] = idsDesdeUserRoles.length ? idsDesdeUserRoles : idsDesdeUser;
+
+        const nombres: string[] = idsUsuario
+          .map((id: number) => roles.find((r: any) => Number(r?.id) === Number(id))) // ✅ Number vs Number
+          .map((r: any) => (r?.key ?? r?.nombre ?? r?.name ?? '').toString())
+          .filter((name: string) => Boolean(name));
+
+        const keys: string[] = nombres.map((name: string) => this.normalizeRoleName(name));
+
+        const isEditorJefe =
+          keys.includes('EDITOR_JEFE') ||
+          keys.includes('EDITORJEFE');
+
+        const isAsistenteEditorial =
+          keys.includes('ASISTENTE_EDITORIAL') ||
+          keys.includes('ASISTENTEEDITORIAL') ||
+          keys.includes('ASISTENTE');
+
+        console.log('[ROLES DEBUG]', {
+          idsDesdeUserRoles,
+          idsDesdeUser,
+          idsUsuario,
+          nombres,
+          keys,
+          isEditorJefe,
+          isAsistenteEditorial
+        });
+
         return { user, roleNamesUser: nombres, isEditorJefe, isAsistenteEditorial };
+      }),
+      catchError((err: any) => {
+        console.error('getMyRoleFlagsFast error:', err);
+        return of({ user: null, roleNamesUser: [] as string[], isEditorJefe: false, isAsistenteEditorial: false });
       })
     );
   }
