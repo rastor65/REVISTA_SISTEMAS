@@ -1,22 +1,250 @@
+<div class="levels-page">
+  <section class="levels-hero">
+    <div class="levels-hero__content">
+      <span class="hero-badge">
+        <i class="pi pi-book"></i>
+        Catálogo académico
+      </span>
 
-<br>
-<br>
-<h2 class="formacion-title">NIVELES DE FORMACIÓN</h2>
+      <h1>Gestión de niveles de formación</h1>
+      <p>
+        Administra desde una sola vista todos los niveles de formación del sistema.
+        Consulta, crea, edita y elimina registros con una experiencia mucho más clara,
+        moderna y eficiente.
+      </p>
+    </div>
 
-<br>
-<br>
+    <div class="levels-hero__stats">
+      <div class="hero-stat">
+        <span>Total de niveles</span>
+        <strong>{{ totalNiveles }}</strong>
+      </div>
 
-<div class="container">
-  <p-table [value]="niveles" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,15]">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Nombre</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-nivel>
-      <tr>
-        <td>{{ nivel.nombre }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
+      <div class="hero-stat">
+        <span>Resultados visibles</span>
+        <strong>{{ totalFiltrados }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span>Último ID</span>
+        <strong>#{{ ultimoId }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="main-panel">
+    <div class="panel-header">
+      <div>
+        <h2>Listado de niveles</h2>
+        <p>Consulta y administra todos los niveles registrados en el sistema.</p>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        label="Nuevo nivel"
+        class="p-button-success create-btn"
+        (click)="openCreateDialog()">
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          [(ngModel)]="searchText"
+          placeholder="Buscar por nombre del nivel de formación" />
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-filter-slash"
+        label="Limpiar"
+        class="p-button-outlined p-button-secondary clear-btn"
+        (click)="clearSearch()">
+      </button>
+    </div>
+
+    <div *ngIf="cargando" class="state-card">
+      <div class="loader"></div>
+      <h3>Cargando niveles</h3>
+      <p>Estamos consultando la información registrada en el sistema.</p>
+    </div>
+
+    <ng-container *ngIf="!cargando">
+      <div *ngIf="filteredNiveles.length > 0; else emptyState" class="table-shell">
+        <p-table
+          [value]="filteredNiveles"
+          [paginator]="true"
+          [rows]="8"
+          [rowsPerPageOptions]="[5,8,10,20]"
+          responsiveLayout="scroll">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th class="actions-col">Acciones</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-nivel>
+            <tr>
+              <td class="table-id">#{{ nivel.id }}</td>
+              <td class="table-title">{{ nivel.nombre }}</td>
+              <td class="actions-col">
+                <div class="action-buttons">
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-pencil"
+                    class="p-button-rounded p-button-text p-button-warning"
+                    (click)="openEditDialog(nivel)">
+                  </button>
+
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-trash"
+                    class="p-button-rounded p-button-text p-button-danger"
+                    (click)="openDeleteDialog(nivel)">
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="state-card">
+          <i class="pi pi-inbox state-icon"></i>
+          <h3>No hay resultados</h3>
+          <p>No se encontraron niveles de formación con los filtros actuales.</p>
+        </div>
+      </ng-template>
+    </ng-container>
+  </section>
+
+  <!-- CREAR / EDITAR -->
+  <p-dialog
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: '460px' }"
+    [showHeader]="false"
+    [closable]="false"
+    [dismissableMask]="false"
+    styleClass="custom-dialog">
+
+    <div class="dialog-head">
+      <div>
+        <span class="dialog-eyebrow">Formulario</span>
+        <h3>{{ dialogTitle }}</h3>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        class="p-button-text dialog-close-btn"
+        (click)="closeDialog()">
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      <div class="field-block">
+        <label for="nivel-nombre">Nombre del nivel de formación</label>
+        <input
+          id="nivel-nombre"
+          pInputText
+          type="text"
+          [(ngModel)]="nivelForm.nombre"
+          placeholder="Ej. Técnico, Tecnólogo, Profesional, Maestría" />
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-check"
+        [label]="dialogMode === 'create' ? 'Crear' : 'Guardar cambios'"
+        class="p-button-success save-btn"
+        [loading]="guardando"
+        (click)="saveNivel()">
+      </button>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        label="Cancelar"
+        class="p-button-outlined p-button-secondary cancel-btn"
+        (click)="closeDialog()">
+      </button>
+    </div>
+  </p-dialog>
+
+  <!-- ELIMINAR -->
+  <p-dialog
+    [(visible)]="deleteDialogVisible"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: '430px' }"
+    [showHeader]="false"
+    [closable]="false"
+    [dismissableMask]="false"
+    styleClass="custom-dialog">
+
+    <div class="dialog-head dialog-head--danger">
+      <div>
+        <span class="dialog-eyebrow">Confirmación</span>
+        <h3>Eliminar nivel de formación</h3>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        class="p-button-text dialog-close-btn"
+        (click)="closeDeleteDialog()">
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      <p class="delete-text">
+        ¿Estás seguro de que deseas eliminar el nivel
+        <strong>"{{ nivelSeleccionado?.nombre }}"</strong>?
+      </p>
+      <p class="delete-subtext">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <div class="dialog-actions">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-trash"
+        label="Eliminar"
+        class="p-button-danger"
+        [loading]="eliminando"
+        (click)="deleteNivel()">
+      </button>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        label="Cancelar"
+        class="p-button-outlined p-button-secondary"
+        (click)="closeDeleteDialog()">
+      </button>
+    </div>
+  </p-dialog>
+
+  <p-toast [style]="{ top: '90px' }"></p-toast>
 </div>

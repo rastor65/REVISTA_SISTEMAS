@@ -1,273 +1,427 @@
 <br /><br /><br />
 
-<h2 class="solicitudes-title">CONTROL DE SEGUIMIENTOS</h2>
+<section class="page-shell">
+  <section class="hero-panel">
+    <div class="hero-panel__left">
+      <span class="hero-badge">Gestión editorial avanzada</span>
+      <h2 class="solicitudes-title">Control de seguimientos</h2>
+      <p class="hero-description">
+        Administre el flujo editorial de las solicitudes, supervise responsables,
+        valide el visto bueno y controle cada etapa del proceso con una visualización clara y profesional.
+      </p>
 
-<!-- Barra de herramientas / búsqueda -->
-<section class="toolbar">
-  <div class="toolbar-inner">
-    <div class="search">
-      <i class="pi pi-search search-icon" aria-hidden="true"></i>
-      <input pInputText type="text" class="search-input" placeholder="Buscar por título o responsable…"
-        [(ngModel)]="searchText" (ngModelChange)="buscarSeguimientos()" aria-label="Buscar solicitudes" />
+      <div class="hero-mode">
+        <span class="mode-chip assistant" *ngIf="isAsistenteEditorial">
+          <i class="pi pi-verified"></i>
+          Asistente editorial: acceso total y control de visto bueno
+        </span>
+
+        <span class="mode-chip chief" *ngIf="!isAsistenteEditorial && isEditorJefe">
+          <i class="pi pi-briefcase"></i>
+          Editor jefe: solo solicitudes con visto bueno
+        </span>
+
+        <span class="mode-chip neutral" *ngIf="!isAsistenteEditorial && !isEditorJefe">
+          <i class="pi pi-shield"></i>
+          Vista administrativa general
+        </span>
+      </div>
     </div>
 
-    <button pButton type="button" label="Buscar" class="p-button-rounded btn-accent"
-      (click)="buscarSeguimientos()"></button>
-  </div>
-</section>
+    <div class="hero-panel__right">
+      <div class="stat-card">
+        <span>Solicitudes visibles</span>
+        <strong>{{ totalSolicitudesVisibles }}</strong>
+      </div>
 
-<section class="contenedor">
-  <div *ngIf="filteredSeguimientos && filteredSeguimientos.length > 0 || searchText === ''">
+      <div class="stat-card stat-card--success">
+        <span>Con visto bueno</span>
+        <strong>{{ totalConVistoBueno }}</strong>
+      </div>
+
+      <div class="stat-card stat-card--warning">
+        <span>Pendientes</span>
+        <strong>{{ totalPendientesVistoBueno }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="search-panel">
+    <div class="search-box">
+      <i class="pi pi-search search-box__icon"></i>
+      <input
+        pInputText
+        type="text"
+        class="search-box__input"
+        placeholder="Buscar por título, responsable, paso o estado..."
+        [(ngModel)]="searchText"
+        (ngModelChange)="buscarSeguimientos()"
+      />
+    </div>
+
+    <button
+      pButton
+      type="button"
+      icon="pi pi-search"
+      label="Buscar"
+      class="p-button-rounded search-panel__button"
+      (click)="buscarSeguimientos()">
+    </button>
+  </section>
+
+  <section class="requests-grid">
     <ng-container *ngFor="let solicitudId of getSortedGroupedKeys()">
+      <ng-container *ngIf="recentSeguimientos[solicitudId] as actual">
+        <p-card *ngIf="canSeeSolicitud(solicitudId)" class="request-card">
+          <ng-template pTemplate="content">
+            <div class="request-card__header" (click)="toggleExpand(solicitudId)">
+              <div class="request-card__identity">
+                <div class="request-card__logo">
+                  <img src="assets/logo_r.jpg" alt="Revista" />
+                </div>
 
-      <!-- Editor jefe: solo ver si hay visto bueno -->
-      <p-card *ngIf="canSeeSolicitud(solicitudId)" class="folio-card">
+                <div class="request-card__info">
+                  <h3>{{ getSolicitudNombre(actual.solicitudId) }}</h3>
 
-        <ng-template pTemplate="header">
-          <header class="folio-header" (click)="toggleExpand(solicitudId)">
-            <!-- IZQUIERDA: branding + título + meta -->
-            <div class="folio-left">
-              <img class="brand" src="assets/logo_r.jpg" alt="Revista" />
+                  <div class="request-card__chips">
+                    <span class="chip chip-soft">
+                      <i class="pi pi-sitemap"></i>
+                      {{ getPasoNombre(actual.pasos_seguimiento) }}
+                    </span>
 
-              <div class="title-group">
-                <h3 class="folio-title">{{ getSolicitudNombre(solicitudId) }}</h3>
+                    <span class="chip" [ngClass]="getEstadoClase(actual.estado_seguimiento)">
+                      <i class="pi pi-bolt"></i>
+                      {{ getEstadoNombre(actual.estado_seguimiento) }}
+                    </span>
 
-                <div class="meta-row">
-                  <span class="badge soft">
-                    <i class="pi pi-list-check" aria-hidden="true"></i>
-                    {{ getPasoNombre(recentSeguimientos[solicitudId].pasos_seguimiento) }}
-                  </span>
+                    <span
+                      class="chip"
+                      [class.chip-success]="getSolicitudVistoBueno(solicitudId)"
+                      [class.chip-warning]="!getSolicitudVistoBueno(solicitudId)">
+                      <i
+                        class="pi"
+                        [ngClass]="getSolicitudVistoBueno(solicitudId) ? 'pi-check-circle' : 'pi-clock'">
+                      </i>
+                      {{ getSolicitudVistoBueno(solicitudId) ? 'Visto bueno' : 'Pendiente de visto bueno' }}
+                    </span>
+                  </div>
 
-                  <span class="badge" [class.badge-success]="getSolicitudVistoBueno(solicitudId)"
-                    [class.badge-warning]="!getSolicitudVistoBueno(solicitudId)">
-                    <i class="pi" [ngClass]="getSolicitudVistoBueno(solicitudId) ? 'pi-check-circle' : 'pi-clock'"
-                      aria-hidden="true"></i>
-                    {{ getSolicitudVistoBueno(solicitudId) ? 'Visto bueno' : 'Pendiente' }}
-                  </span>
+                  <div class="request-card__meta">
+                    <span>
+                      <i class="pi pi-user"></i>
+                      {{ getResponsableNombre(actual.responsableId) }}
+                    </span>
+                    <span>
+                      <i class="pi pi-calendar"></i>
+                      {{ actual.fecha_programacion }}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-                  <span class="badge soft">
-                    <i class="pi pi-bolt" aria-hidden="true"></i>
-                    {{ getEstadoNombre(recentSeguimientos[solicitudId].estado_seguimiento) }}
-                  </span>
+              <div class="request-card__side" (click)="$event.stopPropagation()">
+                <div class="approval-block" *ngIf="isAsistenteEditorial">
+                  <div class="approval-label">
+                    {{ getSolicitudVistoBueno(solicitudId) ? 'Aprobada' : 'Sin visto bueno' }}
+                  </div>
 
-                  <span class="badge ghost">
-                    <i class="pi pi-calendar" aria-hidden="true"></i>
-                    {{ recentSeguimientos[solicitudId].fecha_programacion }}
-                  </span>
+                  <input
+                    type="checkbox"
+                    class="switch-input"
+                    id="vb-{{ solicitudId }}"
+                    [ngModel]="getSolicitudVistoBueno(solicitudId)"
+                    (ngModelChange)="toggleVistoBueno(solicitudId, $event)"
+                  />
+                  <label class="switch" for="vb-{{ solicitudId }}">
+                    <span class="switch__handle"></span>
+                  </label>
+                </div>
+
+                <div class="progress-ring">
+                  <div class="progress-ring__value">
+                    {{ getPorcentaje(actual.pasos_seguimiento) }}%
+                  </div>
+                  <small>
+                    Etapa {{ getNivelActual(actual.pasos_seguimiento) }}/{{ totalPasos }}
+                  </small>
+                </div>
+
+                <button
+                  pButton
+                  type="button"
+                  class="p-button-rounded p-button-text expand-btn"
+                  [ngClass]="{ rotated: expandedCard === solicitudId }"
+                  (click)="toggleExpand(solicitudId)">
+                  <i class="pi pi-chevron-down"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="request-card__progress">
+              <div class="progress-bar">
+                <div
+                  class="progress-bar__value"
+                  [style.width.%]="getPorcentaje(actual.pasos_seguimiento)">
                 </div>
               </div>
             </div>
 
-            <!-- CENTRO: progreso -->
-            <div class="folio-center">
-              <div class="progress">
-                <div class="progress-track">
-                  <div class="progress-value"
-                    [style.width.%]="getPorcentaje(recentSeguimientos[solicitudId].pasos_seguimiento)"></div>
-                </div>
-                <div class="progress-meta">
-                  <span class="progress-strong">
-                    {{ getPorcentaje(recentSeguimientos[solicitudId].pasos_seguimiento) }}%
-                  </span>
-                  <span class="progress-muted">
-                    Etapa {{ getNivelActual(recentSeguimientos[solicitudId].pasos_seguimiento) }}/{{ totalPasos }}
-                  </span>
-                </div>
+            <div class="request-card__table" *ngIf="expandedCard === solicitudId">
+              <div class="table-wrapper">
+                <p-table
+                  [value]="groupedSeguimientos[solicitudId]"
+                  [paginator]="true"
+                  [rows]="100"
+                  styleClass="seguimientos-table">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Solicitud</th>
+                      <th>Paso</th>
+                      <th>Estado</th>
+                      <th>Responsable</th>
+                      <th>Asignación</th>
+                      <th>Programación</th>
+                      <th>Evaluación</th>
+                      <th>Correcciones</th>
+                      <th>Formato</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </ng-template>
+
+                  <ng-template pTemplate="body" let-seguimiento>
+                    <tr [ngClass]="getRowClass(seguimiento, solicitudId)">
+                      <td class="table-title-cell">
+                        <i class="pi pi-file"></i>
+                        {{ getSolicitudNombre(seguimiento.solicitudId) }}
+                      </td>
+
+                      <td>{{ getPasoNombre(seguimiento.pasos_seguimiento) }}</td>
+
+                      <td>
+                        <span class="table-status" [ngClass]="getEstadoClase(seguimiento.estado_seguimiento)">
+                          {{ getEstadoNombre(seguimiento.estado_seguimiento) }}
+                        </span>
+                      </td>
+
+                      <td>{{ getResponsableNombre(seguimiento.responsableId) }}</td>
+                      <td>{{ seguimiento.fecha_asignacion }}</td>
+                      <td>{{ seguimiento.fecha_programacion }}</td>
+                      <td>{{ seguimiento.fecha_evaluacion }}</td>
+
+                      <td>
+                        <ng-container *ngIf="seguimiento.correciones === null; else correccionesTpl">
+                          <span class="empty-pill">
+                            <i class="pi pi-ban"></i>
+                            No presenta
+                          </span>
+                        </ng-container>
+
+                        <ng-template #correccionesTpl>
+                          <button
+                            pButton
+                            type="button"
+                            icon="pi pi-download"
+                            class="p-button-rounded p-button-outlined p-button-plain"
+                            [label]="obtenerNombreArchivo(seguimiento.correciones)"
+                            (click)="abrirDescarga(seguimiento.id)">
+                          </button>
+                        </ng-template>
+                      </td>
+
+                      <td>
+                        <ng-container *ngIf="seguimiento.formato_evaluacion === null; else formatoTpl">
+                          <span class="empty-pill">
+                            <i class="pi pi-ban"></i>
+                            No presenta
+                          </span>
+                        </ng-container>
+
+                        <ng-template #formatoTpl>
+                          <button
+                            pButton
+                            type="button"
+                            icon="pi pi-download"
+                            class="p-button-rounded p-button-outlined p-button-plain"
+                            [label]="obtenerNombreArchivo(seguimiento.formato_evaluacion)"
+                            (click)="abrirFormato(seguimiento.id)">
+                          </button>
+                        </ng-template>
+                      </td>
+
+                      <td class="table-actions">
+                        <button
+                          pButton
+                          icon="pi pi-pencil"
+                          class="p-button-rounded p-button-text p-button-warning"
+                          (click)="ShowEditarSeguimiento(seguimiento)">
+                        </button>
+
+                        <button
+                          pButton
+                          icon="pi pi-trash"
+                          class="p-button-rounded p-button-text p-button-danger"
+                          (click)="ShowEliminarSeguimiento(seguimiento)">
+                        </button>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
               </div>
             </div>
-
-            <!-- DERECHA: acciones -->
-            <div class="folio-right" (click)="$event.stopPropagation()">
-              <!-- Toggle visto bueno: solo para Asistente editorial -->
-              <div *ngIf="isAsistenteEditorial" class="approve-control">
-                <input type="checkbox" class="switch-input" id="vb-{{solicitudId}}"
-                  [ngModel]="getSolicitudVistoBueno(solicitudId)"
-                  (ngModelChange)="toggleVistoBueno(solicitudId, $event)" aria-label="Dar visto bueno" />
-                <label class="switch" for="vb-{{solicitudId}}">
-                  <span class="switch-handle"></span>
-                </label>
-                <span class="approve-label">
-                  {{ getSolicitudVistoBueno(solicitudId) ? 'Visto bueno' : 'Dar visto bueno' }}
-                </span>
-              </div>
-
-              <button pButton type="button" class="p-button-rounded p-button-text btn-icon"
-                [ngClass]="{ rotated: expandedCard === solicitudId }" (click)="toggleExpand(solicitudId)"
-                aria-label="Expandir/contraer">
-                <i class="pi pi-chevron-down"></i>
-              </button>
-            </div>
-          </header>
-        </ng-template>
-
-        <!-- CONTENIDO EXPANDIBLE -->
-        <section *ngIf="expandedCard === solicitudId" class="folio-body">
-          <div class="table-shell">
-            <div class="scrollable-table">
-              <p-table [value]="groupedSeguimientos[solicitudId]" [paginator]="true" [rows]="100">
-                <ng-template pTemplate="header">
-                  <tr>
-                    <th>Solicitud</th>
-                    <th>Pasos</th>
-                    <th>Estado</th>
-                    <th>Responsable</th>
-                    <th>Fecha Asignación</th>
-                    <th>Fecha Programación</th>
-                    <th>Fecha Evaluación</th>
-                    <th>Correcciones</th>
-                    <th>Formato de evaluación</th>
-                    <th>Acciones</th>
-                  </tr>
-                </ng-template>
-
-                <ng-template pTemplate="body" let-seguimiento>
-                  <tr [ngClass]="getRowClass(seguimiento, solicitudId)">
-                    <td class="cell-title">
-                      <i class="pi pi-file-edit cell-icon" aria-hidden="true"></i>
-                      {{ getSolicitudNombre(seguimiento.solicitudId) }}
-                    </td>
-                    <td>{{ getPasoNombre(seguimiento.pasos_seguimiento) }}</td>
-                    <td>{{ getEstadoNombre(seguimiento.estado_seguimiento) }}</td>
-                    <td>{{ getResponsableNombre(seguimiento.responsableId) }}</td>
-                    <td>{{ seguimiento.fecha_asignacion }}</td>
-                    <td>{{ seguimiento.fecha_programacion }}</td>
-                    <td>{{ seguimiento.fecha_evaluacion }}</td>
-
-                    <td>
-                      <ng-container *ngIf="seguimiento.correciones === null; else downloadLink">
-                        <span class="tag empty"><i class="pi pi-ban" aria-hidden="true"></i> No presenta</span>
-                      </ng-container>
-                      <ng-template #downloadLink>
-                        <button pButton type="button" icon="pi pi-download"
-                          class="p-button-rounded p-button-outlined p-button-plain"
-                          [label]="obtenerNombreArchivo(seguimiento.correciones)"
-                          (click)="abrirDescarga(seguimiento.id)"></button>
-                      </ng-template>
-                    </td>
-
-                    <td>
-                      <ng-container *ngIf="seguimiento.formato_evaluacion === null; else formatLink">
-                        <span class="tag empty"><i class="pi pi-ban" aria-hidden="true"></i> No presenta</span>
-                      </ng-container>
-                      <ng-template #formatLink>
-                        <button pButton type="button" icon="pi pi-download"
-                          class="p-button-rounded p-button-outlined p-button-plain"
-                          [label]="obtenerNombreArchivo(seguimiento.formato_evaluacion)"
-                          (click)="abrirFormato(seguimiento.id)"></button>
-                      </ng-template>
-                    </td>
-
-                    <td class="actions">
-                      <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning"
-                        (click)="ShowEditarSeguimiento(seguimiento)" aria-label="Editar"></button>
-
-                      <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
-                        (click)="ShowEliminarSeguimiento(seguimiento)" aria-label="Eliminar"></button>
-                    </td>
-                  </tr>
-                </ng-template>
-              </p-table>
-            </div>
-          </div>
-        </section>
-      </p-card>
-
+          </ng-template>
+        </p-card>
+      </ng-container>
     </ng-container>
-  </div>
+  </section>
 </section>
 
-<!-- DIÁLOGO EDITAR -->
-<p-dialog header="Editar seguimiento" [(visible)]="displayEditar" [responsive]="true"
-  [style]="{ 'width': '50%', 'min-height': '300px', 'top': '30px'}" [showHeader]="false" [closable]="false"
-  [dismissableMask]="false" [modal]="true">
-  <form [formGroup]="seguimientoForm" (ngSubmit)="EditarSeguimiento()">
-    <div class="p-grid p-fluid">
-      <div class="p-col-12" style="text-align: center;">
-        <h2 id="solicitudId" optionLabel="titulo_articulo" optionValue="id">
-          {{ getSolicitudNombre(seguimientoSeleccionado?.solicitudId)}}
-        </h2>
+<p-dialog
+  [(visible)]="displayEditar"
+  [responsive]="true"
+  [style]="{ width: '56%', top: '30px' }"
+  [showHeader]="false"
+  [closable]="false"
+  [dismissableMask]="false"
+  [modal]="true"
+  styleClass="premium-dialog">
 
-        <h4 id="pasos_seguimiento" optionLabel="nombre" optionValue="id" class="muted">
-          {{ getPasoNombre(seguimientoSeleccionado?.pasos_seguimiento)}}
-        </h4>
+  <div class="dialog-card">
+    <div class="dialog-card__header">
+      <div class="dialog-card__icon success">
+        <i class="pi pi-pencil"></i>
       </div>
-
-      <hr />
-      <br />
-
-      <div class="p-col-12">
-        <label for="estado_seguimiento">Estado de seguimiento</label>
-        <p-dropdown id="estado_seguimiento" [options]="estados" optionLabel="nombre" optionValue="id"
-          formControlName="estado_seguimiento"></p-dropdown>
-      </div>
-
-      <div class="p-col-12">
-        <label for="responsableId">Responsable</label>
-        <p-dropdown id="responsableId" [filter]="true" [options]="responsables" placeholder="Seleccionar…"
-          optionLabel="nombres" optionValue="user" formControlName="responsableId">
-          <ng-template let-responsable pTemplate="item">
-            {{ responsable.nombres }} {{ responsable.apellidos }}
-          </ng-template>
-        </p-dropdown>
-      </div>
-
-      <div class="upload-row">
-        <label for="correciones">Correcciones</label>
-        <div class="archivo-area">
-          <label for="correciones" class="btn-upload">
-            <i class="pi pi-upload"></i><span>Seleccionar archivo</span>
-            <input pButton type="file" id="correciones" (change)="onCorreccionesFileSelected($event)" required
-              style="display:none" />
-          </label>
-          <div *ngIf="archivoSeleccionadoCorreciones" class="file-name">
-            <strong>Archivo: </strong>{{ archivoSeleccionadoCorreciones }}
-          </div>
-        </div>
-      </div>
-
-      <div class="upload-row">
-        <label for="formato_evaluacion">Formato de evaluación</label>
-        <div class="archivo-area">
-          <label for="formato_evaluacion" class="btn-upload">
-            <i class="pi pi-upload"></i><span>Seleccionar archivo</span>
-            <input pButton type="file" id="formato_evaluacion" (change)="onFormatoFileSelected($event)" required
-              style="display:none" />
-          </label>
-          <div *ngIf="archivoSeleccionadoFormato" class="file-name">
-            <strong>Archivo: </strong>{{ archivoSeleccionadoFormato }}
-          </div>
-        </div>
+      <div>
+        <h2>{{ getSolicitudNombre(seguimientoSeleccionado?.solicitudId ?? null) }}</h2>
+        <p>{{ getPasoNombre(seguimientoSeleccionado?.pasos_seguimiento) }}</p>
       </div>
     </div>
 
-    <button pButton type="submit" icon="pi pi-check" label="Guardar Cambios"
-      class="p-button-rounded p-button-outlined p-button-success btn-wide"></button>
-  </form>
+    <form [formGroup]="seguimientoForm" (ngSubmit)="EditarSeguimiento()">
+      <div class="dialog-form-grid">
+        <div class="dialog-field">
+          <label for="estado_seguimiento">Estado de seguimiento</label>
+          <p-dropdown
+            id="estado_seguimiento"
+            [options]="estados"
+            optionLabel="nombre"
+            optionValue="id"
+            formControlName="estado_seguimiento">
+          </p-dropdown>
+        </div>
 
-  <button pButton icon="pi pi-times" label="Cancelar"
-    class="p-button-rounded p-button-outlined p-button-secondary btn-wide"
-    (click)="OcultarEditarSeguimiento()"></button>
+        <div class="dialog-field">
+          <label for="responsableId">Responsable</label>
+          <p-dropdown
+            id="responsableId"
+            [filter]="true"
+            [options]="responsables"
+            placeholder="Seleccionar..."
+            optionLabel="nombres"
+            optionValue="user"
+            formControlName="responsableId">
+            <ng-template let-responsable pTemplate="item">
+              {{ responsable.nombres }} {{ responsable.apellidos }}
+            </ng-template>
+          </p-dropdown>
+        </div>
+
+        <div class="dialog-upload">
+          <label for="correciones">Correcciones</label>
+          <div class="upload-box">
+            <label for="correciones" class="upload-button">
+              <i class="pi pi-upload"></i>
+              <span>Seleccionar archivo</span>
+              <input type="file" id="correciones" (change)="onCorreccionesFileSelected($event)" style="display:none" />
+            </label>
+
+            <div *ngIf="archivoSeleccionadoCorreciones" class="upload-file-name">
+              {{ archivoSeleccionadoCorreciones }}
+            </div>
+          </div>
+        </div>
+
+        <div class="dialog-upload">
+          <label for="formato_evaluacion">Formato de evaluación</label>
+          <div class="upload-box">
+            <label for="formato_evaluacion" class="upload-button">
+              <i class="pi pi-upload"></i>
+              <span>Seleccionar archivo</span>
+              <input type="file" id="formato_evaluacion" (change)="onFormatoFileSelected($event)" style="display:none" />
+            </label>
+
+            <div *ngIf="archivoSeleccionadoFormato" class="upload-file-name">
+              {{ archivoSeleccionadoFormato }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog-footer-actions">
+        <button
+          pButton
+          type="submit"
+          label="Guardar cambios"
+          icon="pi pi-check"
+          class="p-button-rounded p-button-success">
+        </button>
+
+        <button
+          pButton
+          type="button"
+          label="Cancelar"
+          icon="pi pi-times"
+          class="p-button-rounded p-button-secondary p-button-outlined"
+          (click)="OcultarEditarSeguimiento()">
+        </button>
+      </div>
+    </form>
+  </div>
 </p-dialog>
 
-<!-- DIÁLOGO ELIMINAR -->
-<p-dialog header="Eliminar seguimiento" [(visible)]="displayEliminar" [responsive]="true"
-  [style]="{ 'width': '55%', 'min-height': '100px', 'top': '30px', 'text-align': 'center'}" [showHeader]="false"
-  [closable]="false" [dismissableMask]="false" [modal]="true">
-  <div class="dialog-body">
+<p-dialog
+  [(visible)]="displayEliminar"
+  [responsive]="true"
+  [style]="{ width: '40%', top: '30px' }"
+  [showHeader]="false"
+  [closable]="false"
+  [dismissableMask]="false"
+  [modal]="true"
+  styleClass="premium-dialog">
+
+  <div class="dialog-card danger-mode">
+    <div class="dialog-card__header">
+      <div class="dialog-card__icon danger">
+        <i class="pi pi-trash"></i>
+      </div>
+      <div>
+        <h2>Eliminar seguimiento</h2>
+        <p>Esta acción eliminará el registro seleccionado.</p>
+      </div>
+    </div>
+
     <div class="dialog-summary">
-      <p><b>¿Seguro que desea eliminar este paso?</b></p>
-      <p><b>Solicitud: </b> {{ getSolicitudNombre(seguimientoSeleccionado?.solicitudId)}}</p>
+      <p><b>Solicitud:</b> {{ getSolicitudNombre(seguimientoSeleccionado?.solicitudId ?? null) }}</p>
       <p><b>Paso:</b> {{ getPasoNombre(seguimientoSeleccionado?.pasos_seguimiento) }}</p>
     </div>
 
-    <hr />
+    <div class="dialog-footer-actions">
+      <button
+        pButton
+        type="button"
+        label="Eliminar"
+        icon="pi pi-trash"
+        class="p-button-rounded p-button-danger"
+        (click)="EliminarSeguimiento()">
+      </button>
 
-    <div class="dialog-actions">
-      <button pButton icon="pi pi-trash" label="Eliminar" class="p-button-rounded p-button-outlined p-button-danger"
-        (click)="EliminarSeguimiento()"></button>
-
-      <button pButton icon="pi pi-times" label="Cancelar" class="p-button-rounded p-button-outlined p-button-secondary"
-        (click)="OcultarEliminarSeguimiento()"></button>
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-rounded p-button-secondary p-button-outlined"
+        (click)="OcultarEliminarSeguimiento()">
+      </button>
     </div>
   </div>
 </p-dialog>

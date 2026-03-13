@@ -37,7 +37,7 @@ export class RecursosRolesService {
   }
 
   deleteResourceFromRole(resourcesRoleId: number): Observable<any> {
-    const url = `${this.base_recursos_rol}/resourcesr/${resourcesRoleId}`; // Utiliza la ID del registro para eliminar la relación
+    const url = `${this.base_recursos_rol}${resourcesRoleId}`; // Utiliza la ID del registro para eliminar la relación
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.delete(url, { headers });
   }

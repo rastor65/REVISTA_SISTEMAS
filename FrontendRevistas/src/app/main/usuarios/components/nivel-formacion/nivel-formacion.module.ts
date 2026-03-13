@@ -1,10 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { CrearComponent } from './components/crear/crear.component';
-import { EditarComponent } from './components/editar/editar.component';
 import { VerComponent } from './components/ver/ver.component';
-import { EliminarComponent } from './components/eliminar/eliminar.component';
 import { NivelFormacionComponent } from './nivel-formacion.component';
 import { NivelFormacionRoutingModule } from './nivel-formacion-routing.module';
 
@@ -24,10 +21,7 @@ import { MessageModule } from 'primeng/message';
 @NgModule({
   declarations: [
     NivelFormacionComponent,
-    CrearComponent,
-    EditarComponent,
     VerComponent,
-    EliminarComponent
   ],
   imports: [
     CommonModule,

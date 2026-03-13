@@ -1,51 +1,337 @@
-<br>
-<br>
-<br>
-<h2 class="formacion-title">USUARIOS</h2>
-<br>
-<br>
-<div style="background-color: #f2f2f2; padding: 5px; border-radius: 5px;">
-  <p style="font-size: 16px; color: #333; text-align: center;">
-    Tenga en cuenta que en este listado solo aparecerán usuarios que tengan roles asignados (que no sean usuarios
-    anónimos).
-  </p>
+<div class="users-page">
+  <section class="users-hero">
+    <div class="users-hero__content">
+      <span class="hero-badge">
+        <i class="pi pi-users"></i>
+        Administración
+      </span>
+
+      <h1>Gestión de usuarios</h1>
+      <p>
+        Administra usuarios del sistema desde una sola vista. Consulta, crea, edita y elimina
+        registros con una interfaz clara, moderna y fácil de operar.
+      </p>
+    </div>
+
+    <div class="users-hero__stats">
+      <div class="hero-stat">
+        <span class="hero-stat__label">Usuarios</span>
+        <strong>{{ totalUsers }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span class="hero-stat__label">Con roles</span>
+        <strong>{{ usersWithRoles }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span class="hero-stat__label">Asignaciones</span>
+        <strong>{{ totalAssignments }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="users-toolbar">
+    <div class="users-toolbar__left">
+      <div class="search-box">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Buscar por usuario, nombre, correo o rol..."
+          [(ngModel)]="searchValue"
+          (input)="applyGlobalFilter($event)">
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-filter-slash"
+        label="Limpiar"
+        class="p-button-outlined clean-btn"
+        (click)="clearFilters()">
+      </button>
+    </div>
+
+    <div class="users-toolbar__right">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        label="Nuevo usuario"
+        class="create-btn"
+        (click)="openCreateDialog()">
+      </button>
+    </div>
+  </section>
+
+  <section class="users-table-card">
+    <p-table
+      #dt
+      [value]="userRows"
+      [loading]="loading"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5,10,20,30]"
+      [globalFilterFields]="globalFilterFields"
+      responsiveLayout="scroll"
+      dataKey="id">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Usuario</th>
+          <th>Nombre completo</th>
+          <th>Correo</th>
+          <th>Roles</th>
+          <th>Estado</th>
+          <th class="actions-col">Acciones</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>
+            <div class="user-main">
+              <div class="user-avatar">
+                {{ getInitials(user) }}
+              </div>
+              <div class="user-main__text">
+                <strong>{{ user.username }}</strong>
+                <small>ID {{ user.id }}</small>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <span class="text-main">{{ user.fullName }}</span>
+          </td>
+
+          <td>
+            <span class="text-muted">{{ user.email || 'Sin correo registrado' }}</span>
+          </td>
+
+          <td>
+            <div class="roles-chips" *ngIf="user.roles.length > 0; else noRoles">
+              <span class="role-chip" *ngFor="let role of user.roles">
+                {{ role }}
+              </span>
+            </div>
+
+            <ng-template #noRoles>
+              <span class="no-role-text">Sin roles asignados</span>
+            </ng-template>
+          </td>
+
+          <td>
+            <span
+              class="status-badge"
+              [ngClass]="user.status ? 'status-badge--active' : 'status-badge--inactive'">
+              {{ user.status ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+
+          <td class="actions-col">
+            <div class="action-buttons">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-text p-button-warning"
+                (click)="openEditDialog(user)">
+              </button>
+
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-text p-button-danger"
+                (click)="confirmDelete(user)">
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <i class="pi pi-users"></i>
+              <h3>No hay usuarios para mostrar</h3>
+              <p>No se encontraron resultados con los filtros actuales.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </section>
+
+  <!-- Dialog crear / editar -->
+  <p-dialog
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [closable]="false"
+    [dismissableMask]="false"
+    [style]="{ width: '700px', maxWidth: '95vw' }"
+    [showHeader]="false"
+    styleClass="user-dialog">
+
+    <div class="dialog-shell">
+      <div class="dialog-top">
+        <div>
+          <span class="dialog-kicker">{{ dialogMode === 'create' ? 'Nuevo registro' : 'Actualización' }}</span>
+          <h2>{{ dialogTitle }}</h2>
+          <p>Completa la información básica del usuario.</p>
+        </div>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-times"
+          class="p-button-text dialog-close"
+          (click)="closeDialog()">
+        </button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field-block">
+          <label for="username">Usuario</label>
+          <input
+            pInputText
+            id="username"
+            [(ngModel)]="formModel.username"
+            name="username"
+            placeholder="Ej. jlopez">
+        </div>
+
+        <div class="field-block">
+          <label for="email">Correo</label>
+          <input
+            pInputText
+            id="email"
+            [(ngModel)]="formModel.email"
+            name="email"
+            placeholder="correo@dominio.com">
+        </div>
+
+        <div class="field-block">
+          <label for="first_name">Nombres</label>
+          <input
+            pInputText
+            id="first_name"
+            [(ngModel)]="formModel.first_name"
+            name="first_name"
+            placeholder="Nombres">
+        </div>
+
+        <div class="field-block">
+          <label for="last_name">Apellidos</label>
+          <input
+            pInputText
+            id="last_name"
+            [(ngModel)]="formModel.last_name"
+            name="last_name"
+            placeholder="Apellidos">
+        </div>
+
+        <div class="field-block field-block--full">
+          <label for="password">
+            {{ dialogMode === 'create' ? 'Contraseña' : 'Nueva contraseña (opcional)' }}
+          </label>
+          <input
+            pInputText
+            id="password"
+            type="password"
+            [(ngModel)]="formModel.password"
+            name="password"
+            [placeholder]="dialogMode === 'create' ? 'Ingrese una contraseña' : 'Solo si deseas cambiarla'">
+        </div>
+
+        <div class="field-block field-block--full status-field">
+          <label class="status-switch">
+            <input
+              type="checkbox"
+              [(ngModel)]="formModel.status"
+              name="status">
+            <span class="status-switch__slider"></span>
+            <span class="status-switch__text">
+              {{ formModel.status ? 'Usuario activo' : 'Usuario inactivo' }}
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-times"
+          label="Cancelar"
+          class="p-button-outlined cancel-btn"
+          (click)="closeDialog()">
+        </button>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-save"
+          [label]="saving ? 'Guardando...' : 'Guardar'"
+          class="save-btn"
+          [disabled]="saving"
+          (click)="saveUser()">
+        </button>
+      </div>
+    </div>
+  </p-dialog>
+
+  <!-- Dialog eliminar -->
+  <p-dialog
+    [(visible)]="deleteDialogVisible"
+    [modal]="true"
+    [closable]="false"
+    [dismissableMask]="false"
+    [style]="{ width: '500px', maxWidth: '95vw' }"
+    [showHeader]="false"
+    styleClass="delete-dialog">
+
+    <div class="delete-shell">
+      <div class="delete-icon">
+        <i class="pi pi-trash"></i>
+      </div>
+
+      <h2>Eliminar usuario</h2>
+      <p *ngIf="selectedUser">
+        Vas a eliminar el usuario <strong>{{ selectedUser.username }}</strong>.
+        Esta acción no se puede deshacer.
+      </p>
+
+      <div class="delete-summary" *ngIf="selectedUser">
+        <span><b>Nombre:</b> {{ selectedUser.fullName }}</span>
+        <span><b>Correo:</b> {{ selectedUser.email || 'Sin correo' }}</span>
+      </div>
+
+      <div class="dialog-actions dialog-actions--center">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-times"
+          label="Cancelar"
+          class="p-button-outlined cancel-btn"
+          (click)="closeDeleteDialog()">
+        </button>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-trash"
+          [label]="deleting ? 'Eliminando...' : 'Eliminar'"
+          class="delete-btn"
+          [disabled]="deleting"
+          (click)="deleteUser()">
+        </button>
+      </div>
+    </div>
+  </p-dialog>
+
+  <p-toast [style]="{ top: '90px' }"></p-toast>
 </div>
-
-<br>
-
-<div class="p-personas-controls">
-
-  <div class="p-personas-search">
-    <input type="text" pInputText placeholder="Buscar" [(ngModel)]="searchValue" (input)="filterTable()">
-  </div>
-
-  <div class="p-personas-filter">
-    <p-dropdown [options]="filterOptions" placeholder="seleccionar..." optionLabel="name" optionValue="name"
-      [showClear]="true" (onChange)="filterByRole($event.value)"></p-dropdown>
-  </div>
-
-</div>
-<p-table #dt [value]="roles" [rows]="10" [paginator]="true" [responsive]="true" [globalFilterFields]="globalFilterFields">
-
-  <ng-template pTemplate="header">
-    <tr>
-      <th pSortableColumn="id">ID</th>
-      <th pSortableColumn="userId.first_name">Nombres</th>
-      <th pSortableColumn="userId.last_name">Apellidos</th>
-      <th pSortableColumn="userId.email">Email</th>
-      <th pSortableColumn="userId.username">Usuario</th>
-      <th pSortableColumn="rolesId.name">Rol</th>
-    </tr>
-  </ng-template>
-
-  <ng-template pTemplate="body" let-role>
-    <tr pSelectableRow>
-      <td>{{ role.id }}</td>
-      <td>{{ role.userId.first_name }}</td>
-      <td>{{ role.userId.last_name }}</td>
-      <td>{{ role.userId.email }}</td>
-      <td>{{ role.userId.username }}</td>
-      <td>{{role.rolesId.name }}</td>
-    </tr>
-  </ng-template>
-</p-table>

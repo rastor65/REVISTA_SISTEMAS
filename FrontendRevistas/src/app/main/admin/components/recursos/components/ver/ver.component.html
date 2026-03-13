@@ -1,90 +1,368 @@
-<br>
-<br>
-<br>
-<h2 class="formacion-title">Recursos</h2>
-<br>
-<div class="resources-header">
-    <button pButton type="button" icon="pi pi-plus" label="Crear Recurso" class="p-button-outlined p-button-success"
-        (click)="showCreateDialog()"></button>
-</div>
+<div class="resources-page">
+  <section class="resources-hero">
+    <div class="resources-hero__content">
+      <span class="hero-badge">
+        <i class="pi pi-box"></i>
+        Navegación y permisos
+      </span>
 
-<p-dialog [(visible)]="dialogVisible" [baseZIndex]="10000" [modal]="true" [responsive]="true" class="custom-dialog"
-    [showHeader]="false" [closable]="false" [dismissableMask]="false">
+      <h1>Gestión de recursos del sistema</h1>
+      <p>
+        Administra los recursos funcionales del sistema, incluyendo títulos, rutas,
+        jerarquía, método, iconos y enlaces asociados.
+      </p>
+    </div>
+
+    <div class="resources-hero__stats">
+      <div class="hero-stat">
+        <span class="hero-stat__label">Total recursos</span>
+        <strong>{{ totalResources }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span class="hero-stat__label">Recursos raíz</span>
+        <strong>{{ totalRootResources }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span class="hero-stat__label">Con enlace</span>
+        <strong>{{ totalWithLink }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="resources-toolbar">
+    <div class="search-box">
+      <span class="search-box__icon">
+        <i class="pi pi-search"></i>
+      </span>
+
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="searchText"
+        (ngModelChange)="buscarRecursos()"
+        placeholder="Buscar por título, path, método, icono o link" />
+    </div>
+
+    <div class="toolbar-actions">
+      <div class="view-switch">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-bars"
+          class="view-btn"
+          [ngClass]="{ 'view-btn--active': currentView === 'table' }"
+          (click)="toggleView('table')">
+        </button>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-th-large"
+          class="view-btn"
+          [ngClass]="{ 'view-btn--active': currentView === 'cards' }"
+          (click)="toggleView('cards')">
+        </button>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        label="Crear recurso"
+        class="p-button-success create-btn"
+        (click)="showCreateDialog()">
+      </button>
+    </div>
+  </section>
+
+  <div *ngIf="cargandoVista" class="state-box">
+    <div class="state-box__spinner"></div>
+    <h3>Cargando recursos</h3>
+    <p>Estamos consultando la estructura funcional del sistema.</p>
+  </div>
+
+  <ng-container *ngIf="!cargandoVista">
+    <div *ngIf="filteredResources.length > 0; else emptyState">
+      <div *ngIf="currentView === 'table'" class="table-shell">
+        <p-table
+          [value]="filteredResources"
+          dataKey="id"
+          [paginator]="true"
+          [rows]="8"
+          [rowsPerPageOptions]="[5,10,20,30]"
+          responsiveLayout="scroll">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Path</th>
+              <th>Padre</th>
+              <th>Método</th>
+              <th>Icono</th>
+              <th>Link</th>
+              <th>Tipo</th>
+              <th class="actions-col">Acciones</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-resource>
+            <tr>
+              <td>{{ resource.id }}</td>
+              <td class="table-title">{{ resource.titulo }}</td>
+              <td>{{ resource.path || '—' }}</td>
+              <td>{{ resource.id_padre || '—' }}</td>
+              <td>{{ resource.method || '—' }}</td>
+              <td>
+                <span class="icon-preview" *ngIf="resource.icono; else noIcon">
+                  <i [class]="resource.icono"></i>
+                  <span>{{ resource.icono }}</span>
+                </span>
+                <ng-template #noIcon>—</ng-template>
+              </td>
+              <td>{{ resource.link || '—' }}</td>
+              <td>
+                <span class="type-chip" [ngClass]="!resource.id_padre || resource.id_padre === 0 ? 'type-root' : 'type-child'">
+                  {{ getResourceType(resource) }}
+                </span>
+              </td>
+              <td class="actions-col">
+                <div class="action-group">
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-pencil"
+                    class="p-button-outlined edit-btn"
+                    (click)="showEditDialog(resource)">
+                  </button>
+
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-trash"
+                    class="p-button-outlined delete-btn"
+                    (click)="showDeleteDialog(resource)">
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <div *ngIf="currentView === 'cards'" class="cards-grid">
+        <article class="resource-card" *ngFor="let resource of filteredResources">
+          <div class="resource-card__top">
+            <span class="type-chip" [ngClass]="!resource.id_padre || resource.id_padre === 0 ? 'type-root' : 'type-child'">
+              {{ getResourceType(resource) }}
+            </span>
+
+            <span class="resource-id">#{{ resource.id }}</span>
+          </div>
+
+          <h3>{{ resource.titulo }}</h3>
+
+          <div class="resource-card__meta">
+            <div class="meta-item">
+              <span class="meta-label">Path</span>
+              <span class="meta-value">{{ resource.path || '—' }}</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Padre</span>
+              <span class="meta-value">{{ resource.id_padre || '—' }}</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Método</span>
+              <span class="meta-value">{{ resource.method || '—' }}</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Link</span>
+              <span class="meta-value">{{ resource.link || '—' }}</span>
+            </div>
+
+            <div class="meta-item" *ngIf="resource.icono">
+              <span class="meta-label">Icono</span>
+              <span class="icon-preview">
+                <i [class]="resource.icono"></i>
+                <span>{{ resource.icono }}</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="resource-card__actions">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              class="p-button-outlined edit-btn"
+              (click)="showEditDialog(resource)">
+            </button>
+
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              class="p-button-outlined delete-btn"
+              (click)="showDeleteDialog(resource)">
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div class="state-box state-box--empty">
+      <div class="empty-icon">
+        <i class="pi pi-box"></i>
+      </div>
+      <h3>No se encontraron recursos</h3>
+      <p>No hay resultados para la búsqueda actual o aún no existen recursos registrados.</p>
+    </div>
+  </ng-template>
+
+  <p-dialog
+    [(visible)]="dialogVisible"
+    [baseZIndex]="10000"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: dialogType === 'delete' ? '34rem' : '40rem', maxWidth: '92vw' }"
+    [showHeader]="false"
+    [closable]="false"
+    [dismissableMask]="false">
+
     <ng-container *ngIf="dialogType === 'create' || dialogType === 'edit'">
-        <h2 class="dialog-header">{{ dialogType === 'create' ? 'Crear Recurso' : 'Editar Recurso' }}</h2>
-        <div class="dialog-content">
+      <div class="form-dialog">
+        <div class="form-dialog__header">
+          <div>
+            <span class="hero-badge hero-badge--small">
+              {{ dialogType === 'create' ? 'Nuevo recurso' : 'Editar recurso' }}
+            </span>
+            <h2>{{ dialogType === 'create' ? 'Crear recurso del sistema' : 'Actualizar recurso del sistema' }}</h2>
+            <p>Define la configuración funcional y visual del recurso dentro del sistema.</p>
+          </div>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            class="p-button-text dialog-close-btn"
+            (click)="closeDialog()">
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <div class="field-block field-block--full">
             <label for="titulo">Título</label>
-            <input type="text" id="titulo" [(ngModel)]="selectedResource.titulo" class="p-inputtext" />
+            <input id="titulo" [(ngModel)]="selectedResource.titulo" class="p-inputtext" placeholder="Nombre del recurso">
+          </div>
 
+          <div class="field-block">
             <label for="path">Path</label>
-            <input type="text" id="path" [(ngModel)]="selectedResource.path" class="p-inputtext" />
+            <input id="path" [(ngModel)]="selectedResource.path" class="p-inputtext" placeholder="/api/recurso">
+          </div>
 
+          <div class="field-block">
             <label for="id_padre">ID Padre</label>
-            <input type="number" id="id_padre" [(ngModel)]="selectedResource.id_padre" class="p-inputtext" />
+            <input id="id_padre" type="number" [(ngModel)]="selectedResource.id_padre" class="p-inputtext" placeholder="0">
+          </div>
 
-            <label for="method">Method</label>
-            <input type="text" id="method" [(ngModel)]="selectedResource.method" class="p-inputtext" />
+          <div class="field-block">
+            <label for="method">Método</label>
+            <input id="method" [(ngModel)]="selectedResource.method" class="p-inputtext" placeholder="GET / POST">
+          </div>
 
+          <div class="field-block">
             <label for="icono">Icono</label>
-            <input type="text" id="icono" [(ngModel)]="selectedResource.icono" class="p-inputtext" />
+            <input id="icono" [(ngModel)]="selectedResource.icono" class="p-inputtext" placeholder="pi pi-home">
+          </div>
 
+          <div class="field-block field-block--full">
             <label for="link">Link</label>
-            <input type="text" id="link" [(ngModel)]="selectedResource.link" class="p-inputtext" />
+            <input id="link" [(ngModel)]="selectedResource.link" class="p-inputtext" placeholder="/dashboard/inicio">
+          </div>
         </div>
-        <div class="dialog-footer">
-            <button pButton type="button" icon="pi pi-check"
-                label="{{ dialogType === 'create' ? 'Guardar' : 'Guardar Cambios' }}"
-                class="p-button-outlined p-button-success" (click)="saveResource()"></button>
-            <button pButton type="button" icon="pi pi-times" label="Cancelar" class="p-button-outlined p-button-danger"
-                (click)="cancelEdit()"></button>
+
+        <div class="form-dialog__actions">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            label="Cancelar"
+            class="p-button-secondary p-button-outlined"
+            (click)="closeDialog()">
+          </button>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-save"
+            [label]="dialogType === 'create' ? 'Guardar recurso' : 'Guardar cambios'"
+            class="p-button-success"
+            [disabled]="guardandoRecurso || !formularioValido"
+            (click)="saveResource()">
+          </button>
         </div>
+      </div>
     </ng-container>
 
     <ng-container *ngIf="dialogType === 'delete'">
-        <h2 class="dialog-header">Eliminar Recurso</h2>
-        <div class="p-dialog-content">
-            <p>¿Estás seguro de que deseas eliminar este recurso?</p>
+      <div class="delete-dialog">
+        <div class="delete-dialog__icon">
+          <i class="pi pi-exclamation-triangle"></i>
         </div>
-        <div class="p-dialog-footer">
-            <button pButton type="button" icon="pi pi-check" label="Confirmar Eliminación"
-                class="p-button-outlined p-button-danger" (click)="deleteResource(selectedResource.id)"></button>
-            <button pButton type="button" icon="pi pi-times" label="Cancelar"
-                class="p-button-outlined p-button-secondary" (click)="cancelEdit()"></button>
+
+        <div class="delete-dialog__content">
+          <span class="hero-badge hero-badge--danger">Confirmación</span>
+          <h2>¿Deseas eliminar este recurso?</h2>
+          <p>Esta acción retirará el recurso del sistema. Verifica que no esté asociado a roles críticos.</p>
+
+          <div class="delete-dialog__summary">
+            <div class="summary-row">
+              <span>Título</span>
+              <strong>{{ selectedResource.titulo }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Path</span>
+              <strong>{{ selectedResource.path || '—' }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Link</span>
+              <strong>{{ selectedResource.link || '—' }}</strong>
+            </div>
+          </div>
         </div>
+
+        <div class="delete-dialog__actions">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            label="Cancelar"
+            class="p-button-secondary p-button-outlined"
+            (click)="closeDialog()">
+          </button>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-trash"
+            label="Confirmar eliminación"
+            class="p-button-danger"
+            [disabled]="eliminandoRecurso"
+            (click)="deleteResource(selectedResource.id)">
+          </button>
+        </div>
+      </div>
     </ng-container>
-</p-dialog>
+  </p-dialog>
 
-
-
-<p-table [value]="resources" dataKey="id" [paginator]="true" [rows]="10" [responsive]="true" [sortMode]="'single'">
-    <ng-template pTemplate="header">
-        <tr>
-            <th pSortableColumn="id">ID</th>
-            <th pSortableColumn="titulo">Título</th>
-            <th pSortableColumn="path">Path</th>
-            <th pSortableColumn="id_padre">ID Padre</th>
-            <th pSortableColumn="method">Method</th>
-            <th pSortableColumn="icono">Icono</th>
-            <th pSortableColumn="link">Link</th>
-            <th>Acciones</th>
-        </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-resource>
-        <tr>
-            <td>{{ resource.id }}</td>
-            <td>{{ resource.titulo }}</td>
-            <td>{{ resource.path }}</td>
-            <td>{{ resource.id_padre }}</td>
-            <td>{{ resource.method }}</td>
-            <td><i [ngClass]="resource.icono"></i></td>
-            <td>{{ resource.link }}</td>
-            <td>
-                <button pButton type="button" icon="pi pi-pencil" label="Editar"
-                    class="p-button-outlined p-button-warning" (click)="showEditDialog(resource)"></button>
-                <button pButton type="button" icon="pi pi-trash" label="Eliminar"
-                    class="p-button-outlined p-button-danger" (click)="showDeleteDialog(resource)"></button>
-            </td>
-        </tr>
-    </ng-template>
-</p-table>
+  <p-toast [style]="{ top: '90px' }"></p-toast>
+</div>

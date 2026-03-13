@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SolicitudesService } from 'src/app/core/services/solicitudes/solicitudes.service';
-import { MessageService } from 'primeng/api';
-import { ConfirmationService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Seguimiento, Pasos, Solicitud, Estado } from 'src/app/models/solicitudes';
 import { UserService } from 'src/app/core/services/usuarios/user.service';
@@ -23,7 +22,7 @@ interface RecentSeguimiento {
 export class VerComponent implements OnInit {
   API_URI = environment.API_URI;
 
-  seguimientoSeleccionado: any;
+  seguimientoSeleccionado: Seguimiento | null = null;
 
   solicitudes: Solicitud[] = [];
   pasos: Pasos[] = [];
@@ -31,30 +30,25 @@ export class VerComponent implements OnInit {
   estados: Estado[] = [];
   responsables: any[] = [];
 
-  mostrarDialogo: boolean = false;
-  searchText: string = '';
+  mostrarDialogo = false;
+  searchText = '';
   expandedCard: number | null = null;
-
-  totalPasos: number = 7;
 
   filteredSeguimientos: Seguimiento[] = [];
   groupedSeguimientos: GroupedSeguimientos = {};
   recentSeguimientos: RecentSeguimiento = {};
 
-  displayEditar: boolean = false;
-  displayEliminar: boolean = false;
+  displayEditar = false;
+  displayEliminar = false;
   seguimientoForm: FormGroup;
 
   correccionesFile: File | null = null;
-  FormatoFile: File | null = null;
-  archivoSeleccionadoCorreciones: string = '';
-  archivoSeleccionadoFormato: string = '';
+  formatoFile: File | null = null;
+  archivoSeleccionadoCorreciones = '';
+  archivoSeleccionadoFormato = '';
 
-  // Flags de rol (calculados con TODOS los roles)
   isEditorJefe = false;
   isAsistenteEditorial = false;
-
-  // opcional: para debug
   roleNamesUser: string[] = [];
 
   constructor(
@@ -62,7 +56,7 @@ export class VerComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private formBuilder: FormBuilder,
-    private userService: UserService,
+    private userService: UserService
   ) {
     this.seguimientoForm = this.formBuilder.group({
       fecha_asignacion: [''],
@@ -77,8 +71,7 @@ export class VerComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    // Carga datos
+  ngOnInit(): void {
     this.obtenerResponsables();
     this.obtenerPasos();
     this.obtenerSolicitudes();
@@ -101,16 +94,32 @@ export class VerComponent implements OnInit {
         this.groupSeguimientos();
       },
       error: (err) => {
-        console.error('No se pudieron obtener roles del usuario (fast):', err);
+        console.error('No se pudieron obtener roles del usuario:', err);
         this.isEditorJefe = false;
         this.isAsistenteEditorial = false;
       }
     });
-
   }
 
-  // ✅ Regla de visibilidad: si es asistente, VE TODO (aunque también sea editor jefe).
-  // El filtro "solo visto bueno" aplica únicamente al editor jefe que NO es asistente.
+  get totalPasos(): number {
+    if (!this.pasos || this.pasos.length === 0) {
+      return 1;
+    }
+    return Math.max(...this.pasos.map((p) => Number(p.nivel) || 0), 1);
+  }
+
+  get totalSolicitudesVisibles(): number {
+    return this.getSortedGroupedKeys().filter((id) => this.canSeeSolicitud(id)).length;
+  }
+
+  get totalConVistoBueno(): number {
+    return this.solicitudes.filter((s) => !!s.visto_bueno).length;
+  }
+
+  get totalPendientesVistoBueno(): number {
+    return this.solicitudes.filter((s) => !s.visto_bueno).length;
+  }
+
   canSeeSolicitud(solicitudId: number): boolean {
     if (this.isAsistenteEditorial) return true;
     if (!this.isEditorJefe) return true;
@@ -122,15 +131,11 @@ export class VerComponent implements OnInit {
     return Number.isNaN(t) ? 0 : t;
   }
 
-  getAccordionHeaderClass(solicitudId: number): string {
-    return 'custom-accordion-header';
-  }
-
-  obtenerSeguimientos() {
+  obtenerSeguimientos(): void {
     this.solicitudesService.obtenerSeguimientos().subscribe({
       next: (data) => {
         this.seguimientos = data || [];
-        this.buscarSeguimientos(); // ✅ filtra + agrupa con data real
+        this.buscarSeguimientos();
       },
       error: (err) => {
         console.error('Error al obtener seguimientos:', err);
@@ -146,6 +151,7 @@ export class VerComponent implements OnInit {
     this.solicitudesService.obtenerPasos().subscribe(
       (pasos: any[]) => {
         this.pasos = pasos || [];
+        this.groupSeguimientos();
       },
       (error: any) => {
         console.error('Error al obtener los pasos de solicitud', error);
@@ -157,7 +163,6 @@ export class VerComponent implements OnInit {
     this.solicitudesService.obtenerSolicitudes().subscribe(
       (solicitudes: any[]) => {
         this.solicitudes = solicitudes || [];
-        // ✅ por si el usuario escribe búsqueda por título antes de que lleguen solicitudes
         this.buscarSeguimientos();
       },
       (error: any) => {
@@ -179,57 +184,67 @@ export class VerComponent implements OnInit {
 
   obtenerResponsables(): void {
     this.userService.ObtenerUsuarios().subscribe(
-      response => {
+      (response) => {
         this.responsables = response || [];
         this.buscarSeguimientos();
       },
-      error => {
+      (error) => {
         console.error('Error al obtener los responsables:', error);
       }
     );
   }
 
-  getSolicitudNombre(solicitudId: number): string {
+  getSolicitudNombre(solicitudId?: number | null): string {
+    if (solicitudId === undefined || solicitudId === null) {
+      return 'Solicitud no encontrada';
+    }
+
     const solicitud = this.solicitudes.find(s => s.id === solicitudId);
-    return solicitud ? solicitud.titulo_articulo : '';
+    return solicitud ? solicitud.titulo_articulo : 'Solicitud no encontrada';
   }
 
   getSolicitudVistoBueno(solicitudId: number): boolean {
-    const solicitud = this.solicitudes.find(s => s.id === solicitudId);
+    const solicitud = this.solicitudes.find((s) => s.id === solicitudId);
     return solicitud ? !!solicitud.visto_bueno : false;
   }
 
   getPasoNombre(pasoId?: number): string {
     if (pasoId === undefined || pasoId === null) return 'No disponible';
-    const paso = this.pasos.find(p => p.id === pasoId);
+    const paso = this.pasos.find((p) => p.id === pasoId);
     return paso ? paso.nombre : 'No disponible';
   }
 
   getPorcentaje(pasoId: number): number {
-    const pasoEncontrado = this.pasos.find(p => p.id === pasoId);
-    if (pasoEncontrado) {
-      const nivelNumerico = Number(pasoEncontrado.nivel) || 0;
-      const porcentaje = (nivelNumerico / this.totalPasos) * 100;
-      return parseFloat(porcentaje.toFixed(2));
-    }
-    return 0;
+    const pasoEncontrado = this.pasos.find((p) => p.id === pasoId);
+    if (!pasoEncontrado) return 0;
+
+    const nivelNumerico = Number(pasoEncontrado.nivel) || 0;
+    const porcentaje = (nivelNumerico / this.totalPasos) * 100;
+    return Math.round(porcentaje);
   }
 
   getNivelActual(pasoId: number): number {
-    const pasoEncontrado = this.pasos.find(p => p.id === pasoId);
-    if (pasoEncontrado) return Number(pasoEncontrado.nivel) || 0;
-    return 0;
+    const pasoEncontrado = this.pasos.find((p) => p.id === pasoId);
+    return pasoEncontrado ? Number(pasoEncontrado.nivel) || 0 : 0;
   }
 
   getEstadoNombre(estadoId: number): string {
-    const estado = this.estados.find(e => e.id === estadoId);
-    return estado ? estado.nombre : '';
+    const estado = this.estados.find((e) => e.id === estadoId);
+    return estado ? estado.nombre : 'Sin estado';
+  }
+
+  getEstadoClase(estadoId: number): string {
+    const nombre = this.getEstadoNombre(estadoId).toLowerCase();
+
+    if (nombre.includes('pendiente')) return 'badge-warning';
+    if (nombre.includes('acept') || nombre.includes('aprob')) return 'badge-success';
+    if (nombre.includes('rechaz')) return 'badge-danger';
+    return 'badge-soft';
   }
 
   getResponsableNombre(responsableId: number): string {
-    // Tu HTML usa optionValue="user", así que aquí asumes que responsableId == responsable.user
-    const responsable = this.responsables.find(r => r.user === responsableId);
-    return responsable ? `${responsable.nombres} ${responsable.apellidos}` : '';
+    const responsable = this.responsables.find((r) => r.user === responsableId);
+    return responsable ? `${responsable.nombres} ${responsable.apellidos}` : 'No asignado';
   }
 
   obtenerNombreArchivo(rutaArchivo: string | null): string {
@@ -238,12 +253,12 @@ export class VerComponent implements OnInit {
     return partes[partes.length - 1];
   }
 
-  abrirDescarga(seguimientoId: string) {
+  abrirDescarga(seguimientoId: string | number): void {
     const correcionesUrl = `${this.API_URI}/solicitud/seguimiento/seguimientos/${seguimientoId}/descargar/correciones/`;
     window.open(correcionesUrl, '_blank');
   }
 
-  abrirFormato(seguimientoId: string) {
+  abrirFormato(seguimientoId: string | number): void {
     const formatoUrl = `${this.API_URI}/solicitud/seguimiento/seguimientos/${seguimientoId}/descargar/formato_evaluacion/`;
     window.open(formatoUrl, '_blank');
   }
@@ -260,16 +275,23 @@ export class VerComponent implements OnInit {
     this.filteredSeguimientos = (this.seguimientos || []).filter((seguimiento) => {
       const titulo = (this.getSolicitudNombre(seguimiento.solicitudId) || '').toLowerCase();
       const responsable = (this.getResponsableNombre(seguimiento.responsableId) || '').toLowerCase();
-      return titulo.includes(txt) || responsable.includes(txt);
+      const estado = (this.getEstadoNombre(seguimiento.estado_seguimiento) || '').toLowerCase();
+      const paso = (this.getPasoNombre(seguimiento.pasos_seguimiento) || '').toLowerCase();
+
+      return (
+        titulo.includes(txt) ||
+        responsable.includes(txt) ||
+        estado.includes(txt) ||
+        paso.includes(txt)
+      );
     });
 
     this.groupSeguimientos();
   }
 
-  groupSeguimientos() {
+  groupSeguimientos(): void {
     const list = [...(this.filteredSeguimientos || [])];
 
-    // Agrupar por solicitudId
     this.groupedSeguimientos = list
       .sort((a, b) => this.toTime(a.fecha_programacion) - this.toTime(b.fecha_programacion))
       .reduce((acc: GroupedSeguimientos, seguimiento) => {
@@ -277,18 +299,22 @@ export class VerComponent implements OnInit {
         return acc;
       }, {});
 
-    // Seguimiento más reciente por solicitud
-    this.recentSeguimientos = Object.keys(this.groupedSeguimientos).reduce((acc: RecentSeguimiento, solicitudId: string) => {
-      const arr = this.groupedSeguimientos[+solicitudId] || [];
-      const sorted = [...arr].sort((a, b) => this.toTime(b.fecha_programacion) - this.toTime(a.fecha_programacion));
-      if (sorted.length) acc[+solicitudId] = sorted[0];
-      return acc;
-    }, {});
+    this.recentSeguimientos = Object.keys(this.groupedSeguimientos).reduce(
+      (acc: RecentSeguimiento, solicitudId: string) => {
+        const arr = this.groupedSeguimientos[+solicitudId] || [];
+        const sorted = [...arr].sort(
+          (a, b) => this.toTime(b.fecha_programacion) - this.toTime(a.fecha_programacion)
+        );
+        if (sorted.length) acc[+solicitudId] = sorted[0];
+        return acc;
+      },
+      {}
+    );
   }
 
   getSortedGroupedKeys(): number[] {
     return Object.keys(this.groupedSeguimientos)
-      .map(key => +key)
+      .map((key) => +key)
       .sort((a, b) => {
         const fechaA = this.groupedSeguimientos[a]?.[0]?.fecha_programacion;
         const fechaB = this.groupedSeguimientos[b]?.[0]?.fecha_programacion;
@@ -300,9 +326,18 @@ export class VerComponent implements OnInit {
     const fechaProgramacion = new Date(seguimiento.fecha_programacion);
     const hoy = new Date();
 
-    const diferenciaDias = Math.ceil((fechaProgramacion.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
-    const diasTotal = Math.ceil((fechaProgramacion.getTime() - new Date(seguimiento.fecha_asignacion).getTime()) / (1000 * 60 * 60 * 24));
-    const porcentajeDiasRestantes = diasTotal > 0 ? (diferenciaDias / diasTotal) * 100 : 0;
+    const diferenciaDias = Math.ceil(
+      (fechaProgramacion.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    const diasTotal = Math.ceil(
+      (fechaProgramacion.getTime() -
+        new Date(seguimiento.fecha_asignacion).getTime()) /
+      (1000 * 60 * 60 * 24)
+    );
+
+    const porcentajeDiasRestantes =
+      diasTotal > 0 ? (diferenciaDias / diasTotal) * 100 : 0;
 
     const esReciente = seguimiento.id === this.recentSeguimientos[solicitudId]?.id;
 
@@ -344,17 +379,27 @@ export class VerComponent implements OnInit {
     this.seguimientoSeleccionado = seguimiento;
   }
 
-  OcultarEditarSeguimiento() {
+  OcultarEditarSeguimiento(): void {
     this.displayEditar = false;
+    this.seguimientoSeleccionado = null;
+    this.correccionesFile = null;
+    this.formatoFile = null;
+    this.archivoSeleccionadoCorreciones = '';
+    this.archivoSeleccionadoFormato = '';
   }
 
-  OcultarEliminarSeguimiento() {
+  OcultarEliminarSeguimiento(): void {
     this.displayEliminar = false;
+    this.seguimientoSeleccionado = null;
   }
 
-  EditarSeguimiento() {
+  EditarSeguimiento(): void {
     if (!this.seguimientoForm.valid) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor completa los campos requeridos correctamente' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Por favor completa los campos requeridos correctamente'
+      });
       return;
     }
 
@@ -367,13 +412,19 @@ export class VerComponent implements OnInit {
     const pasoContenido = this.obtenerContenidoPaso(pasoId);
 
     if (!pasoContenido) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo obtener el contenido del paso' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo obtener el contenido del paso'
+      });
       return;
     }
 
     const diasProgramacion = parseInt(pasoContenido.dias_programacion, 10) || 0;
     const fechaActual = new Date();
-    const fechaProgramacion = new Date(fechaActual.getTime() + (diasProgramacion * 24 * 60 * 60 * 1000));
+    const fechaProgramacion = new Date(
+      fechaActual.getTime() + diasProgramacion * 24 * 60 * 60 * 1000
+    );
 
     const fechaProgramacionISO = fechaProgramacion.toISOString().split('T')[0];
     const fechaActualISO = fechaActual.toISOString().split('T')[0];
@@ -381,7 +432,7 @@ export class VerComponent implements OnInit {
     const formData = new FormData();
 
     if (this.correccionesFile) formData.append('correciones', this.correccionesFile);
-    if (this.FormatoFile) formData.append('formato_evaluacion', this.FormatoFile);
+    if (this.formatoFile) formData.append('formato_evaluacion', this.formatoFile);
 
     formData.append('id', String(seguimientoEditado.id));
     formData.append('fecha_asignacion', fechaActualISO);
@@ -399,51 +450,71 @@ export class VerComponent implements OnInit {
     this.solicitudesService.actualizarSeguimientoConArchivo(formData).subscribe({
       next: () => {
         this.mostrarDialogo = false;
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Seguimiento actualizado correctamente' });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Seguimiento actualizado correctamente'
+        });
         this.obtenerSeguimientos();
         this.OcultarEditarSeguimiento();
       },
       error: (error: any) => {
         console.error('Error al actualizar el seguimiento:', error);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al actualizar el seguimiento' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Ocurrió un error al actualizar el seguimiento'
+        });
       }
     });
   }
 
   obtenerContenidoPaso(pasoId: number): any {
-    return this.pasos.find(paso => paso.id === pasoId);
+    return this.pasos.find((paso) => paso.id === pasoId);
   }
 
-  onCorreccionesFileSelected(event: any) {
+  onCorreccionesFileSelected(event: any): void {
     this.correccionesFile = event.target.files?.[0] || null;
     this.archivoSeleccionadoCorreciones = this.correccionesFile?.name || '';
   }
 
-  onFormatoFileSelected(event: any) {
-    this.FormatoFile = event.target.files?.[0] || null;
-    this.archivoSeleccionadoFormato = this.FormatoFile?.name || '';
+  onFormatoFileSelected(event: any): void {
+    this.formatoFile = event.target.files?.[0] || null;
+    this.archivoSeleccionadoFormato = this.formatoFile?.name || '';
   }
 
-  EliminarSeguimiento() {
+  EliminarSeguimiento(): void {
     if (!this.seguimientoSeleccionado) return;
 
     this.solicitudesService.eliminarSeguimiento(this.seguimientoSeleccionado.id).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Seguimiento eliminado' });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Seguimiento eliminado'
+        });
         this.OcultarEliminarSeguimiento();
         this.obtenerSeguimientos();
       },
       error: (error) => {
         console.error('Error al eliminar el seguimiento', error);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar el seguimiento' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo eliminar el seguimiento'
+        });
       }
     });
   }
 
-  toggleVistoBueno(solicitudId: number, checked: boolean) {
-    const s = this.solicitudes.find(x => x.id === solicitudId);
+  toggleVistoBueno(solicitudId: number, checked: boolean): void {
+    const s = this.solicitudes.find((x) => x.id === solicitudId);
     if (!s) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Solicitud no encontrada en memoria' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Solicitud no encontrada en memoria'
+      });
       return;
     }
 
@@ -460,8 +531,12 @@ export class VerComponent implements OnInit {
         });
       },
       error: (err) => {
-        console.error('Error PUT visto_bueno:', err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el visto bueno' });
+        console.error('Error actualizando visto_bueno:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo actualizar el visto bueno'
+        });
       }
     });
   }

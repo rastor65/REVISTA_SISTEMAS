@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { UsuariosService } from 'src/app/core/services/dashboard/usuarios.service';
-import { HttpHeaders } from '@angular/common/http';
-import { HttpErrorResponse } from '@angular/common/http';
-import { HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
+
+import { UsuariosService } from 'src/app/core/services/dashboard/usuarios.service';
 import { Usuario, Rol, UserRole } from 'src/app/models/user/person';
 
 @Component({
@@ -11,175 +12,226 @@ import { Usuario, Rol, UserRole } from 'src/app/models/user/person';
   templateUrl: './ver.component.html',
   styleUrls: ['./ver.component.css']
 })
-
 export class VerComponent implements OnInit {
   usuarios: Usuario[] = [];
   roles: Rol[] = [];
-  usuarioSeleccionado: Usuario = {} as Usuario;
-  AllRoles: any[] = [];
-  usuarioRolesMap: Map<string, string[]> = new Map<string, string[]>();
-  filteredUsuarios: Usuario[] = [];
+  allRoles: UserRole[] = [];
+
+  usuarioSeleccionado: Usuario | null = null;
+
   rolesSeleccionados: number[] = [];
-  nuevosRolesSeleccionados: number[] = [];
+  rolesIniciales: number[] = [];
+
+  userSearchText = '';
+  rolesSearchText = '';
+
+  cargandoVista = true;
+  guardandoCambios = false;
 
   constructor(
     private usuariosService: UsuariosService,
-    private messageService: MessageService,
-    private http: HttpClient
-  ) { }
+    private messageService: MessageService
+  ) {}
 
-  ngOnInit() {
-    this.usuariosService.getUsers().subscribe(data => {
-      this.usuarios = data as Usuario[];
-    });
-
-    this.usuariosService.getRoles().subscribe(data => {
-      this.roles = data as Rol[];
-    });
-    this.procesarRoles();
-    this.getRol();
-
+  ngOnInit(): void {
+    this.cargarDatos();
   }
 
-  searchUsuarios(event: { query: string }): void {
-    const filtered: Usuario[] = this.usuarios.filter(usuario =>
-      usuario.username.toLowerCase().includes(event.query.toLowerCase())
-    );
-    this.filteredUsuarios = filtered;
+  get totalUsuarios(): number {
+    return this.usuarios.length;
   }
 
-  getRol() {
-    this.usuariosService.getAllRoles().subscribe(response => {
-      this.AllRoles = response;
-      this.procesarRoles();
-    });
+  get totalRoles(): number {
+    return this.roles.length;
   }
 
-  procesarRoles() {
-    this.usuarioRolesMap.clear();
+  get totalAsignaciones(): number {
+    return this.allRoles.filter((x) => x.status !== false).length;
+  }
 
-    this.AllRoles.forEach((userRole) => {
-      const usuario = userRole.userId.username;
+  get tieneUsuarioSeleccionado(): boolean {
+    return !!this.usuarioSeleccionado?.id;
+  }
 
-      // Aquí, verificamos si `rolesId` es un objeto o un arreglo
-      // y extraemos los nombres de los roles en consecuencia.
-      const roles = Array.isArray(userRole.rolesId)
-        ? userRole.rolesId.map((rol: any) => rol.name)
-        : [userRole.rolesId.name];
+  get nombreUsuarioSeleccionado(): string {
+    return this.usuarioSeleccionado?.username || 'Sin usuario seleccionado';
+  }
 
-      if (this.usuarioRolesMap.has(usuario)) {
-        const rolesExistente = this.usuarioRolesMap.get(usuario) || [];
-        rolesExistente.push(...roles);
-        this.usuarioRolesMap.set(usuario, Array.from(new Set(rolesExistente)));
-      } else {
-        this.usuarioRolesMap.set(usuario, Array.from(new Set(roles)));
+  get rolesUsuarioSeleccionadoTexto(): string {
+    if (!this.usuarioSeleccionado) {
+      return 'Selecciona un usuario para visualizar sus roles.';
+    }
+
+    const nombres = this.getRoleNamesForUser(this.usuarioSeleccionado.id);
+    return nombres.length ? nombres.join(', ') : 'Sin roles asignados';
+  }
+
+  get totalRolesSeleccionados(): number {
+    return this.rolesSeleccionados.length;
+  }
+
+  get hayCambiosPendientes(): boolean {
+    if (!this.usuarioSeleccionado) {
+      return false;
+    }
+
+    const actuales = [...this.rolesSeleccionados].sort((a, b) => a - b);
+    const iniciales = [...this.rolesIniciales].sort((a, b) => a - b);
+
+    return JSON.stringify(actuales) !== JSON.stringify(iniciales);
+  }
+
+  get usuariosFiltrados(): Usuario[] {
+    const term = this.userSearchText.trim().toLowerCase();
+
+    const lista = !term
+      ? [...this.usuarios]
+      : this.usuarios.filter((usuario) => {
+          const username = (usuario.username || '').toLowerCase();
+          const email = (usuario.email || '').toLowerCase();
+          return username.includes(term) || email.includes(term);
+        });
+
+    return lista.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+  }
+
+  get rolesFiltrados(): Rol[] {
+    const term = this.rolesSearchText.trim().toLowerCase();
+
+    const lista = !term
+      ? [...this.roles]
+      : this.roles.filter((rol) => (rol.name || '').toLowerCase().includes(term));
+
+    return lista.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  }
+
+  cargarDatos(): void {
+    this.cargandoVista = true;
+
+    forkJoin({
+      usuarios: this.usuariosService.getUsers(),
+      roles: this.usuariosService.getRoles(),
+      asignaciones: this.usuariosService.getAllRoles()
+    }).subscribe({
+      next: ({ usuarios, roles, asignaciones }) => {
+        this.usuarios = (usuarios || []) as Usuario[];
+        this.roles = (roles || []) as Rol[];
+        this.allRoles = (asignaciones || []) as UserRole[];
+        this.cargandoVista = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar la información:', error);
+        this.cargandoVista = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No fue posible cargar usuarios, roles y asignaciones.'
+        });
       }
     });
-
-
-    // Actualizar rolesSeleccionados con los roles del usuario seleccionado
-    const rolesDelUsuarioSeleccionado = this.usuarioRolesMap.get(this.usuarioSeleccionado.username) || [];
-    this.rolesSeleccionados = rolesDelUsuarioSeleccionado.map((rolNombre: string) => {
-      const rolEncontrado = this.roles.find((rol) => rol.name === rolNombre);
-      return rolEncontrado ? rolEncontrado.id : null;
-    }) as number[];
-
   }
 
-  onUsuarioSelect(event: any) {
-    this.usuarioSeleccionado = event;
-    this.rolesSeleccionados = this.getAllRolesForUsuario(this.usuarioSeleccionado.id);
+  seleccionarUsuario(usuario: Usuario): void {
+    this.usuarioSeleccionado = usuario;
+    this.rolesSearchText = '';
+
+    const rolesActuales = this.getAllRolesForUsuario(usuario.id);
+    this.rolesSeleccionados = [...rolesActuales];
+    this.rolesIniciales = [...rolesActuales];
+  }
+
+  limpiarSeleccion(): void {
+    this.usuarioSeleccionado = null;
+    this.rolesSeleccionados = [];
+    this.rolesIniciales = [];
+    this.rolesSearchText = '';
+  }
+
+  usuarioEstaSeleccionado(usuarioId: number): boolean {
+    return this.usuarioSeleccionado?.id === usuarioId;
   }
 
   getAllRolesForUsuario(usuarioId: number): number[] {
-    const rolesSeleccionados: number[] = [];
-
-    // Filtrar los roles que corresponden al usuario seleccionado
-    const rolesUsuario = this.AllRoles.filter((rol) => rol.userId.id === usuarioId);
-
-    // Extraer solo los identificadores de roles y agregarlos a rolesSeleccionados
-    rolesUsuario.forEach((rol) => {
-      rolesSeleccionados.push(rol.rolesId.id);
-    });
-
-    return rolesSeleccionados;
+    return this.allRoles
+      .filter(
+        (registro) =>
+          registro.userId?.id === usuarioId &&
+          registro.rolesId?.id &&
+          registro.status !== false
+      )
+      .map((registro) => registro.rolesId.id);
   }
 
-  isRolSelected(rol: any): boolean {
-    return this.rolesSeleccionados.some((selectedRoleId) => selectedRoleId === rol.id);
+  getRoleNamesForUser(usuarioId: number): string[] {
+    const nombres = this.allRoles
+      .filter(
+        (registro) =>
+          registro.userId?.id === usuarioId &&
+          registro.rolesId?.name &&
+          registro.status !== false
+      )
+      .map((registro) => registro.rolesId.name);
+
+    return Array.from(new Set(nombres)).sort((a, b) => a.localeCompare(b));
   }
 
+  getRolesCountForUser(usuarioId: number): number {
+    return this.getRoleNamesForUser(usuarioId).length;
+  }
 
-  onRolChange(rol: any, isChecked: boolean) {
-    const rolId = Number(rol.id); // Convertir el id del rol a número
-
-    if (isChecked) {
-      // Si el rol no estaba seleccionado previamente, agregarlo a la lista de roles seleccionados
-      if (!this.rolesSeleccionados.includes(rolId)) {
-        this.rolesSeleccionados.push(rolId);
-        this.asignarRol();
-      }
-    } else {
-      // Si el rol estaba seleccionado previamente, eliminarlo de la lista de roles seleccionados
-      const index = this.rolesSeleccionados.indexOf(rolId);
-      if (index !== -1) {
-        this.rolesSeleccionados.splice(index, 1);
-        this.deleteUserRole(rol);
-        return;
-      }
+  getRolesPreviewForUser(usuarioId: number): string {
+    const roles = this.getRoleNamesForUser(usuarioId);
+    if (!roles.length) {
+      return 'Sin roles asignados';
     }
+    if (roles.length <= 3) {
+      return roles.join(', ');
+    }
+    return `${roles.slice(0, 3).join(', ')} y ${roles.length - 3} más`;
   }
 
+  isRolSelected(rol: Rol): boolean {
+    return this.rolesSeleccionados.includes(rol.id);
+  }
 
+  toggleRol(rolId: number): void {
+    const index = this.rolesSeleccionados.indexOf(rolId);
 
-  asignarRol() {
-  
-    // Verificar si hay algún rol seleccionado
-    if (this.rolesSeleccionados.length === 0) {
+    if (index >= 0) {
+      this.rolesSeleccionados.splice(index, 1);
+    } else {
+      this.rolesSeleccionados.push(rolId);
+    }
+
+    this.rolesSeleccionados = [...this.rolesSeleccionados];
+  }
+
+  seleccionarTodosLosRoles(): void {
+    if (!this.usuarioSeleccionado) {
       return;
     }
-  
-    const rolId = this.rolesSeleccionados[this.rolesSeleccionados.length - 1]; // Obtener el último rol seleccionado
-  
-    // Verificar si el usuario ya tiene asignado este rol (incluso si está oculto)
-    const existingUserRole = this.buscarUserRole(this.usuarioSeleccionado.id, rolId);
-  
-    if (existingUserRole) {
-      // Si el rol existe y está oculto, cambiar su estado a true
-      if (!existingUserRole.status) {
-        existingUserRole.status = true;
-        const userRoleId = existingUserRole.id;
-        this.actualizarUserRole(userRoleId, existingUserRole);
-      }
-    } else {
-      // Si el rol no existe, agregarlo como un nuevo registro
-      const body = {
-        status: true,
-        userId: this.usuarioSeleccionado.id,
-        rolesId: rolId // Enviar solo el ID del rol seleccionado
-      };
-  
-      const bodyString = JSON.stringify(body);
-  
-      const httpOptions = {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json'
-        })
-      };
-  
-      this.usuariosService.asignarRoles(bodyString, httpOptions).subscribe(
-        response => {
-          this.messageService.add({ severity: 'success', summary: `Rol asignado satisfactoriamente` });
-  
-          // Recargar los roles del usuario después de agregar uno nuevo
-          this.getAllRolesForUsuario(this.usuarioSeleccionado.id);
-        },
-        error => {
-          console.error("Error al asignar el rol", error);
-          this.messageService.add({ severity: 'error', summary: 'Error al asignar el rol' });
-        }
-      );
+    this.rolesSeleccionados = this.roles.map((rol) => rol.id);
+  }
+
+  quitarTodosLosRoles(): void {
+    if (!this.usuarioSeleccionado) {
+      return;
     }
+    this.rolesSeleccionados = [];
+  }
+
+  restablecerSeleccion(): void {
+    if (!this.usuarioSeleccionado) {
+      return;
+    }
+    this.rolesSeleccionados = [...this.rolesIniciales];
+  }
+
+  buscarUserRole(usuarioId: number, rolId: number): UserRole | undefined {
+    return this.allRoles.find(
+      (userRole: UserRole) =>
+        userRole.userId?.id === usuarioId && userRole.rolesId?.id === rolId
+    );
   }
 
   actualizarUserRole(userRoleId: number, updatedUserRole: UserRole) {
@@ -188,59 +240,134 @@ export class VerComponent implements OnInit {
       userId: updatedUserRole.userId.id,
       rolesId: updatedUserRole.rolesId.id
     };
-  
+
     const bodyString = JSON.stringify(body);
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
     };
-  
-    this.usuariosService.actualizarUserRole(userRoleId, bodyString, httpOptions).subscribe(
-      response => {
-        this.messageService.add({ severity: 'success', summary: `Rol actualizado satisfactoriamente` });
-  
-        // Recargar los roles del usuario después de actualizar el estado del rol
-        this.getAllRolesForUsuario(this.usuarioSeleccionado.id);
-      },
-      error => {
-        console.error("Error al actualizar el rol", error);
-        this.messageService.add({ severity: 'error', summary: 'Error al actualizar el rol' });
-      }
-    );
-  }
-  
-  
-  buscarUserRole(usuarioId: number, rolId: number): UserRole | undefined {
-    return this.AllRoles.find((userRole: UserRole) =>
-      userRole.userId.id === usuarioId && userRole.rolesId.id === rolId
-    );
+
+    return this.usuariosService.actualizarUserRole(userRoleId, bodyString, httpOptions);
   }
 
-  deleteUserRole(rol: any) {
-    const usuarioIdSeleccionado = this.usuarioSeleccionado.id;
-    const rolIdSeleccionado = rol.id;
+  crearAsignacionRol(usuarioId: number, rolId: number) {
+    const body = {
+      status: true,
+      userId: usuarioId,
+      rolesId: rolId
+    };
 
-    const userRoleAEliminar = this.buscarUserRole(usuarioIdSeleccionado, rolIdSeleccionado);
+    const bodyString = JSON.stringify(body);
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
 
-    if (!userRoleAEliminar) {
-      console.error('No se encontró ningún registro de user_roles coincidente');
+    return this.usuariosService.asignarRoles(bodyString, httpOptions);
+  }
+
+  eliminarAsignacionRol(userRoleId: number) {
+    return this.usuariosService.deleteUserRole(userRoleId);
+  }
+
+  guardarRolesUsuario(): void {
+    if (!this.usuarioSeleccionado?.id) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Selecciona un usuario',
+        detail: 'Debes seleccionar un usuario antes de guardar.'
+      });
       return;
     }
 
-    const userRoleId = userRoleAEliminar.id;
+    if (!this.hayCambiosPendientes) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Sin cambios',
+        detail: 'No hay cambios pendientes por guardar.'
+      });
+      return;
+    }
 
-    this.usuariosService.deleteUserRole(userRoleId).subscribe(
-      () => {
-        this.messageService.add({ severity: 'success', summary: `Rol eliminado satisfactoriamente` });
-        // Realizar las acciones necesarias después de eliminar el user_roles.
-      },
-      (error: HttpErrorResponse) => {
-        console.error('Error al eliminar el user_roles', error);
-        this.messageService.add({ severity: 'error', summary: 'Error al eliminar el rol' });
-        // Realizar el manejo de errores adecuado.
-      }
+    this.guardandoCambios = true;
+
+    const usuarioId = this.usuarioSeleccionado.id;
+
+    const rolesAAgregar = this.rolesSeleccionados.filter(
+      (rolId) => !this.rolesIniciales.includes(rolId)
     );
+
+    const rolesAEliminar = this.rolesIniciales.filter(
+      (rolId) => !this.rolesSeleccionados.includes(rolId)
+    );
+
+    const operacionesAgregar = rolesAAgregar.map((rolId) => {
+      const existingUserRole = this.buscarUserRole(usuarioId, rolId);
+
+      if (existingUserRole) {
+        if (!existingUserRole.status) {
+          existingUserRole.status = true;
+          return this.actualizarUserRole(existingUserRole.id, existingUserRole);
+        }
+        return of(null);
+      }
+
+      return this.crearAsignacionRol(usuarioId, rolId);
+    });
+
+    const operacionesEliminar = rolesAEliminar.map((rolId) => {
+      const userRoleAEliminar = this.buscarUserRole(usuarioId, rolId);
+
+      if (!userRoleAEliminar) {
+        return of(null);
+      }
+
+      return this.eliminarAsignacionRol(userRoleAEliminar.id);
+    });
+
+    const operaciones = [...operacionesAgregar, ...operacionesEliminar];
+
+    if (!operaciones.length) {
+      this.guardandoCambios = false;
+      return;
+    }
+
+    forkJoin(operaciones)
+      .pipe(switchMap(() => this.usuariosService.getAllRoles()))
+      .subscribe({
+        next: (response) => {
+          this.allRoles = response as UserRole[];
+          const rolesActuales = this.getAllRolesForUsuario(usuarioId);
+          this.rolesSeleccionados = [...rolesActuales];
+          this.rolesIniciales = [...rolesActuales];
+          this.guardandoCambios = false;
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Roles actualizados',
+            detail: 'Los roles del usuario se guardaron correctamente.'
+          });
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Error al actualizar roles del usuario', error);
+          this.guardandoCambios = false;
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No fue posible guardar los cambios de roles.'
+          });
+        }
+      });
+  }
+
+  trackByUserId(index: number, usuario: Usuario): number {
+    return usuario.id;
+  }
+
+  trackByRoleId(index: number, rol: Rol): number {
+    return rol.id;
   }
 }
-

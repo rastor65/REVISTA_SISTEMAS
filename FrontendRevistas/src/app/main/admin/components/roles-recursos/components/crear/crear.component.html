@@ -1,77 +1,260 @@
-<br>
-<br>
-<br>
-<br>
-<h2 class="formacion-title">Asignar recursos</h2>
+<div class="permissions-page">
+  <section class="permissions-hero">
+    <div class="permissions-hero__content">
+      <span class="hero-badge">
+        <i class="pi pi-sitemap"></i>
+        Control de acceso
+      </span>
 
-<div class="role-resource-container">
-  <form (submit)="agregarRecursoRol()">
-    <div class="input-container">
-      <label for="selectRole">Seleccionar un Rol:</label>
-      <select id="selectRole" name="selectedRole" [(ngModel)]="selectedRole">
-        <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
-      </select>
+      <h1>Asignación de recursos a roles</h1>
+      <p>
+        Administra de forma clara y profesional los permisos del sistema.
+        Selecciona un rol, filtra recursos y activa o desactiva accesos con una experiencia mucho más cómoda.
+      </p>
     </div>
-    <div class="input-container">
-      <label for="selectResource">Seleccionar un Recurso:</label>
-      <select id="selectResource" name="selectedResource" [(ngModel)]="selectedResource">
-        <option *ngFor="let resource of flattenedResources" [value]="resource.id">{{ resource.titulo }}</option>
-      </select>
-    </div>
-    <button type="submit">Asignar recurso</button>
-  </form>
-</div>
 
-<div class="table-container">
-  <table class="resource-role-table">
-    <thead>
-      <tr>
-        <th>RECURSOS</th>
-        <th [colSpan]="roles.length">ROLES</th>
-      </tr>
-      <tr>
-        <th>Titulo</th>
-        <th *ngFor="let role of roles">{{ role.name }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <ng-container *ngFor="let resource of resources">
-        <tr [ngClass]="{ 'row': true }">
-          <td>{{ resource.titulo }}</td>
-          <td *ngFor="let role of roles">
-            <label class="custom-checkbox">
-              <input type="checkbox" [checked]="hasAccess(role.id, resource.id)">
-              <span class="custom-label"></span>
-            </label>
-          </td>
-        </tr>
-        <!-- Mostrar "hijos" -->
-        <ng-container *ngFor="let childResource of resource.children">
-          <tr [ngClass]="{ 'child-row': true }">
-            <td>{{ childResource.titulo }}</td>
-            <td *ngFor="let role of roles">
-              <label class="custom-checkbox">
-                <input type="checkbox" [checked]="hasAccess(role.id, childResource.id)">
-                <span class="custom-label"></span>
-              </label>
-            </td>
-          </tr>
-          <!-- Mostrar "nietos" -->
-          <ng-container *ngFor="let grandchildResource of childResource.children">
-            <tr [ngClass]="{ 'grandchild-row': true }">
-              <td>{{ grandchildResource.titulo }}</td>
-              <td *ngFor="let role of roles">
-                <label class="custom-checkbox">
-                  <input type="checkbox" [checked]="hasAccess(role.id, grandchildResource.id)">
-                  <span class="custom-label"></span>
-                </label>
-              </td>
-            </tr>
-          </ng-container>
-        </ng-container>
+    <div class="permissions-hero__stats">
+      <div class="hero-stat">
+        <span>Roles</span>
+        <strong>{{ totalRoles }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span>Recursos</span>
+        <strong>{{ totalResources }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span>Asignaciones</span>
+        <strong>{{ totalAssignments }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <div class="permissions-layout">
+    <!-- PANEL DE ROLES -->
+    <aside class="roles-panel">
+      <div class="panel-header">
+        <h2>Roles del sistema</h2>
+        <p>Haz clic en un rol para cargar su configuración de acceso.</p>
+      </div>
+
+      <div *ngIf="cargandoVista" class="state-card">
+        <div class="loader"></div>
+        <h3>Cargando roles</h3>
+        <p>Estamos preparando la configuración del sistema.</p>
+      </div>
+
+      <ng-container *ngIf="!cargandoVista">
+        <div class="roles-list">
+          <button
+            type="button"
+            class="role-card"
+            *ngFor="let role of roles"
+            [ngClass]="{ 'role-card--active': selectedRole === role.id }"
+            (click)="selectRole(role.id)">
+
+            <div class="role-card__top">
+              <h3>{{ role.name }}</h3>
+              <span>{{ getAssignedCountByRole(role.id) }}</span>
+            </div>
+
+            <p>recursos asignados</p>
+          </button>
+        </div>
       </ng-container>
-    </tbody>
-  </table>
-</div>
+    </aside>
 
-<p-toast [style]="{ top: '80px' }"></p-toast>
+    <!-- PANEL PRINCIPAL -->
+    <section class="studio-panel">
+      <div class="panel-header">
+        <h2>Panel de permisos</h2>
+        <p>Visualiza la jerarquía de recursos y administra accesos del rol seleccionado.</p>
+      </div>
+
+      <div *ngIf="cargandoVista" class="state-card state-card--large">
+        <div class="loader"></div>
+        <h3>Cargando recursos</h3>
+        <p>Consultando estructura de recursos y permisos asignados.</p>
+      </div>
+
+      <ng-container *ngIf="!cargandoVista">
+        <div *ngIf="selectedRoleObject; else emptyRoleState" class="studio-content">
+          <div class="selected-role-panel">
+            <div class="selected-role-panel__main">
+              <span class="eyebrow">Rol activo</span>
+              <h2>{{ selectedRoleName }}</h2>
+              <p>
+                Este rol tiene actualmente {{ assignedCountForSelectedRole }} recurso(s) asignado(s).
+              </p>
+            </div>
+
+            <div class="selected-role-panel__stats">
+              <div class="mini-stat">
+                <span>Visibles</span>
+                <strong>{{ totalVisibleResources }}</strong>
+              </div>
+
+              <div class="mini-stat">
+                <span>Activos visibles</span>
+                <strong>{{ totalVisibleAssignedResources }}</strong>
+              </div>
+
+              <div class="mini-stat">
+                <span>Total del rol</span>
+                <strong>{{ assignedCountForSelectedRole }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbar-panel">
+            <div class="search-box">
+              <i class="pi pi-search"></i>
+              <input
+                pInputText
+                type="text"
+                [(ngModel)]="searchText"
+                placeholder="Buscar por título, path o link" />
+            </div>
+
+            <div class="toolbar-actions">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-check-circle"
+                label="Activar visibles"
+                class="p-button-success p-button-outlined toolbar-btn"
+                [disabled]="actualizandoAcceso"
+                (click)="toggleVisibleResources(true)">
+              </button>
+
+              <button
+                pButton
+                type="button"
+                icon="pi pi-times-circle"
+                label="Desactivar visibles"
+                class="p-button-danger p-button-outlined toolbar-btn"
+                [disabled]="actualizandoAcceso"
+                (click)="toggleVisibleResources(false)">
+              </button>
+
+              <button
+                pButton
+                type="button"
+                icon="pi pi-filter-slash"
+                label="Limpiar filtro"
+                class="p-button-secondary p-button-outlined toolbar-btn"
+                (click)="clearSearch()">
+              </button>
+            </div>
+          </div>
+
+          <div class="hierarchy-stats">
+            <div class="hierarchy-card hierarchy-card--root">
+              <span>Recursos raíz</span>
+              <strong>{{ totalRootResources }}</strong>
+            </div>
+
+            <div class="hierarchy-card hierarchy-card--child">
+              <span>Recursos hijos</span>
+              <strong>{{ totalChildResources }}</strong>
+            </div>
+
+            <div class="hierarchy-card hierarchy-card--nested">
+              <span>Niveles anidados</span>
+              <strong>{{ totalNestedResources }}</strong>
+            </div>
+          </div>
+
+          <div class="resources-shell">
+            <div class="resources-shell__header">
+              <h3>Recursos disponibles</h3>
+              <span>{{ filteredFlatResources.length }} resultado(s)</span>
+            </div>
+
+            <div *ngIf="filteredFlatResources.length === 0" class="empty-results">
+              <i class="pi pi-inbox"></i>
+              <p>No se encontraron recursos con el filtro actual.</p>
+            </div>
+
+            <div *ngIf="filteredFlatResources.length > 0" class="resources-list">
+              <div
+                class="resource-row"
+                *ngFor="let resource of filteredFlatResources"
+                [ngClass]="{
+                  'resource-row--root': resource.level === 0,
+                  'resource-row--child': resource.level === 1,
+                  'resource-row--nested': resource.level >= 2
+                }">
+
+                <div class="resource-row__accent"></div>
+
+                <div class="resource-row__body">
+                  <div class="resource-row__left" [style.paddingLeft.px]="16 + (resource.level * 24)">
+                    <div class="resource-icon">
+                      <i [class]="getFallbackIcon(resource)"></i>
+                    </div>
+
+                    <div class="resource-content">
+                      <div class="resource-content__top">
+                        <h4>{{ resource.titulo }}</h4>
+
+                        <span class="level-pill">
+                          {{ getLevelLabel(resource.level) }}
+                        </span>
+
+                        <span
+                          class="access-pill"
+                          [ngClass]="hasAccess(selectedRole, resource.id) ? 'access-pill--on' : 'access-pill--off'">
+                          {{ hasAccess(selectedRole, resource.id) ? 'Con acceso' : 'Sin acceso' }}
+                        </span>
+                      </div>
+
+                      <div class="resource-content__meta">
+                        <span *ngIf="resource.path">
+                          <i class="pi pi-sitemap"></i>
+                          {{ resource.path }}
+                        </span>
+
+                        <span *ngIf="resource.link">
+                          <i class="pi pi-link"></i>
+                          {{ resource.link }}
+                        </span>
+
+                        <span *ngIf="resource.icono">
+                          <i [class]="resource.icono"></i>
+                          {{ resource.icono }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="resource-row__right">
+                    <label class="switch">
+                      <input
+                        type="checkbox"
+                        [checked]="hasAccess(selectedRole, resource.id)"
+                        [disabled]="isSavingAccess(selectedRole, resource.id) || actualizandoAcceso"
+                        (change)="onAccessChange(resource, $event)">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #emptyRoleState>
+          <div class="state-card state-card--large">
+            <i class="pi pi-lock state-icon"></i>
+            <h3>Selecciona un rol</h3>
+            <p>Elige un rol desde el panel izquierdo para comenzar a administrar sus recursos.</p>
+          </div>
+        </ng-template>
+      </ng-container>
+    </section>
+  </div>
+
+  <p-toast [style]="{ top: '90px' }"></p-toast>
+</div>

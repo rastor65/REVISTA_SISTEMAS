@@ -19,14 +19,12 @@ import { DropdownModule } from 'primeng/dropdown';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ToastModule} from 'primeng/toast';
 import { CrearComponent } from './components/crear/crear.component';
-import { VerComponent } from './components/ver/ver.component';
 
 import { CardModule } from 'primeng/card';
 
 @NgModule({
   declarations: [
     CrearComponent,
-    VerComponent,
   ],
   imports: [
     CommonModule,

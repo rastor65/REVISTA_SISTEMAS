@@ -1,65 +1,321 @@
-<br>
-<br>
-<br>
-<div class="roles-container">
-    <h2 class="formacion-title">Roles</h2><br>
-</div>
+<div class="roles-page">
+  <section class="roles-hero">
+    <div class="roles-hero__content">
+      <span class="hero-badge">
+        <i class="pi pi-shield"></i>
+        Seguridad y acceso
+      </span>
 
-
-<div class="create-button-container">
-    <button pButton type="button" icon="pi pi-plus" label="Crear Rol"
-        class="p-button-success p-button-outlined create-role-button" (click)="showCreateDialog()"></button>
-</div>
-<div class="roles-list">
-    <div *ngFor="let role of roles" class="role-card">
-        <div class="p-card">
-            <div class="role-header"><b>{{ role.name }}</b></div>
-            <div class="role-info">
-                <p>Creado en: {{ role.createdAt | date:'dd/MM/yyyy' }}</p>
-                <p>Actualizado en: {{ role.updateAt | date:'dd/MM/yyyy' }}</p>
-            </div>
-            <div class="role-actions">
-                <button pButton type="button" icon="pi pi-pencil" label="Editar"
-                    class="p-button-outlined p-button-secondary" (click)="showEditDialog(role)"></button>
-                <button pButton type="button" icon="pi pi-trash" label="Eliminar"
-                    class="p-button-outlined p-button-danger" (click)="showDeleteDialog(role)"></button>
-            </div>
-        </div>
+      <h1>Gestión de roles del sistema</h1>
+      <p>
+        Administra los perfiles de acceso que estructuran los permisos dentro de la plataforma.
+        Desde aquí puedes crear, editar y eliminar los roles disponibles.
+      </p>
     </div>
-</div>
 
-<p-dialog header="{{ dialogHeader }}" [(visible)]="dialogVisible" [baseZIndex]="10000" [modal]="true"
-    [responsive]="true" [styleClass]="'custom-dialog'" [style]="{width: '25vw', top: '30px'}" [showHeader]="false"
-    [closable]="false" [dismissableMask]="false">
+    <div class="roles-hero__stats">
+      <div class="hero-stat">
+        <span class="hero-stat__label">Total roles</span>
+        <strong>{{ totalRoles }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span class="hero-stat__label">Activos</span>
+        <strong>{{ totalActivos }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span class="hero-stat__label">Inactivos</span>
+        <strong>{{ totalInactivos }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="roles-toolbar">
+    <div class="search-box">
+      <span class="search-box__icon">
+        <i class="pi pi-search"></i>
+      </span>
+
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="searchText"
+        (ngModelChange)="buscarRoles()"
+        placeholder="Buscar por nombre, estado o fecha" />
+    </div>
+
+    <div class="toolbar-actions">
+      <div class="view-switch">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-bars"
+          class="view-btn"
+          [ngClass]="{ 'view-btn--active': currentView === 'table' }"
+          (click)="toggleView('table')">
+        </button>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-th-large"
+          class="view-btn"
+          [ngClass]="{ 'view-btn--active': currentView === 'cards' }"
+          (click)="toggleView('cards')">
+        </button>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        label="Crear rol"
+        class="p-button-success create-btn"
+        (click)="showCreateDialog()">
+      </button>
+    </div>
+  </section>
+
+  <div *ngIf="cargandoVista" class="state-box">
+    <div class="state-box__spinner"></div>
+    <h3>Cargando roles</h3>
+    <p>Estamos consultando la configuración actual de perfiles del sistema.</p>
+  </div>
+
+  <ng-container *ngIf="!cargandoVista">
+    <div *ngIf="filteredRoles.length > 0; else emptyState">
+      <div *ngIf="currentView === 'table'" class="table-shell">
+        <p-table
+          [value]="filteredRoles"
+          [paginator]="true"
+          [rows]="8"
+          [rowsPerPageOptions]="[5,10,20,30]"
+          responsiveLayout="scroll">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Creado en</th>
+              <th>Actualizado en</th>
+              <th class="actions-col">Acciones</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-role>
+            <tr>
+              <td class="table-title">{{ role.name }}</td>
+              <td>
+                <span class="status-chip" [ngClass]="getEstadoClase(role)">
+                  {{ getEstadoTexto(role) }}
+                </span>
+              </td>
+              <td>{{ role.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td>{{ role.updateAt | date:'dd/MM/yyyy' }}</td>
+              <td class="actions-col">
+                <div class="action-group">
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-pencil"
+                    label="Editar"
+                    class="p-button-outlined edit-btn"
+                    (click)="showEditDialog(role)">
+                  </button>
+
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-trash"
+                    label="Eliminar"
+                    class="p-button-outlined delete-btn"
+                    (click)="showDeleteDialog(role)">
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <div *ngIf="currentView === 'cards'" class="cards-grid">
+        <article class="role-card" *ngFor="let role of filteredRoles">
+          <div class="role-card__top">
+            <span class="status-chip" [ngClass]="getEstadoClase(role)">
+              {{ getEstadoTexto(role) }}
+            </span>
+          </div>
+
+          <h3>{{ role.name }}</h3>
+
+          <div class="role-card__meta">
+            <div class="meta-item">
+              <span class="meta-label">Creado en</span>
+              <span class="meta-value">{{ role.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Actualizado en</span>
+              <span class="meta-value">{{ role.updateAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          <div class="role-card__actions">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              label="Editar"
+              class="p-button-outlined edit-btn"
+              (click)="showEditDialog(role)">
+            </button>
+
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              label="Eliminar"
+              class="p-button-outlined delete-btn"
+              (click)="showDeleteDialog(role)">
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div class="state-box state-box--empty">
+      <div class="empty-icon">
+        <i class="pi pi-users"></i>
+      </div>
+      <h3>No se encontraron roles</h3>
+      <p>No hay resultados para la búsqueda actual o aún no existen roles registrados.</p>
+    </div>
+  </ng-template>
+
+  <p-dialog
+    [(visible)]="dialogVisible"
+    [baseZIndex]="10000"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: dialogType === 'delete' ? '34rem' : '32rem', maxWidth: '92vw' }"
+    [showHeader]="false"
+    [closable]="false"
+    [dismissableMask]="false">
 
     <ng-container *ngIf="dialogType === 'create' || dialogType === 'edit'">
-        <div class="input-container">
-            <label for="roleName"><b>Nombre:</b></label>
-            <div>
-                <span class="p-input-icon-left">
-                    <i class="pi pi-user"></i>
-                    <input id="roleName" [(ngModel)]="selectedRole.name" placeholder="Nombre del Rol"
-                        class="p-inputtext p-input-with-icon">
-                </span>
-            </div>
-            <div class="button-container">
-                <button pButton icon="pi pi-check" label="Guardar" class="p-button-rounded p-button-success"
-                    (click)="saveRole()"></button>
-                <button pButton icon="pi pi-times" label="Cancelar" class="p-button-rounded p-button-danger"
-                    (click)="cancelEdit()"></button>
-            </div>
+      <div class="form-dialog">
+        <div class="form-dialog__header">
+          <div>
+            <span class="hero-badge hero-badge--small">
+              {{ dialogType === 'create' ? 'Nuevo rol' : 'Editar rol' }}
+            </span>
+            <h2>{{ dialogType === 'create' ? 'Crear rol del sistema' : 'Actualizar rol del sistema' }}</h2>
+            <p>Define el nombre del rol y su estado de disponibilidad dentro de la plataforma.</p>
+          </div>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            class="p-button-text dialog-close-btn"
+            (click)="closeDialog()">
+          </button>
         </div>
 
+        <div class="form-grid">
+          <div class="field-block field-block--full">
+            <label for="roleName">Nombre del rol</label>
+            <div class="input-shell">
+              <span class="input-icon"><i class="pi pi-user"></i></span>
+              <input
+                id="roleName"
+                [(ngModel)]="selectedRole.name"
+                placeholder="Ej. Editor jefe"
+                class="p-inputtext">
+            </div>
+          </div>
+
+          <div class="field-block field-block--full">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="selectedRole.status">
+              <span>Rol activo</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-dialog__actions">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            label="Cancelar"
+            class="p-button-secondary p-button-outlined"
+            (click)="closeDialog()">
+          </button>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-save"
+            [label]="dialogType === 'create' ? 'Guardar rol' : 'Guardar cambios'"
+            class="p-button-success"
+            [disabled]="guardandoRol || !formularioValido"
+            (click)="saveRole()">
+          </button>
+        </div>
+      </div>
     </ng-container>
 
     <ng-container *ngIf="dialogType === 'delete'">
-        <p>¿Estás seguro de que deseas eliminar este rol?</p>
-        <div class="button-container">
-            <button pButton icon="pi pi-check" label="Confirmar" class="p-button-rounded p-button-success"
-                (click)="deleteRole(selectedRole.id)"></button>
-            <button pButton icon="pi pi-times" label="Cancelar" class="p-button-rounded p-button-danger"
-                (click)="cancelDelete()"></button>
+      <div class="delete-dialog">
+        <div class="delete-dialog__icon">
+          <i class="pi pi-exclamation-triangle"></i>
         </div>
-    </ng-container>
 
-</p-dialog>
+        <div class="delete-dialog__content">
+          <span class="hero-badge hero-badge--danger">Confirmación</span>
+          <h2>¿Deseas eliminar este rol?</h2>
+          <p>Esta acción retirará el rol del sistema. Verifica que no esté siendo utilizado por procesos críticos.</p>
+
+          <div class="delete-dialog__summary">
+            <div class="summary-row">
+              <span>Nombre del rol</span>
+              <strong>{{ selectedRole.name }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Estado</span>
+              <strong>{{ getEstadoTexto(selectedRole) }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="delete-dialog__actions">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            label="Cancelar"
+            class="p-button-secondary p-button-outlined"
+            (click)="closeDialog()">
+          </button>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-trash"
+            label="Confirmar eliminación"
+            class="p-button-danger"
+            [disabled]="eliminandoRol"
+            (click)="deleteRole(selectedRole.id)">
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </p-dialog>
+
+  <p-toast [style]="{ top: '90px' }"></p-toast>
+</div>

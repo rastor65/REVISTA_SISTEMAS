@@ -4,9 +4,6 @@ import environ
 from django.core.mail import send_mail
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-#BASE_DIR = Path(__file__).resolve().parent.parent
-
 env = environ.Env(
     DEBUG=(bool, False)
 )
@@ -16,17 +13,11 @@ BASE_DIR2 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-a#xmneb=v#5y@$2c*sxhl3s2q58i1x8r*7(l8#!(4-4wp37^g&'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost','192.168.8.240','192.168.8.32', 'https://apprevista.uniguajira.edu.co/']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','192.168.8.240','192.168.8.32', 'https://apprevista.uniguajira.edu.co']
 
 #### ORIGIN
 
@@ -34,7 +25,7 @@ CORS_ORIGIN_WHITELIST = (
     "http://localhost:4200",
     "http://192.168.8.240:10780",
     "http://192.168.8.32:10780",
-    "https://apprevista.uniguajira.edu.co/"
+    "https://apprevista.uniguajira.edu.co",
 )
 
 CORS_ALLOW_METHODS = [

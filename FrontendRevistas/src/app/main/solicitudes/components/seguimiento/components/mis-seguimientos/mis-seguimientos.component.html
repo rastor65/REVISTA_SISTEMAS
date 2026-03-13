@@ -1,96 +1,313 @@
-<br>
-<br>
-<h2 class="solicitudes-title">Seguimiento de mis solicitudes</h2>
-<div class="seguimientos-container">
-    <div *ngIf="seguimientos.length > 0; else noSolicitudes">
-        <div *ngFor="let seguimiento of seguimientos" class="seguimiento-card">
-            <div class="shadow-2 surface-card border-round p-4 flex-1 text-center mb-6 md:mb-0">
-                <div class="mb-4">
-                    <img src="assets/logo_r.jpg" width="100" height="100" class="-mt-8">
-                    <span class="block text-900 mb-1 text-xl font-bold">{{ getSolicitudNombre(seguimiento.solicitudId)
-                        }}</span>
-                    <p class="text-600 m-0 font-medium">{{ getPasoNombre(seguimiento.pasos_seguimiento) }}</p>
-                    <span class="bg-blue-50 text-blue-400 border-round inline-flex py-1 px-2 text-sm">
-                        {{ getEstadoNombre(seguimiento.estado_seguimiento) }}
-                    </span>
+<div class="tracking-page">
+  <section class="tracking-hero">
+    <div class="tracking-hero__content">
+      <span class="page-badge">
+        <i class="pi pi-chart-line"></i>
+        Seguimiento editorial
+      </span>
+
+      <h1>Seguimiento de mis solicitudes</h1>
+      <p>
+        Consulta el avance de tus artículos enviados, revisa la etapa editorial actual
+        y accede a los resultados emitidos por los evaluadores cuando estén disponibles.
+      </p>
+    </div>
+
+    <div class="tracking-hero__stats">
+      <div class="metric-card">
+        <span>Solicitudes</span>
+        <strong>{{ totalSolicitudes }}</strong>
+      </div>
+
+      <div class="metric-card metric-card--info">
+        <span>Progreso promedio</span>
+        <strong>{{ progresoPromedio }}%</strong>
+      </div>
+
+      <div class="metric-card metric-card--success">
+        <span>Con resultados</span>
+        <strong>{{ solicitudesConResultado }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <div *ngIf="cargandoVista" class="state-box">
+    <div class="state-box__spinner"></div>
+    <h3>Cargando seguimiento</h3>
+    <p>Estamos consultando el avance de tus solicitudes en la plataforma.</p>
+  </div>
+
+  <ng-container *ngIf="!cargandoVista">
+    <div *ngIf="seguimientos.length > 0; else noSolicitudes" class="tracking-grid">
+      <article *ngFor="let seguimiento of seguimientos" class="tracking-card">
+        <div class="tracking-card__top">
+          <div class="tracking-card__logo">
+            <img src="assets/logo_r.jpg" alt="Revista" />
+          </div>
+
+          <div class="tracking-card__title-wrap">
+            <h3>{{ getSolicitudNombre(seguimiento.solicitudId) }}</h3>
+            <p>{{ getPasoNombre(seguimiento.pasos_seguimiento) }}</p>
+          </div>
+
+          <span class="status-pill" [ngClass]="getEstadoClase(seguimiento.estado_seguimiento)">
+            {{ getEstadoNombre(seguimiento.estado_seguimiento) }}
+          </span>
+        </div>
+
+        <div class="tracking-card__body">
+          <div class="tracking-meta">
+            <div class="meta-item">
+              <span>Nivel actual</span>
+              <strong>{{ getNivelActual(seguimiento.pasos_seguimiento) }}/{{ totalPasos }}</strong>
+            </div>
+
+            <div class="meta-item">
+              <span>Fecha de asignación</span>
+              <strong>{{ seguimiento.fecha_asignacion | date:'dd/MM/yyyy' }}</strong>
+            </div>
+          </div>
+
+          <div class="progress-block">
+            <div class="progress-block__header">
+              <span>Progreso editorial</span>
+              <strong>{{ getPorcentaje(seguimiento.pasos_seguimiento) }}%</strong>
+            </div>
+
+            <div class="progress-bar">
+              <div
+                class="progress-bar__fill"
+                [ngClass]="getPasoClase(seguimiento.pasos_seguimiento)"
+                [style.width.%]="getPorcentaje(seguimiento.pasos_seguimiento)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tracking-card__actions">
+          <button
+            pButton
+            type="button"
+            label="Ver resultados"
+            icon="pi pi-file-search"
+            class="results-btn"
+            (click)="mostrarDialogoCorreciones(seguimiento)">
+          </button>
+        </div>
+      </article>
+    </div>
+  </ng-container>
+
+  <ng-template #noSolicitudes>
+    <div class="state-box state-box--empty">
+      <div class="empty-icon">
+        <i class="pi pi-inbox"></i>
+      </div>
+      <h3>No se encontraron seguimientos</h3>
+      <p>
+        Una vez generes una solicitud, el sistema creará automáticamente las etapas de seguimiento
+        correspondientes y podrás consultarlas aquí.
+      </p>
+    </div>
+  </ng-template>
+
+  <p-dialog
+    [(visible)]="DialogoCorreciones"
+    [responsive]="true"
+    [style]="{ width: '68rem', maxWidth: '95vw' }"
+    [showHeader]="false"
+    [closable]="false"
+    [dismissableMask]="false"
+    [modal]="true">
+
+    <div class="results-dialog" *ngIf="seguimientoSeleccionado">
+      <div class="results-dialog__header">
+        <div>
+          <span class="page-badge page-badge--small">
+            Resultados de evaluación
+          </span>
+          <h2>{{ getSolicitudNombre(seguimientoSeleccionado.solicitudId) }}</h2>
+          <p>
+            Consulta el estado emitido por los evaluadores y descarga los documentos asociados al proceso.
+          </p>
+        </div>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-times"
+          class="dialog-close-btn"
+          (click)="cerrarDialogoCorreciones()">
+        </button>
+      </div>
+
+      <div *ngIf="cargandoResultados" class="dialog-loading">
+        <div class="state-box__spinner"></div>
+        <h3>Cargando resultados</h3>
+        <p>Estamos obteniendo la información de los evaluadores.</p>
+      </div>
+
+      <ng-container *ngIf="!cargandoResultados">
+        <div class="results-grid">
+          <section class="result-panel">
+            <div class="result-panel__header">
+              <h3>Evaluador #1</h3>
+              <p>Resultados de la primera revisión editorial.</p>
+            </div>
+
+            <ng-container *ngIf="revisionEvaluador1Seguimientos.length > 0; else sinEvaluador1">
+              <article class="review-card" *ngFor="let seguimiento of revisionEvaluador1Seguimientos">
+                <div class="review-card__top">
+                  <span class="status-pill" [ngClass]="getEstadoClase(seguimiento.estado_seguimiento)">
+                    {{ getEstadoNombre(seguimiento.estado_seguimiento) }}
+                  </span>
                 </div>
-                <div>
-                    <button pButton class="p-button-info p-button-outlined" label="correciones" icon="pi pi-list"
-                        (click)="mostrarDialogoCorreciones(seguimiento)"></button>
-                </div>
-                <div class="flex justify-content-between align-items-center">
-                    <span class="text-600">Progreso</span>
-                    <div class="border-round" style="height: 7px;">
-                        {{ getPorcentaje(seguimiento.pasos_seguimiento) }}%
+
+                <div class="review-downloads" *ngIf="!esPendiente(seguimiento.estado_seguimiento); else pendienteTemplate">
+                  <div class="download-row">
+                    <div class="download-info">
+                      <strong>Correcciones</strong>
+                      <small *ngIf="tieneCorrecciones(seguimiento); else noCorrecciones1">
+                        Documento disponible para descarga
+                      </small>
+                      <ng-template #noCorrecciones1>
+                        <small>No se adjuntaron correcciones para esta evaluación</small>
+                      </ng-template>
                     </div>
+
+                    <button
+                      *ngIf="tieneCorrecciones(seguimiento)"
+                      pButton
+                      type="button"
+                      icon="pi pi-download"
+                      label="Descargar"
+                      class="download-btn"
+                      (click)="descargarCorrecciones(seguimiento.id)">
+                    </button>
+                  </div>
+
+                  <div class="download-row">
+                    <div class="download-info">
+                      <strong>Formato de evaluación</strong>
+                      <small *ngIf="tieneFormato(seguimiento); else noFormato1">
+                        Documento disponible para descarga
+                      </small>
+                      <ng-template #noFormato1>
+                        <small>No se adjuntó formato de evaluación</small>
+                      </ng-template>
+                    </div>
+
+                    <button
+                      *ngIf="tieneFormato(seguimiento)"
+                      pButton
+                      type="button"
+                      icon="pi pi-download"
+                      label="Descargar"
+                      class="download-btn"
+                      (click)="descargarFormato(seguimiento.id)">
+                    </button>
+                  </div>
                 </div>
-                <div class="surface-300 mt-2 mb-3 border-round" style="height: 7px; width: 100%;">
-                    <div [style.width.%]="getPorcentaje(seguimiento.pasos_seguimiento)"
-                        class="bg-blue-500 h-full border-round"></div>
-                </div>
-                <div class="flex justify-content-between align-items-center">
-                    <span class="text-900">{{ getNivelActual(seguimiento.pasos_seguimiento) }}/{{ totalPasos }}</span>
-                    <span class="text-primary font-medium">{{ seguimiento.fecha_asignacion }}</span>
-                </div>
+              </article>
+            </ng-container>
+
+            <ng-template #sinEvaluador1>
+              <div class="empty-review">
+                <i class="pi pi-clock"></i>
+                <p>Aún no hay resultados registrados por el evaluador #1.</p>
+              </div>
+            </ng-template>
+          </section>
+
+          <section class="result-panel">
+            <div class="result-panel__header">
+              <h3>Evaluador #2</h3>
+              <p>Resultados de la segunda revisión editorial.</p>
             </div>
+
+            <ng-container *ngIf="revisionEvaluador2Seguimientos.length > 0; else sinEvaluador2">
+              <article class="review-card" *ngFor="let seguimiento of revisionEvaluador2Seguimientos">
+                <div class="review-card__top">
+                  <span class="status-pill" [ngClass]="getEstadoClase(seguimiento.estado_seguimiento)">
+                    {{ getEstadoNombre(seguimiento.estado_seguimiento) }}
+                  </span>
+                </div>
+
+                <div class="review-downloads" *ngIf="!esPendiente(seguimiento.estado_seguimiento); else pendienteTemplate">
+                  <div class="download-row">
+                    <div class="download-info">
+                      <strong>Correcciones</strong>
+                      <small *ngIf="tieneCorrecciones(seguimiento); else noCorrecciones2">
+                        Documento disponible para descarga
+                      </small>
+                      <ng-template #noCorrecciones2>
+                        <small>No se adjuntaron correcciones para esta evaluación</small>
+                      </ng-template>
+                    </div>
+
+                    <button
+                      *ngIf="tieneCorrecciones(seguimiento)"
+                      pButton
+                      type="button"
+                      icon="pi pi-download"
+                      label="Descargar"
+                      class="download-btn"
+                      (click)="descargarCorrecciones(seguimiento.id)">
+                    </button>
+                  </div>
+
+                  <div class="download-row">
+                    <div class="download-info">
+                      <strong>Formato de evaluación</strong>
+                      <small *ngIf="tieneFormato(seguimiento); else noFormato2">
+                        Documento disponible para descarga
+                      </small>
+                      <ng-template #noFormato2>
+                        <small>No se adjuntó formato de evaluación</small>
+                      </ng-template>
+                    </div>
+
+                    <button
+                      *ngIf="tieneFormato(seguimiento)"
+                      pButton
+                      type="button"
+                      icon="pi pi-download"
+                      label="Descargar"
+                      class="download-btn"
+                      (click)="descargarFormato(seguimiento.id)">
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </ng-container>
+
+            <ng-template #sinEvaluador2>
+              <div class="empty-review">
+                <i class="pi pi-clock"></i>
+                <p>Aún no hay resultados registrados por el evaluador #2.</p>
+              </div>
+            </ng-template>
+          </section>
         </div>
+
+        <ng-template #pendienteTemplate>
+          <div class="empty-review empty-review--pending">
+            <i class="pi pi-hourglass"></i>
+            <p>La evaluación aún se encuentra en estado pendiente.</p>
+          </div>
+        </ng-template>
+
+        <div class="results-dialog__footer">
+          <button
+            pButton
+            type="button"
+            label="Cerrar"
+            icon="pi pi-times"
+            class="close-results-btn"
+            (click)="cerrarDialogoCorreciones()">
+          </button>
+        </div>
+      </ng-container>
     </div>
+  </p-dialog>
 </div>
-
-<ng-template #noSolicitudes>
-    <p class="no-solicitudes-message">No se encontraron seguimientos, recuerde que una vez se genera una solicitud se
-        generaran automaticamente los debidos seguimientos.</p>
-</ng-template>
-
-<p-dialog header="Evaluaciones de la solicitud" [(visible)]="DialogoCorreciones" [responsive]="true"
-    [style]="{ 'width': '25%', 'min-height': '300px', 'top': '30px', 'text-align': 'center'}" [showHeader]="false"
-    [closable]="false" [dismissableMask]="false" [modal]="true">
-
-    <ng-container>
-
-        <h3>Resultados de evaluador #1</h3>
-        <div *ngFor="let seguimiento of revisionEvaluador1Seguimientos">
-            <div>
-                <p>Estado: <b>{{ getEstadoNombre(seguimiento.estado_seguimiento) }}</b></p>
-                <ng-container *ngIf="!esPendiente(seguimiento.estado_seguimiento)">
-                    <p>Correcciones:</p>
-                    <button pButton type="button" class="p-button-success p-button-outlined"
-                        (click)="descargarCorrecciones(seguimiento.id)" icon="pi pi-download" label="Descargar">
-                    </button>
-
-                    <p>Formato de evaluación:</p>
-                    <button pButton type="button" class="p-button-success p-button-outlined"
-                        (click)="descargarFormato(seguimiento.id)" icon="pi pi-download" label="Descargar">
-                    </button>
-                </ng-container>
-            </div>
-        </div>
-        <br>
-        <h3>Resultados de evaluador #2</h3>
-        <div *ngFor="let seguimiento of revisionEvaluador2Seguimientos">
-            <div>
-                <p>Estado: <b>{{ getEstadoNombre(seguimiento.estado_seguimiento) }}</b></p>
-                <ng-container *ngIf="!esPendiente(seguimiento.estado_seguimiento)">
-                    <p>Correcciones:</p>
-                    <button pButton type="button" class="p-button-success p-button-outlined"
-                        (click)="descargarCorrecciones(seguimiento.id)" icon="pi pi-download" label="Descargar">
-                    </button>
-
-                    <p>Formato de evaluación:</p>
-                    <button pButton type="button" class="p-button-success p-button-outlined"
-                        (click)="descargarFormato(seguimiento.id)" icon="pi pi-download" label="Descargar">
-                    </button>
-                </ng-container>
-            </div>
-        </div>
-
-    </ng-container>
-
-    <br>
-    <br>
-
-    <div style="bottom: 10px; right: 20px;">
-        <button pButton type="button" label="Cerrar" class="p-button-secondary p-button-outlined p-button-rounded"
-            style="width: 100%;" (click)="cerrarDialogoCorreciones()"></button>
-    </div>
-</p-dialog>

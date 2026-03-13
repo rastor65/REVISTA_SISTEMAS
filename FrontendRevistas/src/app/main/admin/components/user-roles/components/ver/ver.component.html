@@ -1,47 +1,223 @@
-<br>
-<br>
-<h2 class="formacion-title">ASIGNAR ROLES</h2>
+<div class="roles-admin-page">
+  <section class="roles-hero">
+    <div class="roles-hero__main">
+      <span class="hero-tag">
+        <i class="pi pi-shield"></i>
+        Gestión de acceso
+      </span>
 
-<div class="container">
-    <form class="form" name="usuarioForm">
+      <h1>Asignación de roles a usuarios</h1>
+      <p>
+        Selecciona un usuario desde el panel izquierdo y administra sus roles desde una interfaz clara,
+        rápida y fácil de usar.
+      </p>
+    </div>
 
-        <div class="form-group">
-            <label for="usuario">Usuario:</label>
-            <p-autoComplete name="usuario" [(ngModel)]="usuarioSeleccionado" [suggestions]="filteredUsuarios"
-                (completeMethod)="searchUsuarios($event)" field="username" [minLength]="1"
-                placeholder="Seleccionar usuario" (onSelect)="onUsuarioSelect($event)"></p-autoComplete>
+    <div class="roles-hero__stats">
+      <div class="stat-card">
+        <span>Usuarios</span>
+        <strong>{{ totalUsuarios }}</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Roles</span>
+        <strong>{{ totalRoles }}</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Asignaciones</span>
+        <strong>{{ totalAsignaciones }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <div class="roles-workspace">
+    <!-- PANEL IZQUIERDO -->
+    <aside class="users-panel">
+      <div class="panel-heading">
+        <h2>Usuarios</h2>
+        <p>Selecciona un usuario para gestionar sus permisos.</p>
+      </div>
+
+      <div *ngIf="cargandoVista" class="state-card">
+        <div class="loader"></div>
+        <h3>Cargando usuarios</h3>
+        <p>Estamos consultando la información del sistema.</p>
+      </div>
+
+      <ng-container *ngIf="!cargandoVista">
+        <div class="search-box">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="userSearchText"
+            placeholder="Buscar por usuario o correo" />
         </div>
 
-        <div class="form-group">
-            <label for="rol">Roles:</label>
-            <div *ngIf="usuarioSeleccionado.username">
-                <div *ngFor="let rol of roles">
-                    <p-checkbox [inputId]="'rol_' + rol.id" [value]="rol.id.toString()" [binary]="true"
-                        [label]="rol.name" [ngModel]="isRolSelected(rol)" (ngModelChange)="onRolChange(rol, $event)"
-                        [name]="'rol_' + rol.id"></p-checkbox>
-                </div>
+        <div class="users-list">
+          <button
+            type="button"
+            class="user-card"
+            *ngFor="let usuario of usuariosFiltrados; trackBy: trackByUserId"
+            [ngClass]="{ 'user-card--active': usuarioEstaSeleccionado(usuario.id) }"
+            (click)="seleccionarUsuario(usuario)">
+
+            <div class="user-card__top">
+              <div>
+                <h3>{{ usuario.username }}</h3>
+                <p>{{ usuario.email || 'Sin correo registrado' }}</p>
+              </div>
+
+              <span class="user-card__count">
+                {{ getRolesCountForUser(usuario.id) }}
+              </span>
             </div>
-        </div>
-    </form>
-    <p-messages></p-messages> <!-- Componente para mostrar los mensajes -->
-</div>
 
-<div class="user-list">
-    <h3>Listado de usuarios y sus roles</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Usuario</th>
-                <th>Rol (roles)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <ng-container *ngFor="let item of usuarioRolesMap | keyvalue">
-                <tr>
-                    <td>{{ item.key }}</td>
-                    <td>{{ item.value.join(', ') }}</td>
-                </tr>
-            </ng-container>
-        </tbody>
-    </table>
+            <div class="user-card__roles">
+              {{ getRolesPreviewForUser(usuario.id) }}
+            </div>
+          </button>
+        </div>
+      </ng-container>
+    </aside>
+
+    <!-- PANEL DERECHO -->
+    <section class="editor-panel">
+      <div class="panel-heading">
+        <h2>Editor de roles</h2>
+        <p>Agrega o quita roles y guarda los cambios cuando termines.</p>
+      </div>
+
+      <div *ngIf="cargandoVista" class="state-card">
+        <div class="loader"></div>
+        <h3>Cargando editor</h3>
+        <p>Preparando los datos de usuarios y roles.</p>
+      </div>
+
+      <ng-container *ngIf="!cargandoVista">
+        <div *ngIf="tieneUsuarioSeleccionado; else noUserSelected" class="editor-content">
+          <div class="selected-user-panel">
+            <div class="selected-user-panel__header">
+              <div>
+                <span class="mini-tag">Usuario seleccionado</span>
+                <h3>{{ nombreUsuarioSeleccionado }}</h3>
+              </div>
+
+              <button
+                pButton
+                type="button"
+                icon="pi pi-times"
+                class="p-button-text clear-btn"
+                (click)="limpiarSeleccion()">
+              </button>
+            </div>
+
+            <div class="selected-user-panel__summary">
+              <div class="summary-box">
+                <span>Roles actuales</span>
+                <p>{{ rolesUsuarioSeleccionadoTexto }}</p>
+              </div>
+
+              <div class="summary-box summary-box--accent">
+                <span>Seleccionados</span>
+                <p>{{ totalRolesSeleccionados }}</p>
+              </div>
+            </div>
+
+            <div class="bulk-actions">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-check-square"
+                label="Seleccionar todos"
+                class="p-button-outlined action-btn"
+                (click)="seleccionarTodosLosRoles()">
+              </button>
+
+              <button
+                pButton
+                type="button"
+                icon="pi pi-minus-circle"
+                label="Quitar todos"
+                class="p-button-outlined action-btn"
+                (click)="quitarTodosLosRoles()">
+              </button>
+
+              <button
+                pButton
+                type="button"
+                icon="pi pi-refresh"
+                label="Restaurar"
+                class="p-button-outlined action-btn"
+                (click)="restablecerSeleccion()">
+              </button>
+            </div>
+          </div>
+
+          <div class="search-box search-box--roles">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="rolesSearchText"
+              placeholder="Buscar rol por nombre" />
+          </div>
+
+          <div class="roles-grid">
+            <button
+              type="button"
+              class="role-tile"
+              *ngFor="let rol of rolesFiltrados; trackBy: trackByRoleId"
+              [ngClass]="{ 'role-tile--active': isRolSelected(rol) }"
+              (click)="toggleRol(rol.id)">
+
+              <div class="role-tile__left">
+                <div class="role-check" [ngClass]="{ 'role-check--active': isRolSelected(rol) }">
+                  <i class="pi" [ngClass]="isRolSelected(rol) ? 'pi-check' : 'pi-plus'"></i>
+                </div>
+
+                <div class="role-tile__text">
+                  <strong>{{ rol.name }}</strong>
+                  <span>ID {{ rol.id }}</span>
+                </div>
+              </div>
+
+              <span class="role-state" [ngClass]="{ 'role-state--active': isRolSelected(rol) }">
+                {{ isRolSelected(rol) ? 'Asignado' : 'Disponible' }}
+              </span>
+            </button>
+          </div>
+
+          <div class="save-panel">
+            <div class="save-panel__left">
+              <span class="save-status" [ngClass]="{ 'save-status--pending': hayCambiosPendientes }">
+                {{ hayCambiosPendientes ? 'Hay cambios pendientes por guardar' : 'Todo está sincronizado' }}
+              </span>
+            </div>
+
+            <button
+              pButton
+              type="button"
+              icon="pi pi-save"
+              label="Guardar cambios"
+              class="p-button-success save-btn"
+              [disabled]="guardandoCambios || !hayCambiosPendientes"
+              (click)="guardarRolesUsuario()">
+            </button>
+          </div>
+        </div>
+
+        <ng-template #noUserSelected>
+          <div class="state-card state-card--large">
+            <i class="pi pi-users state-icon"></i>
+            <h3>Selecciona un usuario</h3>
+            <p>Elige un usuario desde la lista para comenzar a administrar sus roles.</p>
+          </div>
+        </ng-template>
+      </ng-container>
+    </section>
+  </div>
+
+  <p-toast [style]="{ top: '90px' }"></p-toast>
 </div>

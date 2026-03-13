@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { RolesRoutingModule } from './roles-routing.module';
 import { VerComponent } from './components/ver/ver.component';
-import { CrearComponent } from './components/crear/crear.component';
 import { RolesComponent } from './roles.component';
 
 
@@ -19,7 +18,6 @@ import { DialogModule } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
 
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { EliminarComponent } from './components/eliminar/eliminar.component';
 
 
 import { CardModule } from 'primeng/card';
@@ -29,9 +27,7 @@ import { CardModule } from 'primeng/card';
 @NgModule({
   declarations: [
     VerComponent,
-    CrearComponent,
     RolesComponent,
-    EliminarComponent
   ],
   providers: [
     // ConfirmationService

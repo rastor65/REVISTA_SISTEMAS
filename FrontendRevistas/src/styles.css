@@ -121,3 +121,22 @@ body::-webkit-scrollbar-thumb {
   text-transform: uppercase;
   letter-spacing: 2px;
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  background: #eef3f8;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+app-root {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}

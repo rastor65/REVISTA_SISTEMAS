@@ -17,6 +17,7 @@ import { DialogModule } from 'primeng/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { DropdownModule } from 'primeng/dropdown';
+import { Checkbox, CheckboxModule } from 'primeng/checkbox';
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import { DropdownModule } from 'primeng/dropdown';
   imports: [
     CommonModule,
     PersonasRoutingModule,
+    CheckboxModule,
     
     FormsModule,
     ReactiveFormsModule,

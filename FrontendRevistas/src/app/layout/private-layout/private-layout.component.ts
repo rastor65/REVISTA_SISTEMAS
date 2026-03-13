@@ -129,6 +129,25 @@ export class PrivateLayoutComponent implements OnInit {
     });
   }
 
+  public currentYear: number = new Date().getFullYear();
+
+  get displayName(): string {
+    const nombresCompletos = `${this.usuario?.nombres || ''} ${this.usuario?.apellidos || ''}`.trim();
+    return nombresCompletos || this.nombre || this.user?.username || 'Usuario';
+  }
+
+  get displayEmail(): string {
+    return this.user?.email || 'Usuario autenticado';
+  }
+
+  toggleSidebar(): void {
+    this.display = !this.display;
+  }
+
+  closeSidebar(): void {
+    this.display = false;
+  }
+
   displayDialog: boolean = false;
   imageSource: string = 'assets/PQR.png';
   displayDialog2: boolean = false;
@@ -299,7 +318,6 @@ export class PrivateLayoutComponent implements OnInit {
     var user: string | null = localStorage.getItem('user');
     var menu: string | null = localStorage.getItem('menu');
     if (token != null && menu != null && user != null) {
-      this.showSuccess()
       let userObjeto: any = JSON.parse(user);
       let menuObjeto: any = JSON.parse(menu);
       this.privateMenu = createMenu(menuObjeto) as any;
@@ -517,12 +535,12 @@ export class PrivateLayoutComponent implements OnInit {
       console.warn('Usuario no identificado.');
       return;
     }
-  
+
     this.userService.getUserById(this.usuarioId).subscribe({
       next: (User) => {
         this.user = User;
-  
-        this.profileImage = User.avatar 
+
+        this.profileImage = User.avatar
           ? `${this.API_URI}/api/user/${this.usuarioId}/descargar/`
           : 'assets/avatars/user.png';
       },
@@ -536,7 +554,7 @@ export class PrivateLayoutComponent implements OnInit {
       }
     });
   }
-  
+
   guardarImagenPerfil() {
     if (this.usuarioId && this.newProfileImage) {
       this.userService.updateUserProfile(this.usuarioId, this.user, this.newProfileImage).subscribe(

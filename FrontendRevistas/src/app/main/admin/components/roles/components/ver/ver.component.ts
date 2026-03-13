@@ -1,12 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { AdminService } from 'src/app/core/services/dashboard/admin.service';
-import { environment } from 'src/environments/environment';
-
 import { MessageService } from 'primeng/api';
-import { ConfirmationService } from 'primeng/api';
 import { RolesService } from 'src/app/core/services/admin/roles.service';
-import { DialogService } from 'primeng/dynamicdialog';
+
+type ViewType = 'table' | 'cards';
+type DialogType = 'create' | 'edit' | 'delete' | '';
+
+interface RoleItem {
+  id: number;
+  name: string;
+  status?: boolean;
+  createdAt?: string;
+  updateAt?: string;
+}
 
 @Component({
   selector: 'app-ver',
@@ -14,94 +19,247 @@ import { DialogService } from 'primeng/dynamicdialog';
   styleUrls: ['./ver.component.css']
 })
 export class VerComponent implements OnInit {
-  roles: any[] = [];
-  selectedRole: any = {};
-  isCreating: boolean = false;
-  isEditing: boolean = false;
-  dialogVisible: boolean = false;
-  dialogType: string = ''; // 'create', 'edit', 'delete'
-  dialogHeader: string = '';
+  roles: RoleItem[] = [];
+  filteredRoles: RoleItem[] = [];
 
-  constructor(private rolesService: RolesService, public dialogService: DialogService) {}
+  selectedRole: RoleItem = this.getEmptyRole();
+
+  currentView: ViewType = 'cards';
+  dialogVisible = false;
+  dialogType: DialogType = '';
+  dialogHeader = '';
+
+  searchText = '';
+  cargandoVista = true;
+  guardandoRol = false;
+  eliminandoRol = false;
+
+  constructor(
+    private rolesService: RolesService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.loadRoles();
   }
 
-  loadRoles(): void {
-    this.rolesService.getRoles().subscribe(response => {
-      this.roles = response;
+  get totalRoles(): number {
+    return this.roles.length;
+  }
+
+  get totalActivos(): number {
+    return this.roles.filter(role => role.status !== false).length;
+  }
+
+  get totalInactivos(): number {
+    return this.roles.filter(role => role.status === false).length;
+  }
+
+  get formularioValido(): boolean {
+    return !!this.selectedRole.name?.trim();
+  }
+
+  getEmptyRole(): RoleItem {
+    return {
+      id: 0,
+      name: '',
+      status: true
+    };
+  }
+
+  private normalizarTexto(valor: string | null | undefined): string {
+    return (valor || '').toLowerCase().trim();
+  }
+
+  private ordenarRoles(data: RoleItem[]): RoleItem[] {
+    return [...data].sort((a, b) => {
+      const fechaA = new Date(a.createdAt || '').getTime();
+      const fechaB = new Date(b.createdAt || '').getTime();
+      return fechaB - fechaA;
     });
   }
 
-  createRole(): void {
-    this.showCreateDialog();
+  toggleView(view: ViewType): void {
+    this.currentView = view;
   }
 
-  editRole(role: any): void {
-    this.showEditDialog(role);
+  loadRoles(): void {
+    this.cargandoVista = true;
+
+    this.rolesService.getRoles().subscribe({
+      next: (response: RoleItem[]) => {
+        this.roles = this.ordenarRoles(response || []);
+        this.filteredRoles = [...this.roles];
+        this.cargandoVista = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar roles:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No fue posible cargar los roles.'
+        });
+        this.cargandoVista = false;
+      }
+    });
   }
 
-  saveRole(): void {
-    const roleData = {
-      name: this.selectedRole.name,
-      status: this.selectedRole.status // Asegúrate de incluir el campo status
-    };
-  
-    if (this.dialogType === 'create') {
-      this.rolesService.createRole(roleData).subscribe(() => {
-        this.loadRoles();
-        this.closeDialog();
-      });
-    } else if (this.dialogType === 'edit') {
-      this.rolesService.updateRole(this.selectedRole.id, roleData).subscribe(() => {
-        this.loadRoles();
-        this.closeDialog();
-      });
+  buscarRoles(): void {
+    const termino = this.normalizarTexto(this.searchText);
+
+    if (!termino) {
+      this.filteredRoles = [...this.roles];
+      return;
     }
-  }
-  
 
-  cancelEdit(): void {
-    this.closeDialog();
-  }
+    this.filteredRoles = this.roles.filter((role) => {
+      const nombre = this.normalizarTexto(role.name);
+      const estado = role.status === false ? 'inactivo' : 'activo';
+      const fechaCreacion = this.normalizarTexto(
+        role.createdAt ? new Date(role.createdAt).toLocaleDateString() : ''
+      );
+      const fechaActualizacion = this.normalizarTexto(
+        role.updateAt ? new Date(role.updateAt).toLocaleDateString() : ''
+      );
 
-  deleteRole(roleId: number): void {
-    this.rolesService.deleteRole(roleId).subscribe(() => {
-      this.loadRoles();
-      this.closeDialog();
+      return (
+        nombre.includes(termino) ||
+        estado.includes(termino) ||
+        fechaCreacion.includes(termino) ||
+        fechaActualizacion.includes(termino)
+      );
     });
   }
 
   showCreateDialog(): void {
     this.dialogType = 'create';
-    this.dialogHeader = 'Crear Rol';
-    this.selectedRole = { name: '' }; // Inicializa para crear
+    this.dialogHeader = 'Crear rol';
+    this.selectedRole = this.getEmptyRole();
     this.dialogVisible = true;
   }
 
-  showEditDialog(role: any): void {
+  showEditDialog(role: RoleItem): void {
     this.dialogType = 'edit';
-    this.dialogHeader = 'Editar Rol';
-    this.selectedRole = { ...role };
+    this.dialogHeader = 'Editar rol';
+    this.selectedRole = {
+      ...role,
+      status: role.status !== false
+    };
     this.dialogVisible = true;
   }
 
-  showDeleteDialog(role: any): void {
+  showDeleteDialog(role: RoleItem): void {
     this.dialogType = 'delete';
-    this.dialogHeader = 'Eliminar Rol';
+    this.dialogHeader = 'Eliminar rol';
     this.selectedRole = { ...role };
     this.dialogVisible = true;
   }
 
-  cancelDelete(): void {
-    this.closeDialog();
+  saveRole(): void {
+    if (!this.formularioValido) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formulario incompleto',
+        detail: 'Debes ingresar el nombre del rol.'
+      });
+      return;
+    }
+
+    this.guardandoRol = true;
+
+    const roleData = {
+      name: this.selectedRole.name.trim(),
+      status: this.selectedRole.status !== false
+    };
+
+    if (this.dialogType === 'create') {
+      this.rolesService.createRole(roleData).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Rol creado',
+            detail: 'El rol fue creado exitosamente.'
+          });
+          this.loadRoles();
+          this.closeDialog();
+          this.guardandoRol = false;
+        },
+        error: (error) => {
+          console.error('Error al crear rol:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No fue posible crear el rol.'
+          });
+          this.guardandoRol = false;
+        }
+      });
+      return;
+    }
+
+    if (this.dialogType === 'edit') {
+      this.rolesService.updateRole(this.selectedRole.id, roleData).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Rol actualizado',
+            detail: 'El rol fue actualizado exitosamente.'
+          });
+          this.loadRoles();
+          this.closeDialog();
+          this.guardandoRol = false;
+        },
+        error: (error) => {
+          console.error('Error al actualizar rol:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No fue posible actualizar el rol.'
+          });
+          this.guardandoRol = false;
+        }
+      });
+    }
+  }
+
+  deleteRole(roleId: number): void {
+    this.eliminandoRol = true;
+
+    this.rolesService.deleteRole(roleId).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Rol eliminado',
+          detail: 'El rol fue eliminado exitosamente.'
+        });
+        this.loadRoles();
+        this.closeDialog();
+        this.eliminandoRol = false;
+      },
+      error: (error) => {
+        console.error('Error al eliminar rol:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No fue posible eliminar el rol.'
+        });
+        this.eliminandoRol = false;
+      }
+    });
+  }
+
+  getEstadoTexto(role: RoleItem): string {
+    return role.status === false ? 'Inactivo' : 'Activo';
+  }
+
+  getEstadoClase(role: RoleItem): string {
+    return role.status === false ? 'status-inactive' : 'status-active';
   }
 
   closeDialog(): void {
     this.dialogVisible = false;
     this.dialogType = '';
     this.dialogHeader = '';
-    this.selectedRole = {};
+    this.selectedRole = this.getEmptyRole();
   }
 }

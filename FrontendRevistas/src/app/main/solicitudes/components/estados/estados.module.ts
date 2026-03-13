@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { VerComponent } from './components/ver/ver.component';
-import { CrearComponent } from './components/crear/crear.component';
-import { EditarComponent } from './components/editar/editar.component';
-import { EliminarComponent } from './components/eliminar/eliminar.component';
 import { SolicitudesService } from 'src/app/core/services/solicitudes/solicitudes.service';
 
 import { TableModule } from 'primeng/table';
@@ -26,9 +23,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 @NgModule({
   declarations: [
     VerComponent,
-    CrearComponent,
-    EditarComponent,
-    EliminarComponent, 
     EstadosComponent
   ],
   imports: [

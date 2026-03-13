@@ -1,96 +1,109 @@
-<ng-template [ngIf]="isLoggedIn === true">
-  <div class="grid main-header" [style]="{'background':' #02b1bc',
-  'color':'#fff','font-weight':'bold','margin':'0',
-  'border':'1px solid gray','border-radius':'0px'}">
-    <div class="col-12 sm:col-2 md:col-3 lg:col-3 xl:col-3">
-      <p-button styleClass="p-button p-button-outlined" (click)="display = true" class="mr-3">
-        <i class="pi pi-align-justify" style="font-size: 1.5rem; margin-top: 5px;color:whitesmoke"></i>
-        <span class="ml-2 font-bold" style="color:whitesmoke">GERUG</span>
-      </p-button>
-    </div>
-    <div class="col-12 sm:col-2 md:col-3 lg:col-4 xl:col-5 "></div>
-    <div class="col-12 sm:col-7 md:col-6 lg:col-5 xl:col-4">
-      <div class="grid">
-        <div class="col-12 sm:col-12 md:col-9 lg:col-9 xl:col-9 clock">
-          <button pButton pRipple type="button" [disabled]="false" class="p-button p-button-outlined"
-            style="padding: 7px;">
-            <div class="clock" style="color:whitesmoke">
-              {{dia | titlecase}} {{fecha | titlecase}} [<span class="mishoras">{{hora}}:{{minutos}}:<span
-                  class="segundos">{{segundos}}</span></span><span class="ampm">{{ampm}}</span>]
-            </div>
-          </button>
-        </div>
-        <div class="col-12 sm:col-12 md:col-2 lg:col-2 xl:col-2 avatar">
-          <button type="button" pButton pRipple class="p-button-rounded p-button-text centered-avatar" icon="pi pi-plus"
-            (click)="menu.toggle($event)">
-            <p-avatar image="{{profileImage}}" styleClass="ml-3" [ngStyle]="{'height': '100%', 'button': '10px'}"
-              shape="circle"></p-avatar>
-          </button>
-        </div>
-      </div>
-      <p-menu #menu [popup]="true" [model]="items" [style]="{'width':'200px','margin-top':'5px'}"></p-menu>
-      <div #menu2 class="box hidden" header="Anuncios" style="display: inline-block;margin:0px">
-      </div>
-    </div>
-  </div>
+<ng-container *ngIf="isLoggedIn">
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <button pButton pRipple type="button" class="topbar__menu-btn" (click)="toggleSidebar()">
+          <i class="pi pi-bars"></i>
+        </button>
 
-  <div class="container margen">
-    <p-sidebar [(visible)]="display" [style]="{'width':'345px','min-height': '88vh'}" [showCloseIcon]="false"
-      [blockScroll]="false">
-      <br>
-      <br>
-      <br>
-      <div class="grid">
-        <div class="col-11">
-          <a routerLink="/landing" (click)="display=false">
-            <img alt="logo" src="assets/Uniguajira_logo.png" width="260px" height="92px"
-              style="margin-left: 20px ;margin-top: -5px;" styleClass="p-button-outlined" />
-          </a>
+        <a routerLink="/landing" class="topbar__brand">
+          <div class="topbar__brand-mark">
+            <img src="assets/Uniguajira_logo.png" alt="Universidad de La Guajira">
+          </div>
+
+          <div class="topbar__brand-text">
+            <span class="topbar__brand-title">Revista Ciencia e Ingeniería</span>
+            <span class="topbar__brand-subtitle">Plataforma editorial institucional</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="topbar__right">
+        <div class="topbar__clock" *ngIf="dia || fecha">
+          <i class="pi pi-calendar"></i>
+          <span class="topbar__clock-date">
+            {{ (dia || '') | titlecase }} {{ (fecha || '') | titlecase }}
+          </span>
+          <span class="topbar__clock-divider"></span>
+          <span class="topbar__clock-time">
+            {{ hora }}:{{ minutos }}:<small>{{ segundos }}</small> {{ ampm }}
+          </span>
         </div>
-        <div class="col-1">
-          <a pripple="" (click)="display=false" class="p-ripple p-element 
-          cursor-pointer inline-flex align-items-center 
-            justify-content-center text-white border-2 surface-border
-            hover:bg-gray-600 text-600 transition-colors transition-duration-150 border-circle" style="width: 40px; height: 40px;margin-left: -20px;margin-top:22px;
-            background-color:  #02b1bc;"><i class="pi pi-align-justify text-xl"></i>
-            <span class="p-ink"></span>
-          </a>
+
+        <button type="button" pButton pRipple class="topbar__profile-btn" (click)="profileMenu.toggle($event)">
+          <p-avatar [image]="profileImage" shape="circle" styleClass="topbar__avatar">
+          </p-avatar>
+
+          <div class="topbar__profile-info">
+            <span class="topbar__profile-name">{{ displayName }}</span>
+            <span class="topbar__profile-email">{{ displayEmail }}</span>
+          </div>
+
+          <i class="pi pi-angle-down topbar__profile-arrow"></i>
+        </button>
+
+        <p-menu #profileMenu [popup]="true" [model]="items" [style]="{ width: '220px' }">
+        </p-menu>
+      </div>
+    </div>
+  </header>
+
+  <p-sidebar [(visible)]="display" position="left" [showCloseIcon]="false" [blockScroll]="true"
+    styleClass="app-sidebar">
+    <div class="sidebar-shell">
+      <div class="sidebar-header">
+        <a routerLink="/landing" class="sidebar-brand" (click)="closeSidebar()">
+          <img src="assets/Uniguajira_logo.png" alt="Logo Universidad de La Guajira">
+        </a>
+
+        <button type="button" pButton pRipple class="sidebar-close-btn" (click)="closeSidebar()">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="sidebar-user-card">
+        <div class="sidebar-user-avatar">
+          <p-avatar [image]="profileImage" shape="circle" size="xlarge"></p-avatar>
+        </div>
+
+        <div class="sidebar-user-info">
+          <h3>{{ displayName }}</h3>
+          <p>{{ displayEmail }}</p>
         </div>
       </div>
-      <div>
-        <hr>
-        <h4 class="fondebabutton" style="text-align: center;margin-bottom:-5px">{{nombre}}</h4>
-        <hr>
+
+      <div class="sidebar-menu-wrap">
+        <div class="sidebar-menu-header">
+          <span>Navegación</span>
+        </div>
+
+        <div class="sidebar-menu-card">
+          <app-menu [menu]="menu1" (funcion)="ocultarMenu($event)"></app-menu>
+        </div>
       </div>
-      <app-menu [menu]="menu1" (funcion)="ocultarMenu($event)"></app-menu>
-      <span style="margin:5px"></span>
-    </p-sidebar>
-    <div class="content">
+
+    </div>
+  </p-sidebar>
+
+  <main class="private-shell">
+    <section class="private-content">
       <router-outlet></router-outlet>
-      <br>
-      <br>
-      <hr>
-      <footer class="footer" style="padding-top: 20px;">
-        <br>
-        <br>
-        <br>
-        <div class="footer__copyright">
-          <p style="color:gray;font-size: 1.1rem">© 2024 Desarrollo <b>Universidad de La Guajira</b></p>
-        </div>
-        <div class="footer__copyright">
-          <p style="color:gray;font-size: 1rem">Todos los derechos reservados - <b>Semillero SETEC - RASTOR.INC</b></p>
-        </div>
-      </footer>
-    </div>
-    <div>
-      <img src="assets/Revista_banner_i.jpeg" height="300px" width="100%">
-    </div>
-  </div>
-</ng-template>
+    </section>
 
-<div style="display:relative;">
-  <p-menu #menu [popup]="true" [model]="items" [style]="{'width':'200px','margin-top':'5px'}"></p-menu>
-</div>
+    <section class="institutional-banner">
+      <img src="assets/Revista_banner_i.jpeg" alt="Banner institucional de la revista">
+    </section>
+
+    <footer class="private-footer">
+      <div class="private-footer__item">
+        <p>© {{ currentYear }} Desarrollo <strong>Universidad de La Guajira</strong></p>
+      </div>
+      <div class="private-footer__item">
+        <p>Todos los derechos reservados - <strong>Semillero SETEC - RASTOR.INC</strong></p>
+      </div>
+    </footer>
+  </main>
+</ng-container>
 
 <!-- CERRAR CESION -->
 <p-dialog [(visible)]="Dialog" [style]="{'width': '40vw'}" [resizable]="false" zindex="10000" [showHeader]="false"
@@ -294,4 +307,4 @@
 </p-dialog>
 
 <!-- MENSAJE TEMPORAL -->
-<p-toast [style]="{ top: '80px' }"></p-toast>
+<p-toast [style]="{ top: '80px' }"></p-toast><ng-template [ngIf]="isLoggedIn === true">

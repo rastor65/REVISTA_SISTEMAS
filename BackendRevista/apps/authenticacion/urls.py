@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .api.view.models_view.users.auth import (CustomUserList,UserDetail,UserPublic,
                     UserCreate,UserUpdate,ProfileView,  
-                    RegistroView,AuthLogin, LogoutView,UserChangePasswordView, ChangePasswordView
+                    RegistroView,AuthLogin, LogoutView,UserChangePasswordView, ChangePasswordView, UserSoftDelete
                     ,descargar_archivo)
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
     path('user/', CustomUserList.as_view(), name='customuser-list'),
     path('user/<int:pk>/descargar/', descargar_archivo, name='descargar-archivo'),
     path('user/<int:pk>/', UserDetail.as_view(), name='user-detail'),
+    path('users/<int:pk>/delete/', UserSoftDelete.as_view(), name='user-soft-delete'),
     path('user/<int:pk>/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('user/createview/', UserCreate.as_view(), name='user_createview'),
     path('user/update/<int:pk>/', UserUpdate.as_view(), name='user_createview'),

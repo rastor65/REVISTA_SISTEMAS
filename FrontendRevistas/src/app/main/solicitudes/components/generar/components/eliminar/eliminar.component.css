@@ -1,187 +1,511 @@
-  .solicitudes-subtitle {
-    font-size: 30px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #02b1bc;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-  }
-
-  :host ::ng-deep .p-table {
-    width: 100%;
-    margin-bottom: 20px;
-    border-collapse: separate;
-    border-spacing: 0;
-    border: none;
-  }
-  
-  :host ::ng-deep .p-table-header {
-    background-color: #f0f0f0;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-  
-  :host ::ng-deep .p-table-thead > tr > th {
-    padding: 10px 16px;
-    text-align: left;
-    border-bottom: 1px solid #ccc;
-    background-color: #f0f0f0;
-    color: #333;
-  }
-  
-  :host ::ng-deep .p-table-tbody > tr > td {
-    padding: 10px 16px;
-    text-align: left;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  :host ::ng-deep .p-table-tbody > tr:nth-child(even) > td {
-    background-color: #f9f9f9;
-  }
-  
-  :host ::ng-deep .p-table .p-paginator {
-    border-top: 1px solid #ccc;
-    margin-top: 20px;
-  }
-  
-  :host ::ng-deep .p-button-rounded {
-    border-radius: 20px;
-  }
-  
-  :host ::ng-deep .p-button-secondary {
-    background-color: #02b1bc;
-    color: #ffffff;
-    border: none;
-  }
-  
-  :host ::ng-deep .p-button-secondary:hover {
-    background-color: #02b1bc;
-  }
-
-  /* prime-ng-styles.css */
-
-/* Estilo para el p-dialog header */
-:host ::ng-deep .ui-dialog .ui-dialog-titlebar {
-  background-color: #02b1bc;
-  color: #fff;
-  border: none;
-  font-size: 1.2rem;
-  padding: 1rem;
+:host {
+  display: block;
+  width: 100%;
 }
 
-/* Estilo para el p-dialog content */
-:host ::ng-deep .ui-dialog .ui-dialog-content {
+.delete-page {
+  width: 100%;
+  padding: 2rem 1.5rem 3rem;
+  background: linear-gradient(180deg, #f4f8fc 0%, #eef3f8 100%);
+}
+
+/* HERO */
+.delete-hero {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.delete-hero__content,
+.delete-hero__stats {
+  background: #ffffff;
+  border: 1px solid #e5edf5;
+  border-radius: 24px;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
+}
+
+.delete-hero__content {
+  padding: 2rem;
+}
+
+.delete-hero__stats {
   padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
 }
 
-/* Estilo para el p-dialog footer */
-:host ::ng-deep .ui-dialog .ui-dialog-footer {
-  text-align: right;
-  padding: 1rem;
-  border-top: none;
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  background: #e8f7f8;
+  color: #0f7d86;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
 }
 
-/* Estilo para los botones del p-dialog */
-:host ::ng-deep .ui-dialog .ui-dialog-footer .p-button {
-  margin-left: 0.5rem;
+.hero-badge--danger {
+  background: #fff1f2;
+  color: #be123c;
 }
 
-/* Estilo para el botón de cancelar */
-:host ::ng-deep .ui-dialog .ui-dialog-footer .p-button.p-button-secondary {
-  background-color: #ccc;
-  color: #333;
+.delete-hero__content h1 {
+  margin: 1rem 0 0.8rem;
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1.1;
+  font-weight: 900;
+  color: #0f172a;
 }
 
-/* Estilo para el botón de confirmar */
-:host ::ng-deep .ui-dialog .ui-dialog-footer .p-button.p-button-success {
-  background-color: #28a745;
-  color: #fff;
+.delete-hero__content p {
+  margin: 0;
+  max-width: 820px;
+  color: #5f6c7b;
+  font-size: 1rem;
+  line-height: 1.8;
 }
 
-/* Ajustar el ancho del p-dialog */
-:host ::ng-deep .ui-dialog .ui-dialog-content {
-  max-width: 400px;
-  margin: 0 auto;
+.hero-stat {
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  background: #f8fbfe;
+  border: 1px solid #e4edf5;
 }
 
-.view-toggle-buttons {
+.hero-stat__label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.hero-stat strong {
+  color: #0f172a;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* TOOLBAR */
+.delete-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  border: 1px solid #d8e2ec;
+  border-radius: 18px;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+}
+
+.search-box:focus-within {
+  border-color: #02b1bc;
+  box-shadow: 0 0 0 4px rgba(2, 177, 188, 0.12);
+}
+
+.search-box__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  color: #64748b;
+}
+
+.search-box input {
+  width: 100%;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0.95rem 1rem 0.95rem 0 !important;
+  color: #0f172a;
+}
+
+.view-switch {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.view-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  border: 1px solid #d8e2ec !important;
+  color: #64748b !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+}
+
+.view-btn--active {
+  background: linear-gradient(135deg, #02b1bc 0%, #0d8aa1 100%) !important;
+  border-color: #0d8aa1 !important;
+  color: #ffffff !important;
+}
+
+/* TABLE */
+.table-shell {
+  background: #ffffff;
+  border: 1px solid #e5edf5;
+  border-radius: 24px;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+:host ::ng-deep .p-table thead th {
+  background: #f8fbfe !important;
+  color: #334155 !important;
+  font-weight: 800 !important;
+  border-bottom: 1px solid #e5edf5 !important;
+  padding: 1rem !important;
+}
+
+:host ::ng-deep .p-table tbody td {
+  padding: 1rem !important;
+  border-bottom: 1px solid #edf2f7 !important;
+  color: #475569;
+  vertical-align: middle;
+}
+
+:host ::ng-deep .p-table tbody tr:hover {
+  background: #fbfdff !important;
+}
+
+.table-title {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.actions-col {
+  width: 160px;
+  text-align: center;
+}
+
+/* BADGES */
+.content-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.content-badge--ok {
+  background: #ecfdf3;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.content-badge--pending {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+/* CARDS */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.request-card {
+  background: #ffffff;
+  border: 1px solid #e5edf5;
+  border-radius: 24px;
+  padding: 1.4rem;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.request-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.09);
+}
+
+.request-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.request-card__date {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.request-card h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1.35;
+}
+
+.request-card__authors {
+  margin: 0 0 1rem;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.request-card__meta {
+  display: grid;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.meta-item {
+  padding: 0.85rem 0.95rem;
+  border-radius: 16px;
+  background: #f8fbfe;
+  border: 1px solid #e4edf5;
+}
+
+.meta-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.meta-value {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.request-card__actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin: 20px;
 }
 
-.view-toggle-buttons button {
-  background-color: #02b1bc;
-  border-color: #02b1bc;
-  color: white;
+/* BUTTONS */
+.delete-btn {
+  font-weight: 800 !important;
+  border-radius: 999px !important;
 }
 
+:host ::ng-deep .p-button.p-button-outlined.delete-btn {
+  color: #dc2626 !important;
+  border-color: #fecaca !important;
+  background: #ffffff !important;
+}
 
-.cards-container {
+:host ::ng-deep .p-button.p-button-outlined.delete-btn:hover {
+  background: #fef2f2 !important;
+}
+
+:host ::ng-deep .p-button.p-button-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-color: #dc2626;
+}
+
+:host ::ng-deep .p-button.p-button-danger:hover {
+  filter: brightness(1.03);
+}
+
+/* STATES */
+.state-box {
+  background: #ffffff;
+  border: 1px solid #e5edf5;
+  border-radius: 24px;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
+  padding: 2rem;
+  text-align: center;
+}
+
+.state-box--empty {
+  padding: 3rem 2rem;
+}
+
+.state-box h3 {
+  margin: 1rem 0 0.4rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.state-box p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.7;
+}
+
+.state-box__spinner {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto;
+  border: 4px solid #dbeafe;
+  border-top-color: #02b1bc;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto;
+  border-radius: 18px;
+  background: #eef9fa;
+  color: #0f7d86;
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  align-items: center;
+  justify-content: center;
 }
 
-.card {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  width: calc(50% - 20px);
-  /* Para mostrar dos cards por fila */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  position: relative;
+.empty-icon i {
+  font-size: 1.6rem;
 }
 
-.card-content {
+/* DIALOG */
+.delete-dialog {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.delete-dialog__icon {
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 1rem;
+  border-radius: 22px;
+  background: #fff1f2;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-dialog__icon i {
+  font-size: 2rem;
+}
+
+.delete-dialog__content h2 {
+  margin: 0.9rem 0 0.55rem;
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.delete-dialog__content p {
+  margin: 0 0 1.2rem;
+  color: #64748b;
+  line-height: 1.75;
+}
+
+.delete-dialog__summary {
+  text-align: left;
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+  border-radius: 20px;
+  background: #f8fbfe;
+  border: 1px solid #e4edf5;
+}
+
+.summary-row {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.25rem;
 }
 
-.card {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  width: calc(50% - 20px);
-  /* Para mostrar dos cards por fila */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  position: relative;
+.summary-row span {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
-.card-header {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+.summary-row strong {
+  color: #0f172a;
+  font-weight: 800;
+  line-height: 1.5;
 }
 
-.fecha-creacion {
-  background-color: #f0f0f0;
-  color: #777777;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-}
-
-.cards-container {
+.delete-dialog__actions {
+  margin-top: 1.4rem;
   display: flex;
+  justify-content: center;
+  gap: 0.85rem;
   flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
+}
+
+/* ANIMATION */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .delete-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
-  .card {
-    width: calc(100% - 20px);
-    /* Para mostrar una card por fila en pantallas pequeñas */
+  .delete-page {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .delete-hero__content,
+  .delete-hero__stats {
+    padding: 1.25rem;
+  }
+
+  .delete-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .view-switch {
+    justify-content: flex-end;
+  }
+
+  .delete-dialog__actions {
+    justify-content: stretch;
+  }
+
+  .delete-dialog__actions .p-button {
+    width: 100%;
   }
 }
 
-.custom-button-color{
-  border-color: #02b1bc !important;
-  background-color: #02b1bc !important;
+@media (max-width: 480px) {
+  .delete-hero__content h1 {
+    font-size: 1.8rem;
+  }
+
+  .request-card__top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

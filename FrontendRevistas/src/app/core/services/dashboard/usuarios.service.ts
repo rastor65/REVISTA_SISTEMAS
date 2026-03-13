@@ -43,16 +43,28 @@ export class UsuariosService {
     const url = `${this.base_usuarios_roles}${userRoleId}`; // Reemplaza "actualizarUserRole" con la ruta correcta en tu API
     return this.http.put(url, body, httpOptions);
   }
-  
+
   deleteUserRole(userRoleId: number): Observable<any> {
     const url = `${this.base_usuarios_roles}${userRoleId}/`;
     return this.http.delete(url);
   }
-  
+
   assignRole(data: any): Observable<any> {
     const url = `${this.base_usuarios_roles}`;
     return this.http.post(url, data);
   }
-  
+
+  createUser(payload: any) {
+    return this.http.post<any>(`${this.API_URI}/api/registro/`, payload);
+  }
+
+  updateUser(id: number | null, payload: any) {
+    return this.http.put<any>(`${this.API_URI}/api/user/update/${id}/`, payload);
+  }
+
+  deleteUser(id: number) {
+    return this.http.delete<any>(`${this.API_URI}/api/users/${id}/delete/`);
+  }
+
 }
 

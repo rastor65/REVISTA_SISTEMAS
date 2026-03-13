@@ -1,15 +1,351 @@
-<br>
-<br>
-<br>
-<h2 class="solicitudes-title">Lista de Estados de Seguimiento</h2>
-<br>
-<div class="estado-list">
-    <ul class="estado-items">
-        <li *ngFor="let estado of estados" class="estado-item">
-            <div class="estado-content">
-                <h3>{{ estado.nombre }}</h3>
-                <p>{{ estado.descripcion }}</p>
+<div class="states-admin-page">
+  <section class="states-admin-header">
+    <div class="states-admin-header__left">
+      <span class="page-badge">
+        <i class="pi pi-flag"></i>
+        Flujo editorial
+      </span>
+      <h1>Gestión de estados de seguimiento</h1>
+      <p>
+        Administra los estados que intervienen en el seguimiento editorial de artículos.
+        Crea nuevos estados, actualiza su información y elimina los que ya no sean necesarios.
+      </p>
+    </div>
+
+    <div class="states-admin-header__right">
+      <div class="metric-card">
+        <span>Total</span>
+        <strong>{{ totalEstados }}</strong>
+      </div>
+      <div class="metric-card metric-card--success">
+        <span>Activos</span>
+        <strong>{{ totalActivos }}</strong>
+      </div>
+      <div class="metric-card metric-card--muted">
+        <span>Inactivos</span>
+        <strong>{{ totalInactivos }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="states-toolbar">
+    <div class="states-toolbar__search">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="searchText"
+        (ngModelChange)="buscarEstados()"
+        placeholder="Buscar por ID, nombre, descripción o estado" />
+    </div>
+
+    <div class="states-toolbar__actions">
+      <div class="view-switcher">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-bars"
+          class="view-switcher__btn"
+          [ngClass]="{ 'view-switcher__btn--active': currentView === 'table' }"
+          (click)="toggleView('table')">
+        </button>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-th-large"
+          class="view-switcher__btn"
+          [ngClass]="{ 'view-switcher__btn--active': currentView === 'cards' }"
+          (click)="toggleView('cards')">
+        </button>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        label="Nuevo estado"
+        class="create-state-btn"
+        (click)="showCreateDialog()">
+      </button>
+    </div>
+  </section>
+
+  <div *ngIf="cargandoVista" class="loading-panel">
+    <div class="loading-spinner"></div>
+    <h3>Cargando estados</h3>
+    <p>Estamos consultando la información registrada en el sistema.</p>
+  </div>
+
+  <ng-container *ngIf="!cargandoVista">
+    <div *ngIf="filteredEstados.length > 0; else emptyState">
+      <section *ngIf="currentView === 'table'" class="states-table-card">
+        <div class="table-card__header">
+          <div>
+            <h2>Listado de estados</h2>
+            <p>{{ filteredEstados.length }} resultado(s) encontrado(s)</p>
+          </div>
+        </div>
+
+        <p-table
+          [value]="filteredEstados"
+          [paginator]="true"
+          [rows]="8"
+          [rowsPerPageOptions]="[5,10,20,30]"
+          responsiveLayout="scroll"
+          styleClass="states-table">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 90px;">ID</th>
+              <th style="width: 220px;">Nombre</th>
+              <th>Descripción</th>
+              <th style="width: 160px;">Estado</th>
+              <th style="width: 260px;">Acciones</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-estado>
+            <tr>
+              <td>
+                <span class="table-id">#{{ estado.id }}</span>
+              </td>
+
+              <td>
+                <div class="state-name-cell">
+                  <div class="state-name-cell__icon">
+                    <i class="pi pi-tag"></i>
+                  </div>
+                  <div class="state-name-cell__content">
+                    <strong>{{ estado.nombre }}</strong>
+                    <small>Estado de flujo editorial</small>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="state-description">
+                  {{ estado.descripcion }}
+                </div>
+              </td>
+
+              <td>
+                <span class="status-pill" [ngClass]="getEstadoClase(estado)">
+                  {{ getEstadoTexto(estado) }}
+                </span>
+              </td>
+
+              <td>
+                <div class="row-actions">
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-pencil"
+                    label="Editar"
+                    class="table-action-btn table-action-btn--edit"
+                    (click)="showEditDialog(estado)">
+                  </button>
+
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-trash"
+                    label="Eliminar"
+                    class="table-action-btn table-action-btn--delete"
+                    (click)="showDeleteDialog(estado)">
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </section>
+
+      <section *ngIf="currentView === 'cards'" class="states-cards-grid">
+        <article class="state-card" *ngFor="let estado of filteredEstados">
+          <div class="state-card__top">
+            <span class="table-id">#{{ estado.id }}</span>
+            <span class="status-pill" [ngClass]="getEstadoClase(estado)">
+              {{ getEstadoTexto(estado) }}
+            </span>
+          </div>
+
+          <div class="state-card__body">
+            <div class="state-card__icon">
+              <i class="pi pi-flag"></i>
             </div>
-        </li>
-    </ul>
+
+            <div class="state-card__content">
+              <h3>{{ estado.nombre }}</h3>
+              <p>{{ estado.descripcion }}</p>
+            </div>
+          </div>
+
+          <div class="state-card__actions">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              label="Editar"
+              class="table-action-btn table-action-btn--edit"
+              (click)="showEditDialog(estado)">
+            </button>
+
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              label="Eliminar"
+              class="table-action-btn table-action-btn--delete"
+              (click)="showDeleteDialog(estado)">
+            </button>
+          </div>
+        </article>
+      </section>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div class="empty-panel">
+      <div class="empty-panel__icon">
+        <i class="pi pi-inbox"></i>
+      </div>
+      <h3>No se encontraron estados</h3>
+      <p>No hay registros disponibles con los filtros actuales.</p>
+    </div>
+  </ng-template>
+
+  <p-dialog
+    [(visible)]="dialogVisible"
+    [baseZIndex]="10000"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: dialogType === 'delete' ? '34rem' : '36rem', maxWidth: '92vw' }"
+    [showHeader]="false"
+    [closable]="false"
+    [dismissableMask]="false">
+
+    <ng-container *ngIf="dialogType === 'create' || dialogType === 'edit'">
+      <div class="dialog-shell">
+        <div class="dialog-shell__header">
+          <div>
+            <span class="page-badge page-badge--small">
+              {{ dialogType === 'create' ? 'Nuevo estado' : 'Edición' }}
+            </span>
+            <h2>{{ dialogType === 'create' ? 'Crear estado' : 'Editar estado' }}</h2>
+            <p>
+              {{ dialogType === 'create'
+                ? 'Registra un nuevo estado para el flujo de seguimiento.'
+                : 'Actualiza la información del estado seleccionado.' }}
+            </p>
+          </div>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            class="dialog-close-btn"
+            (click)="closeDialog()">
+          </button>
+        </div>
+
+        <div class="dialog-form">
+          <div class="dialog-field">
+            <label for="nombre">Nombre del estado</label>
+            <input
+              id="nombre"
+              type="text"
+              pInputText
+              [(ngModel)]="estadoSeleccionado.nombre"
+              placeholder="Ej. Pendiente de evaluación" />
+          </div>
+
+          <div class="dialog-field">
+            <label for="descripcion">Descripción</label>
+            <textarea
+              id="descripcion"
+              pInputTextarea
+              rows="4"
+              [(ngModel)]="estadoSeleccionado.descripcion"
+              placeholder="Describe claramente el propósito de este estado."></textarea>
+          </div>
+        </div>
+
+        <div class="dialog-actions">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            label="Cancelar"
+            class="dialog-secondary-btn"
+            (click)="closeDialog()">
+          </button>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-save"
+            [label]="dialogType === 'create' ? 'Guardar estado' : 'Guardar cambios'"
+            class="dialog-primary-btn"
+            [disabled]="guardandoEstado || !formularioValido"
+            (click)="saveEstado()">
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="dialogType === 'delete'">
+      <div class="dialog-shell dialog-shell--danger">
+        <div class="danger-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+
+        <div class="dialog-shell__danger-content">
+          <span class="page-badge page-badge--danger">Confirmación</span>
+          <h2>¿Deseas eliminar este estado?</h2>
+          <p>
+            Esta acción eliminará el estado del sistema. Asegúrate de que no afecte el flujo de seguimiento actual.
+          </p>
+
+          <div class="danger-summary">
+            <div>
+              <span>ID</span>
+              <strong>#{{ estadoSeleccionado.id }}</strong>
+            </div>
+            <div>
+              <span>Nombre</span>
+              <strong>{{ estadoSeleccionado.nombre }}</strong>
+            </div>
+            <div>
+              <span>Descripción</span>
+              <strong>{{ estadoSeleccionado.descripcion }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="dialog-actions">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            label="Cancelar"
+            class="dialog-secondary-btn"
+            (click)="closeDialog()">
+          </button>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-trash"
+            label="Eliminar"
+            class="dialog-danger-btn"
+            [disabled]="eliminandoEstado"
+            (click)="eliminarEstado()">
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </p-dialog>
+
+  <p-toast [style]="{ top: '90px' }"></p-toast>
 </div>

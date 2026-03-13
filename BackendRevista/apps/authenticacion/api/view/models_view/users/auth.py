@@ -60,7 +60,7 @@ def descargar_archivo(request, pk):
     return response
 
 class UserDetail(generics.RetrieveAPIView):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.filter(is_active = True)
     serializer_class = UserSerializer
 
     def retrieve(self, request, *args, **kwargs):
@@ -204,6 +204,22 @@ class UserUpdate(generics.UpdateAPIView):
                 "errors": user_serializer.errors,
             }
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+
+class UserSoftDelete(generics.DestroyAPIView):
+    queryset = CustomUser.objects.filter(is_active=True)
+    serializer_class = UserSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        user = self.get_object()
+
+        user.is_active = False
+        user.save(update_fields=['is_active'])
+
+        response_data = {
+            "ok": True,
+            "message": "Usuario desactivado exitosamente"
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
         
 class UserChangePasswordView(UpdateAPIView):
     queryset = CustomUser.objects.all()

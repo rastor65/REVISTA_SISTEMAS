@@ -1,142 +1,293 @@
-<br>
-<br>
-<br>
-<h2 class="solicitudes-title">Evaluaciones pendientes</h2>
-<br>
+<div class="evaluation-page">
+  <section class="evaluation-hero">
+    <div class="evaluation-hero__content">
+      <span class="page-badge">
+        <i class="pi pi-check-square"></i>
+        Evaluación editorial
+      </span>
 
-<div *ngIf="seguimientos.length > 0; else noSolicitudes ">
-    <div *ngFor="let seguimiento of seguimientos" class="seguimiento-item">
-        <div *ngIf="seguimiento.estado_seguimiento === 1">
-            <div *ngIf="seguimientoEnPaso(seguimiento.pasos_seguimiento)">
-                <div class="shadow-2 border-round-xl contenedor">
-                    <div class="p-4 border-round surface-card h-full">
-                        <div class="flex mb-3"><p-avatar image="assets/logo_r.jpg" shape="circle" class="p-element">
-                                <div class="p-avatar p-component p-avatar-image p-avatar-circle"><img
-                                        src="assets/logo_r.jpg" class="ng-star-inserted"></div>
-                            </p-avatar>
-                            <div class="ml-2">
-                                <div class="font-medium text-900 mb-1">
-                                    {{ seguimiento.responsableId !== null ?
-                                    getUsuarioNombre(seguimiento.responsableId) : 'Evaluador desconocido' }}
-                                </div>
-                                <div class="text-sm flex align-items-center text-700">
-                                    <div class="border-circle mx-2">
-                                        <span>Fecha de asignación: {{ seguimiento.fecha_asignacion | date }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-xl text-900 font-medium mb-3 line-height-3">{{
-                            getTituloSolicitud(seguimiento.solicitudId)
-                            }}
-                        </div>
-                        <div class="line-height-3 text-700">{{ getPasoNombre(seguimiento.pasos_seguimiento) }}</div>
-                        <div class="line-height-3 text-700">{{ getEstadoNombre(seguimiento.estado_seguimiento) }}</div>
-                        <div class="button-container">
-                            <button pButton type="button" class="custom-button" icon="pi pi-check-circle"
-                                label="Evaluar" (click)="showDialog(seguimiento)"></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <h1>Evaluaciones pendientes</h1>
+      <p>
+        Revisa los artículos asignados, descarga el documento principal y registra formalmente
+        el resultado de la evaluación con sus respectivos soportes.
+      </p>
     </div>
+
+    <div class="evaluation-hero__stats">
+      <div class="metric-card">
+        <span>Pendientes</span>
+        <strong>{{ totalPendientes }}</strong>
+      </div>
+
+      <div class="metric-card metric-card--info">
+        <span>Asignadas</span>
+        <strong>{{ totalArticulosAsignados }}</strong>
+      </div>
+
+      <div class="metric-card metric-card--muted">
+        <span>Solicitudes</span>
+        <strong>{{ totalSolicitudes }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <div *ngIf="cargandoVista" class="state-box">
+    <div class="state-box__spinner"></div>
+    <h3>Cargando evaluaciones</h3>
+    <p>Estamos consultando los seguimientos asignados al evaluador.</p>
+  </div>
+
+  <ng-container *ngIf="!cargandoVista">
+    <div *ngIf="evaluacionesPendientes.length > 0; else noSolicitudes" class="evaluation-grid">
+      <article *ngFor="let seguimiento of evaluacionesPendientes" class="evaluation-card">
+        <div class="evaluation-card__top">
+          <div class="evaluation-card__avatar">
+            <p-avatar image="assets/logo_r.jpg" shape="circle"></p-avatar>
+          </div>
+
+          <div class="evaluation-card__meta">
+            <span class="meta-label">Evaluador asignado</span>
+            <strong>{{ getUsuarioNombre(seguimiento.responsableId) }}</strong>
+            <small>Fecha de asignación: {{ seguimiento.fecha_asignacion | date:'dd/MM/yyyy' }}</small>
+          </div>
+
+          <span class="status-pill" [ngClass]="getEstadoClase(seguimiento.estado_seguimiento)">
+            {{ getEstadoNombre(seguimiento.estado_seguimiento) }}
+          </span>
+        </div>
+
+        <div class="evaluation-card__body">
+          <h3>{{ getTituloSolicitud(seguimiento.solicitudId) }}</h3>
+
+          <div class="evaluation-card__info">
+            <div class="info-line">
+              <span>Paso actual</span>
+              <strong>{{ getPasoNombre(seguimiento.pasos_seguimiento) }}</strong>
+            </div>
+
+            <div class="info-line">
+              <span>Fecha máxima de evaluación</span>
+              <strong>{{ seguimiento.fecha_programacion | date:'dd/MM/yyyy' }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="evaluation-card__actions">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-check-circle"
+            label="Evaluar artículo"
+            class="evaluate-btn"
+            (click)="showDialog(seguimiento)">
+          </button>
+        </div>
+      </article>
+    </div>
+  </ng-container>
+
+  <ng-template #noSolicitudes>
+    <div class="state-box state-box--empty">
+      <div class="empty-icon">
+        <i class="pi pi-inbox"></i>
+      </div>
+      <h3>No tienes evaluaciones pendientes</h3>
+      <p>
+        En este momento no cuentas con artículos pendientes por revisar.
+        Cuando se te asigne uno nuevo, aparecerá aquí automáticamente.
+      </p>
+    </div>
+  </ng-template>
+
+  <p-dialog
+    [(visible)]="displayDialog"
+    [responsive]="true"
+    [style]="{ width: '72rem', maxWidth: '95vw' }"
+    [showHeader]="false"
+    [closable]="false"
+    [dismissableMask]="false"
+    [modal]="true">
+
+    <div *ngIf="selectedSeguimiento" class="eval-dialog">
+      <div class="eval-dialog__header">
+        <div>
+          <span class="page-badge page-badge--small">
+            Proceso de evaluación
+          </span>
+          <h2>{{ getTituloSolicitud(selectedSeguimiento.solicitudId) }}</h2>
+          <p>
+            Completa la evaluación formal del artículo y adjunta los soportes correspondientes.
+          </p>
+        </div>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-times"
+          class="dialog-close-btn"
+          (click)="hideDialog()">
+        </button>
+      </div>
+
+      <div *ngIf="cargandoDialogo" class="dialog-loading">
+        <div class="state-box__spinner"></div>
+        <h3>Cargando detalle del artículo</h3>
+        <p>Estamos preparando la información para la evaluación.</p>
+      </div>
+
+      <ng-container *ngIf="!cargandoDialogo">
+        <div class="eval-dialog__summary">
+          <div class="summary-card">
+            <span>Fecha de asignación</span>
+            <strong>{{ selectedSeguimiento.fecha_asignacion | date:'dd/MM/yyyy' }}</strong>
+          </div>
+
+          <div class="summary-card">
+            <span>Fecha máxima</span>
+            <strong>{{ selectedSeguimiento.fecha_programacion | date:'dd/MM/yyyy' }}</strong>
+          </div>
+
+          <div class="summary-card">
+            <span>Paso</span>
+            <strong>{{ getPasoNombre(selectedSeguimiento.pasos_seguimiento) }}</strong>
+          </div>
+        </div>
+
+        <div class="alert-banner">
+          <i class="pi pi-info-circle"></i>
+          <div>
+            Para registrar la evaluación, debes descargar el artículo, seleccionar el estado final
+            y adjuntar tanto el archivo de correcciones como el formato de evaluación diligenciado.
+          </div>
+        </div>
+
+        <div class="eval-dialog__layout">
+          <section class="eval-panel">
+            <div class="panel-header">
+              <h3>Documento principal</h3>
+              <p>Descarga el artículo para revisar el contenido completo antes de emitir tu concepto.</p>
+            </div>
+
+            <button
+              pButton
+              type="button"
+              label="Descargar artículo"
+              icon="pi pi-download"
+              class="download-btn"
+              *ngIf="selectedContenido"
+              (click)="DescargarContenido(selectedContenido.id, 'archivo_adjunto')">
+            </button>
+          </section>
+
+          <section class="eval-panel">
+            <div class="panel-header">
+              <h3>Resultado de evaluación</h3>
+              <p>Selecciona el estado que corresponde al resultado final del proceso.</p>
+            </div>
+
+            <div class="form-field">
+              <label for="estado_seguimiento">Estado de evaluación</label>
+              <p-dropdown
+                id="estado_seguimiento"
+                [(ngModel)]="selectedSeguimiento.estado_seguimiento"
+                [options]="estados"
+                optionLabel="nombre"
+                optionValue="id"
+                [placeholder]="'Seleccione un estado'"
+                [filter]="true"
+                appendTo="body"
+                styleClass="w-full custom-select">
+              </p-dropdown>
+            </div>
+          </section>
+
+          <section class="eval-panel eval-panel--full">
+            <div class="panel-header">
+              <h3>Archivos de soporte</h3>
+              <p>Adjunta los documentos requeridos para cerrar la evaluación.</p>
+            </div>
+
+            <div class="upload-grid">
+              <div class="upload-box">
+                <div class="upload-box__icon">
+                  <i class="pi pi-file-pdf"></i>
+                </div>
+
+                <div class="upload-box__content">
+                  <h4>Correcciones</h4>
+                  <p>Documento obligatorio con observaciones o ajustes solicitados.</p>
+
+                  <label for="correciones" class="custom-file-upload">
+                    <i class="pi pi-upload"></i>
+                    <span>Seleccionar archivo</span>
+                    <input
+                      type="file"
+                      id="correciones"
+                      accept=".pdf"
+                      (change)="handleFileInputCorreciones($event)"
+                      style="display:none">
+                  </label>
+
+                  <div class="file-chip" *ngIf="archivoSeleccionadoCorreciones">
+                    <span>{{ archivoSeleccionadoCorreciones }}</span>
+                    <button type="button" (click)="quitarArchivoCorrecciones()">Quitar</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="upload-box upload-box--alt">
+                <div class="upload-box__icon upload-box__icon--alt">
+                  <i class="pi pi-file-edit"></i>
+                </div>
+
+                <div class="upload-box__content">
+                  <h4>Formato de evaluación</h4>
+                  <p>Documento obligatorio con el formato diligenciado por el evaluador.</p>
+
+                  <label for="formato_evaluacion" class="custom-file-upload custom-file-upload--alt">
+                    <i class="pi pi-upload"></i>
+                    <span>Seleccionar archivo</span>
+                    <input
+                      type="file"
+                      id="formato_evaluacion"
+                      accept=".pdf"
+                      (change)="handleFileInputFormato($event)"
+                      style="display:none">
+                  </label>
+
+                  <div class="file-chip file-chip--alt" *ngIf="archivoSeleccionadoFormato">
+                    <span>{{ archivoSeleccionadoFormato }}</span>
+                    <button type="button" (click)="quitarArchivoFormato()">Quitar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="eval-dialog__footer">
+          <button
+            pButton
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            class="cancel-btn"
+            (click)="hideDialog()">
+          </button>
+
+          <button
+            pButton
+            type="button"
+            label="Guardar evaluación"
+            icon="pi pi-save"
+            class="save-btn"
+            [disabled]="guardandoEvaluacion || !puedeGuardarEvaluacion"
+            (click)="guardarEvaluacion()">
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </p-dialog>
+
+  <p-toast [style]="{ top: '80px' }"></p-toast>
 </div>
-
-<ng-template class="no-solicitudes-message" #noSolicitudes>
-    <h4 class="no-solicitudes-message">En este momento, no cuenta con evaluaciones pendientes para su
-        revisión. Si tiene alguna pregunta o necesita asistencia adicional, no dude en ponerse en contacto con
-        nuestro equipo de soporte. Estaremos encantados de ayudarle en lo que necesite.</h4>
-</ng-template>
-
-<p-dialog header="Evaluando articulo" [(visible)]="displayDialog" [responsive]="true"
-    [style]="{ 'width': '60%', 'height': '750px', 'top': '30px' }" [showHeader]=" false" [closable]="false"
-    [dismissableMask]="false" [modal]="true">
-    <ng-container *ngIf=" selectedSeguimiento && selectedContenido">
-        <div class="dialog-content">
-            <div style="justify-content: center; text-align: center;">
-            <h2 class="dialog-section-title"> {{ getTituloSolicitud(selectedSeguimiento.solicitudId) }}</h2>
-            <p><strong>Fecha de asignación</strong> {{ selectedSeguimiento.fecha_asignacion | date }}</p>
-            <p><strong>Fecha maxima de evaluacion</strong> {{ selectedSeguimiento.fecha_programacion | date }}</p>
-            </div>
-            <div class="alert-message">
-                <strong>Tenga en cuenta que, para llevar a cabo una evaluación o realizar correcciones, es necesario
-                    cargar el documento con las correcciones pertinentes, el formato de evaluación debidamente diligenciado y seleccionar la respuesta óptima en el
-                    campo de "estado" de acuerdo con las correcciones realizadas.
-                </strong>
-            </div>
-        </div>
-
-        <hr>
-
-        <ng-container *ngIf="selectedSeguimiento">
-            <div class="p-grid p-fluid">
-                <div>
-                    <button pButton class="custom-button-descargar" type="button" label="Descargar artículo"
-                        style="font-weight: bold;" (click)="DescargarContenido(selectedContenido.id, 'archivo_adjunto')"></button>
-                </div>
-                <br>
-
-                <div class="p-col-12">
-                    <label for="estado"><b>Estado de evaluación:</b></label><br>
-                    <p-dropdown id="estado_seguimiento" [(ngModel)]="selectedSeguimiento.estado_seguimiento"
-                        [options]="estados" optionLabel="nombre" optionValue="id" [styleClass]="'custom-select'"
-                        [placeholder]="'Seleccione un estado'" [filter]="true">
-                    </p-dropdown>
-                </div>
-                <br>
-
-                <div class="dialog-content">
-                    <div>
-                        <label for="correciones"><b>Correciones</b></label><br>
-                        <div class="archivo-area">
-                            <div>
-                                <label for="correciones" class="custom-file-upload">
-                                    <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar
-                                        archivo</span>
-                                    <input pButton type="file" id="correciones"
-                                        (change)="handleFileInputCorreciones($event)" required style="display:none">
-                                </label>
-                            </div>
-                            <br>
-                            <div *ngIf="archivoSeleccionadoCorreciones">
-                                <span>Archivo seleccionado:</span>
-                                {{ archivoSeleccionadoCorreciones }}
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-
-                    <div>
-                        <label for="formato_evaluacion"><b>Formato de evaluación</b></label><br>
-                        <div class="archivo-area">
-                            <div>
-                                <label for="formato_evaluacion" class="custom-file-upload">
-                                    <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar
-                                        archivo</span>
-                                    <input pButton type="file" id="formato_evaluacion"
-                                        (change)="handleFileInputFormato($event)" required style="display:none">
-                                </label>
-                            </div>
-                            <br>
-                            <div *ngIf="archivoSeleccionadoFormato">
-                                <span>Archivo seleccionado:</span>
-                                {{ archivoSeleccionadoFormato }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </ng-container>
-    </ng-container>
-    <br>
-    <div class="button-container">
-        <button pButton type="button" label="Guardar Evaluacion" class="p-button p-button-outlined p-button-success" style="width: 100%;"
-            (click)="guardarEvaluacion()"></button><br>
-            <button pButton type="button" label="Cancelar" class="p-button-secondary p-button-outlined" style="width: 100%;"
-                (click)="hideDialog()"></button>
-    </div>
-</p-dialog>
-
-
-<p-toast [style]="{ top: '80px' }"></p-toast>

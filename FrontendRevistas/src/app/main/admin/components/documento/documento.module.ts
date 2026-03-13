@@ -4,9 +4,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { VerComponent } from './components/ver/ver.component';
-import { CrearComponent } from './components/crear/crear.component';
-import { EditarComponent } from './components/editar/editar.component';
-import { EliminarComponent } from './components/eliminar/eliminar.component';
 import { DocumentoRoutingModule } from './documento-routing.module';
 
 import { TableModule } from 'primeng/table';
@@ -30,9 +27,6 @@ import { CardModule } from 'primeng/card';
   declarations: [
     DocumentoComponent,
     VerComponent,
-    CrearComponent,
-    EditarComponent,
-    EliminarComponent
   ],
   providers: [
     // ConfirmationService

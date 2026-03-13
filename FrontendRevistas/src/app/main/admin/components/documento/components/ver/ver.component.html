@@ -1,23 +1,300 @@
-<div class="document-list">
-    <h2 class="formacion-title">Tipos de Documentos</h2>
-  
-    <div class="container">
-      <p-table class="p-datatable" [value]="documents" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,15]">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Nombre</th>
-            <th>Fecha de creacion</th>
-            <th>Estado</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-document>
-          <tr>
-            <td>{{ document.name }}</td>
-            <td>{{ document.createdAt | date }}</td>
-            <td>{{ document.status ? 'Activo' : 'Inactivo' }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
+<div class="document-type-page">
+  <section class="document-type-hero">
+    <div class="document-type-hero__content">
+      <span class="hero-badge">
+        <i class="pi pi-id-card"></i>
+        Configuración del sistema
+      </span>
+
+      <h1>Gestión de tipos de documento</h1>
+      <p>
+        Administra en una sola vista todos los tipos de documento del sistema:
+        crea nuevos registros, edita los existentes y elimina los que ya no necesites.
+      </p>
     </div>
-  </div>
-  
+
+    <div class="document-type-hero__stats">
+      <div class="hero-stat">
+        <span>Total</span>
+        <strong>{{ totalDocuments }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span>Activos</span>
+        <strong>{{ totalActive }}</strong>
+      </div>
+
+      <div class="hero-stat">
+        <span>Inactivos</span>
+        <strong>{{ totalInactive }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="main-panel">
+    <div class="panel-header">
+      <div>
+        <h2>Listado general</h2>
+        <p>Consulta, filtra y administra los tipos de documento desde un solo lugar.</p>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        label="Nuevo tipo"
+        class="p-button-success create-btn"
+        (click)="openCreateDialog()">
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          [(ngModel)]="searchText"
+          placeholder="Buscar por nombre del tipo de documento" />
+      </div>
+
+      <div class="filter-group">
+        <button
+          type="button"
+          class="filter-pill"
+          [ngClass]="{ 'filter-pill--active': filterState === 'all' }"
+          (click)="setFilter('all')">
+          Todos
+        </button>
+
+        <button
+          type="button"
+          class="filter-pill"
+          [ngClass]="{ 'filter-pill--active': filterState === 'active' }"
+          (click)="setFilter('active')">
+          Activos
+        </button>
+
+        <button
+          type="button"
+          class="filter-pill"
+          [ngClass]="{ 'filter-pill--active': filterState === 'inactive' }"
+          (click)="setFilter('inactive')">
+          Inactivos
+        </button>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-filter-slash"
+          label="Limpiar"
+          class="p-button-outlined p-button-secondary clear-btn"
+          (click)="clearSearch()">
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="cargando" class="state-card">
+      <div class="loader"></div>
+      <h3>Cargando tipos de documento</h3>
+      <p>Estamos consultando la información registrada en el sistema.</p>
+    </div>
+
+    <ng-container *ngIf="!cargando">
+      <div *ngIf="filteredDocuments.length > 0; else emptyState" class="table-shell">
+        <p-table
+          [value]="filteredDocuments"
+          [paginator]="true"
+          [rows]="8"
+          [rowsPerPageOptions]="[5,8,10,20]"
+          responsiveLayout="scroll"
+          [rowTrackBy]="trackByDocument">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Nombre</th>
+              <th>Fecha de creación</th>
+              <th>Fecha de actualización</th>
+              <th>Estado</th>
+              <th class="actions-col">Acciones</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-document>
+            <tr>
+              <td class="table-title">{{ document.name }}</td>
+              <td>{{ document.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td>{{ document.updateAt | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <span
+                  class="status-chip"
+                  [ngClass]="document.status ? 'status-chip--active' : 'status-chip--inactive'">
+                  {{ document.status ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="actions-col">
+                <div class="action-buttons">
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-pencil"
+                    class="p-button-rounded p-button-text p-button-warning"
+                    (click)="openEditDialog(document)"
+                    pTooltip="Editar">
+                  </button>
+
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-trash"
+                    class="p-button-rounded p-button-text p-button-danger"
+                    (click)="openDeleteDialog(document)"
+                    pTooltip="Eliminar">
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="state-card">
+          <i class="pi pi-inbox state-icon"></i>
+          <h3>No hay resultados</h3>
+          <p>No encontramos tipos de documento con los filtros actuales.</p>
+        </div>
+      </ng-template>
+    </ng-container>
+  </section>
+
+  <!-- CREAR / EDITAR -->
+  <p-dialog
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: '460px' }"
+    [showHeader]="false"
+    [closable]="false"
+    [dismissableMask]="false"
+    styleClass="custom-dialog">
+
+    <div class="dialog-head">
+      <div>
+        <span class="dialog-eyebrow">Formulario</span>
+        <h3>{{ dialogTitle }}</h3>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        class="p-button-text dialog-close-btn"
+        (click)="closeDialog()">
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      <div class="field-block">
+        <label for="doc-name">Nombre del tipo de documento</label>
+        <input
+          id="doc-name"
+          pInputText
+          type="text"
+          [(ngModel)]="documentoForm.name"
+          placeholder="Ej. Cédula de ciudadanía" />
+      </div>
+
+      <div class="field-switch">
+        <div>
+          <label class="field-switch__title">Estado</label>
+          <p class="field-switch__text">Define si el tipo de documento estará activo en el sistema.</p>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" [(ngModel)]="documentoForm.status" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-check"
+        [label]="dialogMode === 'create' ? 'Crear' : 'Guardar cambios'"
+        class="p-button-success save-btn"
+        [loading]="guardando"
+        (click)="saveDocument()">
+      </button>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        label="Cancelar"
+        class="p-button-outlined p-button-secondary cancel-btn"
+        (click)="closeDialog()">
+      </button>
+    </div>
+  </p-dialog>
+
+  <!-- ELIMINAR -->
+  <p-dialog
+    [(visible)]="deleteDialogVisible"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: '430px' }"
+    [showHeader]="false"
+    [closable]="false"
+    [dismissableMask]="false"
+    styleClass="custom-dialog">
+
+    <div class="dialog-head dialog-head--danger">
+      <div>
+        <span class="dialog-eyebrow">Confirmación</span>
+        <h3>Eliminar tipo de documento</h3>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        class="p-button-text dialog-close-btn"
+        (click)="closeDeleteDialog()">
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      <p class="delete-text">
+        ¿Estás seguro de que deseas eliminar el tipo de documento
+        <strong>"{{ documentoSeleccionado?.name }}"</strong>?
+      </p>
+      <p class="delete-subtext">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <div class="dialog-actions">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-trash"
+        label="Eliminar"
+        class="p-button-danger"
+        [loading]="eliminando"
+        (click)="deleteDocument()">
+      </button>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        label="Cancelar"
+        class="p-button-outlined p-button-secondary"
+        (click)="closeDeleteDialog()">
+      </button>
+    </div>
+  </p-dialog>
+
+  <p-toast [style]="{ top: '90px' }"></p-toast>
+</div>

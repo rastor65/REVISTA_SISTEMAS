@@ -1,21 +1,330 @@
-<br>
-<br>
-<br>
-<h2 class="solicitudes-title">Revistas - ver</h2>
+<div class="journals-admin-page">
+  <section class="journals-admin-header">
+    <div class="journals-admin-header__left">
+      <span class="page-badge">
+        <i class="pi pi-book"></i>
+        Catálogo editorial
+      </span>
+      <h1>Gestión de revistas</h1>
+      <p>
+        Administra el catálogo de revistas disponibles en la plataforma.
+        Crea nuevas revistas, actualiza sus nombres y desactiva registros cuando sea necesario.
+      </p>
+    </div>
 
-<div class="table-container">
-    <p-table [value]="revistas" [paginator]="true" [rows]="5" class="custom-table">
-        <ng-template pTemplate="header">
+    <div class="journals-admin-header__right">
+      <div class="metric-card">
+        <span>Total</span>
+        <strong>{{ totalRevistas }}</strong>
+      </div>
+      <div class="metric-card metric-card--success">
+        <span>Activas</span>
+        <strong>{{ totalActivas }}</strong>
+      </div>
+      <div class="metric-card metric-card--muted">
+        <span>Inactivas</span>
+        <strong>{{ totalInactivas }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="journals-toolbar">
+    <div class="journals-toolbar__search">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="searchText"
+        (ngModelChange)="buscarRevistas()"
+        placeholder="Buscar por ID, nombre o estado" />
+    </div>
+
+    <div class="journals-toolbar__actions">
+      <div class="view-switcher">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-bars"
+          class="view-switcher__btn"
+          [ngClass]="{ 'view-switcher__btn--active': currentView === 'table' }"
+          (click)="toggleView('table')">
+        </button>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-th-large"
+          class="view-switcher__btn"
+          [ngClass]="{ 'view-switcher__btn--active': currentView === 'cards' }"
+          (click)="toggleView('cards')">
+        </button>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        label="Nueva revista"
+        class="create-journal-btn"
+        (click)="showCreateDialog()">
+      </button>
+    </div>
+  </section>
+
+  <div *ngIf="cargandoVista" class="loading-panel">
+    <div class="loading-spinner"></div>
+    <h3>Cargando revistas</h3>
+    <p>Estamos consultando la información registrada en el sistema.</p>
+  </div>
+
+  <ng-container *ngIf="!cargandoVista">
+    <div *ngIf="filteredRevistas.length > 0; else emptyState">
+      <section *ngIf="currentView === 'table'" class="journals-table-card">
+        <div class="table-card__header">
+          <div>
+            <h2>Listado de revistas</h2>
+            <p>{{ filteredRevistas.length }} resultado(s) encontrado(s)</p>
+          </div>
+        </div>
+
+        <p-table
+          [value]="filteredRevistas"
+          [paginator]="true"
+          [rows]="8"
+          [rowsPerPageOptions]="[5,10,20,30]"
+          responsiveLayout="scroll"
+          styleClass="journals-table">
+
+          <ng-template pTemplate="header">
             <tr>
-                <th>Id</th>
-                <th>Nombre</th>
+              <th style="width: 90px;">ID</th>
+              <th>Nombre de la revista</th>
+              <th style="width: 160px;">Estado</th>
+              <th style="width: 260px;">Acciones</th>
             </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-revista>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-revista>
             <tr>
-                <td>{{ revista.id }}</td>
-                <td>{{ revista.nombre }}</td>
+              <td>
+                <span class="table-id">#{{ revista.id }}</span>
+              </td>
+
+              <td>
+                <div class="journal-name-cell">
+                  <div class="journal-name-cell__icon">
+                    <i class="pi pi-bookmark"></i>
+                  </div>
+                  <div class="journal-name-cell__content">
+                    <strong>{{ revista.nombre }}</strong>
+                    <small>Registro editorial en plataforma</small>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <span class="status-pill" [ngClass]="getEstadoClase(revista)">
+                  {{ getEstadoTexto(revista) }}
+                </span>
+              </td>
+
+              <td>
+                <div class="row-actions">
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-pencil"
+                    label="Editar"
+                    class="table-action-btn table-action-btn--edit"
+                    (click)="showEditDialog(revista)">
+                  </button>
+
+                  <button
+                    pButton
+                    type="button"
+                    icon="pi pi-trash"
+                    label="Desactivar"
+                    class="table-action-btn table-action-btn--delete"
+                    [disabled]="revista.status === false"
+                    (click)="showDeleteDialog(revista)">
+                  </button>
+                </div>
+              </td>
             </tr>
-        </ng-template>
-    </p-table>
+          </ng-template>
+        </p-table>
+      </section>
+
+      <section *ngIf="currentView === 'cards'" class="journals-cards-grid">
+        <article class="journal-card" *ngFor="let revista of filteredRevistas">
+          <div class="journal-card__top">
+            <span class="table-id">#{{ revista.id }}</span>
+            <span class="status-pill" [ngClass]="getEstadoClase(revista)">
+              {{ getEstadoTexto(revista) }}
+            </span>
+          </div>
+
+          <div class="journal-card__body">
+            <div class="journal-card__icon">
+              <i class="pi pi-book"></i>
+            </div>
+
+            <div class="journal-card__content">
+              <h3>{{ revista.nombre }}</h3>
+              <p>Registro editorial disponible en la plataforma.</p>
+            </div>
+          </div>
+
+          <div class="journal-card__actions">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              label="Editar"
+              class="table-action-btn table-action-btn--edit"
+              (click)="showEditDialog(revista)">
+            </button>
+
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              label="Desactivar"
+              class="table-action-btn table-action-btn--delete"
+              [disabled]="revista.status === false"
+              (click)="showDeleteDialog(revista)">
+            </button>
+          </div>
+        </article>
+      </section>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div class="empty-panel">
+      <div class="empty-panel__icon">
+        <i class="pi pi-inbox"></i>
+      </div>
+      <h3>No se encontraron revistas</h3>
+      <p>No hay registros disponibles con los filtros actuales.</p>
+    </div>
+  </ng-template>
+
+  <p-dialog
+    [(visible)]="dialogVisible"
+    [baseZIndex]="10000"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: dialogType === 'delete' ? '34rem' : '32rem', maxWidth: '92vw' }"
+    [showHeader]="false"
+    [closable]="false"
+    [dismissableMask]="false">
+
+    <ng-container *ngIf="dialogType === 'create' || dialogType === 'edit'">
+      <div class="dialog-shell">
+        <div class="dialog-shell__header">
+          <div>
+            <span class="page-badge page-badge--small">
+              {{ dialogType === 'create' ? 'Nueva revista' : 'Edición' }}
+            </span>
+            <h2>{{ dialogType === 'create' ? 'Crear revista' : 'Editar revista' }}</h2>
+            <p>
+              {{ dialogType === 'create'
+                ? 'Registra una nueva revista en el catálogo.'
+                : 'Actualiza la información de la revista seleccionada.' }}
+            </p>
+          </div>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            class="dialog-close-btn"
+            (click)="closeDialog()">
+          </button>
+        </div>
+
+        <div class="dialog-form">
+          <label for="nombre">Nombre de la revista</label>
+          <input
+            id="nombre"
+            type="text"
+            pInputText
+            [(ngModel)]="revistaSeleccionada.nombre"
+            placeholder="Ej. Revista de Ciencias e Ingeniería" />
+        </div>
+
+        <div class="dialog-actions">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            label="Cancelar"
+            class="dialog-secondary-btn"
+            (click)="closeDialog()">
+          </button>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-save"
+            [label]="dialogType === 'create' ? 'Guardar revista' : 'Guardar cambios'"
+            class="dialog-primary-btn"
+            [disabled]="guardandoRevista || !formularioValido"
+            (click)="saveRevista()">
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="dialogType === 'delete'">
+      <div class="dialog-shell dialog-shell--danger">
+        <div class="danger-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+
+        <div class="dialog-shell__danger-content">
+          <span class="page-badge page-badge--danger">Confirmación</span>
+          <h2>¿Deseas desactivar esta revista?</h2>
+          <p>
+            La revista dejará de estar disponible para nuevos procesos, pero conservará su registro histórico.
+          </p>
+
+          <div class="danger-summary">
+            <div>
+              <span>ID</span>
+              <strong>#{{ revistaSeleccionada.id }}</strong>
+            </div>
+            <div>
+              <span>Nombre</span>
+              <strong>{{ revistaSeleccionada.nombre }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="dialog-actions">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            label="Cancelar"
+            class="dialog-secondary-btn"
+            (click)="closeDialog()">
+          </button>
+
+          <button
+            pButton
+            type="button"
+            icon="pi pi-trash"
+            label="Desactivar"
+            class="dialog-danger-btn"
+            [disabled]="eliminandoRevista"
+            (click)="desactivarRevista()">
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </p-dialog>
+
+  <p-toast [style]="{ top: '90px' }"></p-toast>
 </div>

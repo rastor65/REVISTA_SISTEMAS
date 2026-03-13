@@ -1,84 +1,296 @@
-<br>
-<br>
-<br>
-<br>
-<h1 class="solicitudes-title">CREAR SEGUIMIENTO</h1>
+<div class="follow-up-page">
+  <section class="follow-up-hero">
+    <div class="follow-up-hero__main">
+      <span class="hero-badge">
+        <i class="pi pi-plus-circle"></i>
+        Gestión editorial
+      </span>
 
-<div class="crear-seguimiento-container">
-  <form [formGroup]="seguimientoForm" (ngSubmit)="guardarSeguimiento()" class="crear-seguimiento-form">
-    <div>
-      <label for="solicitudId">Solicitud</label><br>
-      <p-dropdown id="solicitudId" name="solicitudId" [options]="solicitudes" optionLabel="titulo_articulo"
-        optionValue="id" placeholder="seleccionar..." [filter]="true" formControlName="solicitudId"></p-dropdown>
-    </div>
-    <div>
-      <label for="responsableId">Responsable</label><br>
-      <p-dropdown id="responsableId" name="responsableId" [options]="responsables" optionLabel="nombres" optionValue="user"
-        placeholder="seleccionar..." [filter]="true" formControlName="responsableId">
-        <ng-template let-responsable pTemplate="item">
-          {{ responsable.nombres }} {{ responsable.apellidos }}
-        </ng-template></p-dropdown>
-    </div>
-    <div>
-      <label for="pasos_seguimiento">Pasos de seguimiento</label><br>
-      <p-dropdown id="pasos_seguimiento" name="pasos_seguimiento" [options]="pasos" optionLabel="nombre"
-        optionValue="id" placeholder="seleccionar..." [filter]="true" formControlName="pasos_seguimiento"></p-dropdown>
-    </div>
-    <div>
-      <label for="estado_seguimiento">Estado de seguimiento</label><br>
-      <p-dropdown id="estado_seguimiento" name="estado_seguimiento" [options]="estados" optionLabel="nombre"
-        optionValue="id" placeholder="seleccionar..." formControlName="estado_seguimiento" [filter]="true"></p-dropdown>
-    </div>
-    <div>
-      <label for="fechaAsignacion">Fecha de Asignación</label>
-      <input type="date" id="fechaAsignacion" formControlName="fecha_asignacion" name="fechaAsignacion" required>
-    </div>
-    <div>
-      <label for="fechaProgramacion">Fecha de Programación</label>
-      <input type="date" id="fechaProgramacion" formControlName="fecha_programacion" name="fechaProgramacion" required>
-    </div>
-    <div>
-      <label for="fechaEvaluacion">Fecha de Evaluación</label>
-      <input type="date" id="fechaEvaluacion" formControlName="fecha_evaluacion" name="fechaEvaluacion" required>
-    </div>
-    <div>
-      <label for="correciones">Correcciones</label><br>
-      <div class="archivo-area">
-        <div>
-          <label for="correcciones" class="custom-file-upload">
-            <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
-            <input pButton type="file" id="correcciones" (change)="onFileSelected($event)" required
-              style="display:none">
-          </label>
-        </div>
-        <br>
-        <div *ngIf="archivoSeleccionado">
-          <span>Archivo seleccionado:</span>
-          {{ archivoSeleccionado }}
-        </div>
-      </div>
-    </div>
-    <div>
-      <label for="formato_evaluacion">Formato de evaluación</label><br>
-      <div class="archivo-area">
-        <div>
-          <label for="formato_evaluacion" class="custom-file-upload">
-            <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
-            <input pButton type="file" id="formato_evaluacion" (change)="onFileSelectedFormato($event)" required
-              style="display:none">
-          </label>
-        </div>
-        <br>
-        <div *ngIf="archivoSeleccionadoFormato">
-          <span>Archivo seleccionado:</span>
-          {{ archivoSeleccionadoFormato }}
-        </div>
-      </div>
+      <h1>Crear seguimiento extra</h1>
+      <p>
+        Registra un seguimiento adicional de forma rápida, clara y organizada para continuar
+        el proceso editorial de una solicitud cuando sea necesario.
+      </p>
     </div>
 
-    <button pButton type="submit" class="p-button p-button-outlined" icon="pi pi-save"
-      label="Guardar Seguimiento"></button>
+    <div class="follow-up-hero__side">
+      <div class="quick-tip">
+        <strong>Uso recomendado</strong>
+        <p>Selecciona primero la solicitud, luego el paso, y deja que el sistema sugiera las fechas.</p>
+      </div>
+
+      <div class="quick-tip">
+        <strong>Archivo obligatorio</strong>
+        <p>El documento de correcciones es obligatorio. El formato de evaluación es opcional.</p>
+      </div>
+    </div>
+  </section>
+
+  <div *ngIf="cargandoCatalogos" class="loading-state">
+    <div class="loading-spinner"></div>
+    <h3>Cargando información</h3>
+    <p>Estamos preparando solicitudes, responsables, pasos y estados.</p>
+  </div>
+
+  <form
+    *ngIf="!cargandoCatalogos"
+    [formGroup]="seguimientoForm"
+    (ngSubmit)="guardarSeguimiento()"
+    class="follow-layout">
+
+    <div class="follow-main">
+      <section class="follow-card">
+        <div class="section-header">
+          <span class="section-step">Paso 1</span>
+          <h2>Selecciona la información base</h2>
+          <p>Relaciona correctamente el seguimiento con la solicitud, el responsable y el flujo editorial.</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="field field--full">
+            <label for="solicitudId">Solicitud</label>
+            <p-dropdown
+              id="solicitudId"
+              [options]="solicitudes"
+              optionLabel="titulo_articulo"
+              optionValue="id"
+              placeholder="Seleccionar solicitud..."
+              [filter]="true"
+              appendTo="body"
+              formControlName="solicitudId"
+              styleClass="w-full">
+            </p-dropdown>
+            <small class="field-error" *ngIf="isInvalid('solicitudId')">Debes seleccionar una solicitud.</small>
+          </div>
+
+          <div class="field">
+            <label for="responsableId">Responsable</label>
+            <p-dropdown
+              id="responsableId"
+              [options]="responsables"
+              optionLabel="nombres"
+              optionValue="user"
+              placeholder="Seleccionar responsable..."
+              [filter]="true"
+              appendTo="body"
+              formControlName="responsableId"
+              styleClass="w-full">
+              <ng-template let-responsable pTemplate="item">
+                {{ responsable.nombres }} {{ responsable.apellidos }}
+              </ng-template>
+            </p-dropdown>
+            <small class="field-error" *ngIf="isInvalid('responsableId')">Debes seleccionar un responsable.</small>
+          </div>
+
+          <div class="field">
+            <label for="pasos_seguimiento">Paso de seguimiento</label>
+            <p-dropdown
+              id="pasos_seguimiento"
+              [options]="pasos"
+              optionLabel="nombre"
+              optionValue="id"
+              placeholder="Seleccionar paso..."
+              [filter]="true"
+              appendTo="body"
+              formControlName="pasos_seguimiento"
+              (onChange)="onPasoChange()"
+              styleClass="w-full">
+            </p-dropdown>
+            <small class="field-error" *ngIf="isInvalid('pasos_seguimiento')">Debes seleccionar un paso.</small>
+          </div>
+
+          <div class="field field--full">
+            <label for="estado_seguimiento">Estado de seguimiento</label>
+            <p-dropdown
+              id="estado_seguimiento"
+              [options]="estados"
+              optionLabel="nombre"
+              optionValue="id"
+              placeholder="Seleccionar estado..."
+              [filter]="true"
+              appendTo="body"
+              formControlName="estado_seguimiento"
+              styleClass="w-full">
+            </p-dropdown>
+            <small class="field-error" *ngIf="isInvalid('estado_seguimiento')">Debes seleccionar un estado.</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="follow-card">
+        <div class="section-header">
+          <span class="section-step">Paso 2</span>
+          <h2>Configura las fechas</h2>
+          <p>El sistema sugiere automáticamente la programación con base en el paso elegido.</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="fechaAsignacion">Fecha de asignación</label>
+            <input
+              id="fechaAsignacion"
+              type="date"
+              formControlName="fecha_asignacion"
+              (change)="onFechaAsignacionChange()"
+              class="custom-input">
+            <small class="field-error" *ngIf="isInvalid('fecha_asignacion')">Debes seleccionar la fecha de asignación.</small>
+          </div>
+
+          <div class="field">
+            <label for="fechaProgramacion">Fecha de programación</label>
+            <input
+              id="fechaProgramacion"
+              type="date"
+              formControlName="fecha_programacion"
+              class="custom-input">
+            <small class="field-help" *ngIf="pasoSeleccionado?.dias_programacion">
+              Sugerida con base en {{ pasoSeleccionado?.dias_programacion }} día(s).
+            </small>
+            <small class="field-error" *ngIf="isInvalid('fecha_programacion')">Debes seleccionar la fecha de programación.</small>
+          </div>
+
+          <div class="field field--full">
+            <label for="fechaEvaluacion">Fecha de evaluación</label>
+            <input
+              id="fechaEvaluacion"
+              type="date"
+              formControlName="fecha_evaluacion"
+              class="custom-input">
+            <small class="field-error" *ngIf="isInvalid('fecha_evaluacion')">Debes seleccionar la fecha de evaluación.</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="follow-card">
+        <div class="section-header">
+          <span class="section-step">Paso 3</span>
+          <h2>Adjunta los soportes</h2>
+          <p>Sube los archivos del seguimiento de manera clara y diferenciada.</p>
+        </div>
+
+        <div class="upload-grid">
+          <div class="upload-box upload-box--primary">
+            <div class="upload-box__header">
+              <div class="upload-icon">
+                <i class="pi pi-file-pdf"></i>
+              </div>
+              <div>
+                <h3>Correcciones</h3>
+                <p>Archivo obligatorio en PDF.</p>
+              </div>
+            </div>
+
+            <label for="correcciones" class="upload-button">
+              <i class="pi pi-upload"></i>
+              <span>Seleccionar archivo</span>
+              <input
+                id="correcciones"
+                type="file"
+                accept=".pdf"
+                (change)="onFileSelected($event)"
+                style="display:none">
+            </label>
+
+            <div class="file-preview" *ngIf="archivoSeleccionado">
+              <span>{{ archivoSeleccionado }}</span>
+              <button type="button" class="file-remove" (click)="quitarArchivoCorrecciones()">Quitar</button>
+            </div>
+          </div>
+
+          <div class="upload-box upload-box--secondary">
+            <div class="upload-box__header">
+              <div class="upload-icon upload-icon--secondary">
+                <i class="pi pi-file-edit"></i>
+              </div>
+              <div>
+                <h3>Formato de evaluación</h3>
+                <p>Archivo opcional en PDF.</p>
+              </div>
+            </div>
+
+            <label for="formato_evaluacion" class="upload-button upload-button--secondary">
+              <i class="pi pi-upload"></i>
+              <span>Seleccionar archivo</span>
+              <input
+                id="formato_evaluacion"
+                type="file"
+                accept=".pdf"
+                (change)="onFileSelectedFormato($event)"
+                style="display:none">
+            </label>
+
+            <div class="file-preview file-preview--secondary" *ngIf="archivoSeleccionadoFormato">
+              <span>{{ archivoSeleccionadoFormato }}</span>
+              <button type="button" class="file-remove" (click)="quitarArchivoFormato()">Quitar</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="follow-sidebar">
+      <section class="summary-card">
+        <div class="section-header section-header--compact">
+          <h2>Resumen</h2>
+          <p>Revisa todo antes de guardar.</p>
+        </div>
+
+        <div class="summary-list">
+          <div class="summary-item">
+            <span>Solicitud</span>
+            <strong>{{ solicitudSeleccionada?.titulo_articulo || 'No seleccionada' }}</strong>
+          </div>
+
+          <div class="summary-item">
+            <span>Responsable</span>
+            <strong>
+              {{ responsableSeleccionado ? (responsableSeleccionado.nombres + ' ' + responsableSeleccionado.apellidos) : 'No seleccionado' }}
+            </strong>
+          </div>
+
+          <div class="summary-item">
+            <span>Paso</span>
+            <strong>{{ pasoSeleccionado?.nombre || 'No seleccionado' }}</strong>
+          </div>
+
+          <div class="summary-item">
+            <span>Estado</span>
+            <strong>{{ estadoSeleccionado?.nombre || 'No seleccionado' }}</strong>
+          </div>
+
+          <div class="summary-item">
+            <span>Correcciones</span>
+            <strong>{{ archivoSeleccionado || 'Pendiente' }}</strong>
+          </div>
+
+          <div class="summary-item">
+            <span>Formato de evaluación</span>
+            <strong>{{ archivoSeleccionadoFormato || 'No adjuntado' }}</strong>
+          </div>
+        </div>
+
+        <div class="summary-actions">
+          <button
+            pButton
+            type="button"
+            label="Limpiar"
+            icon="pi pi-refresh"
+            class="p-button-secondary p-button-outlined"
+            (click)="limpiarFormulario()">
+          </button>
+
+          <button
+            pButton
+            type="submit"
+            label="Guardar seguimiento"
+            icon="pi pi-save"
+            class="p-button-success"
+            [disabled]="guardandoSeguimiento || !formularioValido">
+          </button>
+        </div>
+      </section>
+    </aside>
   </form>
 
-
-  <p-toast [style]="{ top: '80px' }"></p-toast>
+  <p-toast [style]="{ top: '90px' }"></p-toast>
+</div>

@@ -1,474 +1,636 @@
-/* ===========================
-   Tokens (paleta + radii + sombras)
-   =========================== */
-:root{
-  --surface:        #ffffff;
-  --surface-2:      #f6f8fc;
-  --line:           #cbd5e1;     /* borde base */
-  --line-strong:    #94a3b8;     /* borde fuerte en hover */
-  --ink-1:          #0f172a;     /* título */
-  --ink-2:          #334155;     /* labels */
-  --ink-3:          #64748b;     /* secundario */
-  --placeholder:    #8aa1b8;
-  --brand:          #2563eb;     /* azul primario */
-  --brand-weak:     #eef2ff;
-  --success:        #16a34a;
-
-  --radius:         14px;
-  --radius-sm:      12px;
-  --shadow-1:       0 10px 26px rgba(15,23,42,.08);
-  --ring:           0 0 0 3px rgba(37,99,235,.15);
-}
-
-/* ===========================
-   CONTENEDOR PRINCIPAL (mantiene tu layout)
-   =========================== */
-.form-container{
-  width: 70%;
-  margin: 0 auto;
-  padding: 22px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-1);
-}
-
-/* Labels & campos */
-.p-field{ margin-bottom: 18px; }
-.p-field label{
-  display:block; margin-bottom: 6px;
-  font-weight: 800; color: var(--ink-2);
-  letter-spacing:.2px;
-}
-
-/* ===========================
-   INPUT TEXT / TEXTAREA
-   =========================== */
-.form-container .p-inputtext,
-.form-container .p-inputtextarea{
-  width:100%;
-  min-height: 46px;
-  border-radius: var(--radius-sm);
-  border:1px solid var(--line);
-  background: var(--surface-2);
-  color: var(--ink-1);
-  padding: .65rem .85rem;
-  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
-}
-.form-container .p-inputtextarea{ min-height: 110px; resize: vertical; }
-
-.form-container .p-inputtext::placeholder,
-.form-container .p-inputtextarea::placeholder{
-  color: var(--placeholder);
-}
-
-.form-container .p-inputtext:focus,
-.form-container .p-inputtextarea:focus{
-  outline: none;
-  border-color: var(--brand);
-  background: #fff;
-  box-shadow: var(--ring);
-}
-
-/* ===========================
-   INPUT GROUP (icono/añadidos)
-   =========================== */
-.form-container .p-inputgroup{
-  display:flex; align-items:center;
-  border:1px solid var(--line);
-  border-radius: var(--radius-sm);
-  overflow:hidden;
-  background: var(--surface-2);
-}
-.form-container .p-inputgroup .p-inputtext{
-  border:none; background:transparent; min-height: 46px;
-}
-.form-container .p-inputgroup:focus-within{
-  border-color: var(--brand);
-  box-shadow: var(--ring);
-  background:#fff;
-}
-.form-container .p-inputgroup-addon{
-  background: transparent;
-  border:none; color: var(--ink-3);
-  padding: 0 .8rem;
-}
-.form-container .p-inputgroup-addon .pi{ font-size: 1.05rem; }
-
-/* ===========================
-   DROPDOWN / MULTISELECT
-   =========================== */
-.form-container .p-dropdown,
-.form-container .p-multiselect{
+:host {
+  display: block;
   width: 100%;
-  border-radius: var(--radius-sm);
-  border:1px solid var(--line);
-  background: var(--surface-2);
-  min-height: 46px;
-  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
 }
 
-.form-container .p-dropdown:not(.p-disabled).p-focus,
-.form-container .p-multiselect:not(.p-disabled).p-focus{
-  border-color: var(--brand);
-  box-shadow: var(--ring);
-  background:#fff;
+.submission-page {
+  width: 100%;
+  padding: 2rem 1.5rem 3rem;
+  background: linear-gradient(180deg, #f4f8fc 0%, #eef3f8 100%);
 }
 
-.form-container .p-dropdown .p-dropdown-label,
-.form-container .p-multiselect .p-multiselect-label{
-  padding: .65rem .85rem;
-  color: var(--ink-1);
-}
-.form-container .p-dropdown .p-dropdown-label.p-placeholder,
-.form-container .p-multiselect .p-multiselect-label.p-placeholder{
-  color: var(--placeholder);
+/* HERO */
+.submission-hero {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
-/* Tokens “chip” del multiselect (cuando display=chip) */
-.form-container .p-multiselect-token{
+.submission-hero__content,
+.submission-hero__summary {
+  background: #ffffff;
+  border: 1px solid #e5edf5;
+  border-radius: 24px;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
+}
+
+.submission-hero__content {
+  padding: 2rem;
+}
+
+.submission-hero__summary {
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.submission-badge,
+.card-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  padding: 0.55rem 0.95rem;
   border-radius: 999px;
-  background: var(--brand-weak);
-  border:1px solid #c7d2fe;
-  color:#1d4ed8;
-  font-weight:800;
+  background: #e8f7f8;
+  color: #0f7d86;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
 }
 
-/* Paneles desplegados: mayor legibilidad */
-.p-dropdown-panel, .p-multiselect-panel{
-  border-radius: 12px !important;
-  border:1px solid var(--line) !important;
-  box-shadow: 0 16px 36px rgba(2,6,23,.18) !important;
-}
-
-/* Hover de opciones */
-.p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-highlight):hover,
-.p-multiselect-panel .p-multiselect-items .p-multiselect-item:not(.p-highlight):hover{
-  background: #eef2ff;
-  color: #1d4ed8;
-}
-
-/* ===========================
-   BOTONES
-   =========================== */
-.p-button{
-  border-radius: 999px;
+.submission-hero__content h1 {
+  margin: 1rem 0 0.85rem;
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1.1;
   font-weight: 900;
-  letter-spacing:.2px;
-}
-.p-button.p-button-outlined{
-  background: var(--brand-weak);
-  color:#1d4ed8;
-  border-color:#c7d2fe;
-}
-.p-button.p-button-outlined:hover{ filter: brightness(1.03); }
-.p-button-success{
-  background: var(--success);
-  border-color: var(--success);
-}
-.p-button-success:hover{ filter: brightness(1.06); }
-
-/* Botón con icono a la derecha (tu clase) */
-.button-icon-right{
-  display:flex; flex-direction: row-reverse; align-items:center; gap:.5rem;
+  color: #0f172a;
 }
 
-/* ===========================
-   ZONA DE ARCHIVOS (dropzone)
-   =========================== */
-.archivo-area{
-  margin-top:10px; padding:14px;
-  background: linear-gradient(180deg,#f8fbff 0%, #f3f6fc 100%);
-  border:1px dashed var(--line-strong);
-  border-radius: var(--radius-sm);
-  display:flex; align-items:center; gap:12px;
-}
-.archivo-area span{
-  font-weight: 800; color: var(--ink-2);
+.submission-hero__content p {
+  margin: 0;
+  max-width: 820px;
+  color: #5f6c7b;
+  font-size: 1rem;
+  line-height: 1.8;
 }
 
-/* Botón seleccionar archivo (tu clase) */
-.custom-file-upload{
-  display:inline-flex; align-items:center; gap:8px;
-  padding: 8px 14px; cursor:pointer;
-  background: var(--brand-weak);
-  color:#1d4ed8; border:1px solid #c7d2fe;
-  border-radius: 999px; font-weight: 900;
-  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
-  user-select:none;
+.hero-stat {
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  background: #f8fbfe;
+  border: 1px solid #e4edf5;
 }
-.custom-file-upload:hover{
+
+.hero-stat__label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.hero-stat strong {
+  color: #0f172a;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.status-ok {
+  color: #15803d !important;
+}
+
+.status-pending {
+  color: #b45309 !important;
+}
+
+/* LAYOUT */
+.submission-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.6fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.submission-card {
+  background: #ffffff;
+  border: 1px solid #e5edf5;
+  border-radius: 24px;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
+}
+
+.submission-card--main {
+  padding: 2rem;
+}
+
+.submission-card--side {
+  padding: 1.5rem;
+  position: sticky;
+  top: 6rem;
+}
+
+.card-head {
+  margin-bottom: 1.6rem;
+}
+
+.card-head h2 {
+  margin: 0.95rem 0 0.45rem;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.card-head p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.7;
+}
+
+/* FORM */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.field-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.field-block--full {
+  grid-column: 1 / -1;
+}
+
+.field-block label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+.input-shell {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  border: 1px solid #d8e2ec;
+  border-radius: 16px;
+  background: #f8fbfe;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.input-shell:focus-within {
+  border-color: #02b1bc;
+  box-shadow: 0 0 0 4px rgba(2, 177, 188, 0.12);
+  background: #ffffff;
+}
+
+.input-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  color: #64748b;
+}
+
+.input-shell .p-inputtext,
+.input-shell .p-dropdown {
+  width: 100%;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .input-shell .p-dropdown {
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .input-shell .p-dropdown-label {
+  padding: 0.9rem 0.25rem 0.9rem 0 !important;
+}
+
+:host ::ng-deep .p-inputtext,
+:host ::ng-deep .p-dropdown,
+:host ::ng-deep .p-multiselect {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 16px;
+}
+
+:host ::ng-deep .p-inputtext {
+  border: 1px solid #d8e2ec;
+  background: #f8fbfe;
+  padding: 0.9rem 1rem;
+  color: #0f172a;
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep .p-inputtext:focus {
+  border-color: #02b1bc;
+  box-shadow: 0 0 0 4px rgba(2, 177, 188, 0.12);
+  background: #ffffff;
+}
+
+:host ::ng-deep .p-dropdown,
+:host ::ng-deep .p-multiselect {
+  border: 1px solid #d8e2ec;
+  background: #f8fbfe;
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep .p-dropdown:not(.p-disabled).p-focus,
+:host ::ng-deep .p-multiselect:not(.p-disabled).p-focus {
+  border-color: #02b1bc;
+  box-shadow: 0 0 0 4px rgba(2, 177, 188, 0.12);
+  background: #ffffff;
+}
+
+:host ::ng-deep .p-dropdown .p-dropdown-label,
+:host ::ng-deep .p-multiselect .p-multiselect-label {
+  padding: 0.9rem 1rem;
+  color: #0f172a;
+}
+
+:host ::ng-deep .p-dropdown .p-dropdown-label.p-placeholder,
+:host ::ng-deep .p-multiselect .p-multiselect-label.p-placeholder {
+  color: #94a3b8;
+}
+
+:host ::ng-deep .p-multiselect-token {
+  background: #e7f7f8;
+  color: #0f7d86;
+  border: 1px solid #bdecef;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+:host ::ng-deep .p-dropdown-panel,
+:host ::ng-deep .p-multiselect-panel {
+  border-radius: 16px !important;
+  border: 1px solid #e5edf5 !important;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.14) !important;
+  overflow: hidden;
+}
+
+:host ::ng-deep .p-dropdown-item:not(.p-highlight):hover,
+:host ::ng-deep .p-multiselect-item:not(.p-highlight):hover {
+  background: #eef9fa !important;
+  color: #0f7d86 !important;
+}
+
+/* CONTENT CARD */
+.content-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.15rem;
+  border: 1px solid #dce6ef;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #fbfdff 0%, #f4f8fb 100%);
+}
+
+.content-status-card__info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.content-status-card__icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: #e8f7f8;
+  color: #0f7d86;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.content-status-card__icon i {
+  font-size: 1.35rem;
+}
+
+.content-status-card__text h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.content-status-card__text p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.content-action-btn {
+  flex-shrink: 0;
+}
+
+.content-status-inline {
+  margin-top: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #15803d;
+  font-weight: 700;
+}
+
+/* SIDE CARD */
+.side-summary h3 {
+  margin: 0.95rem 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.summary-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: #f8fbfe;
+  border: 1px solid #e4edf5;
+}
+
+.summary-item span {
+  color: #64748b;
+  font-weight: 700;
+}
+
+.summary-item strong {
+  color: #0f172a;
+  text-align: right;
+}
+
+.summary-note {
+  margin-top: 1.2rem;
+  padding: 1rem 1rem;
+  border-radius: 18px;
+  background: #fff8eb;
+  border: 1px solid #f9dfae;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.summary-note i {
+  color: #d97706;
+  margin-top: 0.1rem;
+}
+
+.summary-note p {
+  margin: 0;
+  color: #7c5a10;
+  line-height: 1.65;
+}
+
+/* FOOTER */
+.card-footer {
+  margin-top: 1.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit-btn {
+  min-width: 220px;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+/* LOADING DIALOG */
+:host ::ng-deep .loading-dialog .p-dialog-content {
+  border-radius: 22px;
+  padding: 2rem !important;
+}
+
+.loading-box {
+  text-align: center;
+}
+
+.loading-box h3 {
+  margin: 1rem 0 0.4rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.loading-box p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.7;
+}
+
+/* CONTENT DIALOG */
+:host ::ng-deep .content-dialog .p-dialog-content {
+  border-radius: 24px;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.dialog-shell {
+  padding: 1.5rem;
+  background: #ffffff;
+}
+
+.dialog-shell__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+
+.dialog-shell__head h2 {
+  margin: 0.95rem 0 0.35rem;
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.dialog-shell__head p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.7;
+}
+
+.dialog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.upload-card {
+  border: 1px solid #e4edf5;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #fbfdff 0%, #f7fafc 100%);
+  padding: 1.25rem;
+}
+
+.upload-card__icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: #e8f7f8;
+  color: #0f7d86;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.upload-card__icon i {
+  font-size: 1.45rem;
+}
+
+.upload-card__body h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.upload-card__body p {
+  margin: 0 0 1rem;
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.upload-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  background: #e8f7f8;
+  border: 1px solid #bdecef;
+  color: #0f7d86;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-trigger:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(29,78,216,.18);
+  box-shadow: 0 10px 22px rgba(2, 177, 188, 0.16);
+}
+
+.file-chip {
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 999px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-weight: 700;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.dialog-actions {
+  margin-top: 1.4rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.dialog-close-btn {
+  flex-shrink: 0;
+}
+
+/* BUTTONS */
+:host ::ng-deep .p-button {
+  font-weight: 800;
+}
+
+:host ::ng-deep .p-button.p-button-success {
+  background: linear-gradient(135deg, #02b1bc 0%, #0d8aa1 100%);
+  border-color: #0d8aa1;
+}
+
+:host ::ng-deep .p-button.p-button-success:hover {
   filter: brightness(1.03);
 }
-.custom-file-upload input[type="file"]{ display:none; }
 
-/* ===========================
-   DIÁLOGOS (siguen tus clases)
-   =========================== */
-.mi-dialog .p-dialog-header{
-  background: linear-gradient(180deg, #02b1bc, #0799a2);
-  color:#fff; border:none; padding:1rem;
-}
-.mi-dialog .p-dialog-content{ background:#fff; }
-.mi-dialog .p-dialog-footer{
-  background:#f8fafc; border-top:1px solid var(--line);
+:host ::ng-deep .p-button.p-button-outlined {
+  background: #ffffff;
 }
 
-/* Centrado */
-.custom-dialog{ position:fixed; inset:0; display:flex; justify-content:center; align-items:center; }
-.p-dialog.custom-dialog .p-dialog-wrapper{ max-width:80%; width:auto; }
-.p-dialog.custom-dialog .p-dialog-content{ text-align:center; }
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .submission-layout {
+    grid-template-columns: 1fr;
+  }
 
-/* ===========================
-   Ajustes menores
-   =========================== */
-.solicitudes-title, .page-title{ text-align:center; font-weight:900; color:var(--ink-1); }
-.p-inputgroup .p-inputtext::placeholder{ color:var(--placeholder); }
+  .submission-card--side {
+    position: static;
+  }
 
-/* ---------- Tokens rápidos ---------- */
-:root{
-  --line:#cbd5e1; --line-strong:#94a3b8;
-  --bg:#fff; --bg-2:#f6f8fc;
-  --ink:#0f172a; --ink-2:#334155; --muted:#64748b; --ph:#8aa1b8;
-  --brand:#2563eb; --ring:0 0 0 3px rgba(37,99,235,.15);
-  --r:12px;
+  .submission-hero {
+    grid-template-columns: 1fr;
+  }
 }
 
-/* ---------- Contenedor (igual que tenías) ---------- */
-.form-container{
-  width:70%; margin:0 auto; padding:22px;
-  background:var(--bg); border:1px solid var(--line); border-radius:14px;
-  box-shadow:0 10px 26px rgba(15,23,42,.08);
-}
-.p-field{ margin-bottom:18px; }
-.p-field label{ display:block; margin-bottom:6px; font-weight:800; color:var(--ink-2); }
+@media (max-width: 768px) {
+  .submission-page {
+    padding: 1.25rem 1rem 2rem;
+  }
 
-/* ===================================================
-   1) FIX CRÍTICO: p-inputgroup (inputs se expanden)
-   =================================================== */
-.form-container .p-inputgroup{
-  display:flex; align-items:center; gap:0;
-  border:1px solid var(--line); border-radius: var(--r);
-  background: var(--bg-2); overflow:hidden;
-}
-.form-container .p-inputgroup:focus-within{
-  border-color: var(--brand); box-shadow: var(--ring); background:#fff;
-}
-/* hijos que deben crecer: input, textarea, dropdown, multiselect, wrappers */
-.form-container .p-inputgroup > .p-inputtext,
-.form-container .p-inputgroup > input,
-.form-container .p-inputgroup > textarea,
-.form-container .p-inputgroup > .p-dropdown,
-.form-container .p-inputgroup > .p-multiselect,
-.form-container .p-inputgroup > .p-inputwrapper,
-.form-container .p-inputgroup > .p-component{
-  flex:1 1 auto !important;
-  width:1% !important;            /* truco de Prime para crecer */
-  border:0 !important;            /* borde lo lleva el group */
-  background:transparent !important;
-  min-height:46px;
-  padding:.65rem .85rem;
-  color: var(--ink);
-}
-/* addon a la derecha/izquierda */
-.form-container .p-inputgroup-addon{
-  display:flex; align-items:center; justify-content:center;
-  min-height:46px; padding:0 .9rem; border:0; background:transparent; color:var(--muted);
-}
-.form-container .p-inputgroup-addon .pi{ font-size:1.05rem; }
+  .submission-hero__content,
+  .submission-hero__summary,
+  .submission-card--main,
+  .submission-card--side {
+    padding: 1.25rem;
+  }
 
-/* ===================================================
-   2) Input text / textarea (fuera de inputgroup)
-   =================================================== */
-.form-container .p-inputtext,
-.form-container .p-inputtextarea{
-  width:100%; min-height:46px;
-  border:1px solid var(--line); border-radius: var(--r);
-  background: var(--bg-2); color: var(--ink);
-  padding:.65rem .85rem; transition: border-color .15s, box-shadow .15s, background .15s;
-}
-.form-container .p-inputtextarea{ min-height:110px; resize:vertical; }
-.form-container .p-inputtext::placeholder,
-.form-container .p-inputtextarea::placeholder{ color:var(--ph); }
-.form-container .p-inputtext:focus,
-.form-container .p-inputtextarea:focus{
-  outline:none; border-color:var(--brand); box-shadow: var(--ring); background:#fff;
+  .form-grid,
+  .dialog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .content-status-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card-footer {
+    justify-content: stretch;
+  }
+
+  .submit-btn {
+    width: 100%;
+  }
+
+  .dialog-actions {
+    justify-content: stretch;
+  }
+
+  .dialog-actions .p-button {
+    width: 100%;
+  }
 }
 
-/* ===================================================
-   3) p-dropdown / p-multiselect (fuera de inputgroup)
-   =================================================== */
-.form-container .p-dropdown,
-.form-container .p-multiselect{
-  width:100%; min-height:46px;
-  border:1px solid var(--line); border-radius: var(--r);
-  background: var(--bg-2); transition: border-color .15s, box-shadow .15s, background .15s;
-}
-.form-container .p-dropdown.p-focus,
-.form-container .p-multiselect.p-focus{
-  border-color:var(--brand); box-shadow: var(--ring); background:#fff;
-}
-.form-container .p-dropdown .p-dropdown-label,
-.form-container .p-multiselect .p-multiselect-label{
-  padding:.65rem .85rem; color: var(--ink);
-}
-.form-container .p-dropdown .p-dropdown-label.p-placeholder,
-.form-container .p-multiselect .p-multiselect-label.p-placeholder{ color:var(--ph); }
+@media (max-width: 480px) {
+  .submission-hero__content h1 {
+    font-size: 1.8rem;
+  }
 
-/* Paneles desplegables más modernos */
-.p-dropdown-panel, .p-multiselect-panel{
-  border-radius:12px !important;
-  border:1px solid var(--line) !important;
-  box-shadow:0 16px 36px rgba(2,6,23,.18) !important;
-}
-.p-dropdown-panel .p-dropdown-item:not(.p-highlight):hover,
-.p-multiselect-panel .p-multiselect-item:not(.p-highlight):hover{
-  background:#eef2ff; color:#1d4ed8;
-}
+  .submission-badge,
+  .card-tag {
+    font-size: 0.74rem;
+  }
 
-/* ===================================================
-   4) Select nativo con clase .p-inputtext (tu caso)
-   =================================================== */
-select.p-inputtext{
-  appearance:none; -webkit-appearance:none; -moz-appearance:none;
-  width:100%; min-height:46px;
-  border:1px solid var(--line); border-radius: var(--r);
-  background: var(--bg-2) url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right .75rem center/16px;
-  color: var(--ink); padding:.65rem 2.25rem .65rem .85rem;
-  transition:border-color .15s, box-shadow .15s, background .15s;
-}
-select.p-inputtext:focus{ outline:none; border-color:var(--brand); box-shadow: var(--ring); background:#fff; }
-
-/* ===================================================
-   5) Botones y dropzone (igual que antes, pulidos)
-   =================================================== */
-.p-button{ border-radius:999px; font-weight:900; letter-spacing:.2px; }
-.p-button.p-button-outlined{ background:#eef2ff; color:#1d4ed8; border-color:#c7d2fe; }
-.p-button.p-button-outlined:hover{ filter:brightness(1.03); }
-
-.archivo-area{
-  margin-top:10px; padding:14px; border-radius: var(--r);
-  background:linear-gradient(180deg,#f8fbff 0%, #f3f6fc 100%);
-  border:1px dashed var(--line-strong);
-  display:flex; align-items:center; gap:12px;
-}
-.custom-file-upload{
-  display:inline-flex; align-items:center; gap:8px;
-  padding:8px 14px; cursor:pointer; user-select:none;
-  background:#eef2ff; color:#1d4ed8; border:1px solid #c7d2fe; border-radius:999px; font-weight:900;
-  transition:transform .12s, box-shadow .12s, filter .12s;
-}
-.custom-file-upload:hover{ transform:translateY(-1px); box-shadow:0 10px 24px rgba(29,78,216,.18); filter:brightness(1.03); }
-.custom-file-upload input[type="file"]{ display:none; }
-
-/* Hace que los hijos del inputgroup ocupen todo el ancho */
-:host ::ng-deep .p-inputgroup > input.p-inputtext,
-:host ::ng-deep .p-inputgroup > .p-dropdown,
-:host ::ng-deep .p-inputgroup > .p-multiselect,
-:host ::ng-deep .p-inputgroup > .p-inputwrapper,
-:host ::ng-deep .p-inputgroup > .p-component {
-  flex: 1 1 auto !important;
-  width: 1% !important;
-  min-width: 0 !important;
-  border: 0 !important;            /* el borde lo lleva el grupo */
-  background: transparent !important;
-  min-height: 46px;
-}
-
-/* Altura y estilo del addon */
-:host ::ng-deep .p-inputgroup-addon {
-  min-height: 46px;
-  padding: 0 .9rem;
-}
-
-/* --- InputGroup: forzar que Prime custom elements crezcan --- */
-:host ::ng-deep .p-inputgroup { 
-  display: flex; align-items: stretch; 
-  border-radius: 12px;
-}
-
-/* El hijo real es <p-dropdown> / <p-multiselect>, no el div interno */
-:host ::ng-deep .p-inputgroup > p-dropdown,
-:host ::ng-deep .p-inputgroup > p-multiselect {
-  flex: 1 1 auto !important;
-  width: 1% !important;
-  min-width: 0 !important;
-  display: flex !important;          /* clave: que el wrapper sea flexible */
-}
-
-/* El contenedor visual interno debe ocupar 100% y sin borde duplicado */
-:host ::ng-deep .p-inputgroup > p-dropdown .p-dropdown,
-:host ::ng-deep .p-inputgroup > p-multiselect .p-multiselect {
-  flex: 1 1 auto !important;
-  width: 100% !important;
-  border: 0 !important;
-  background: transparent !important;
-  min-height: 46px;
-}
-
-/* Uniformar altura de addons e inputs dentro del group */
-:host ::ng-deep .p-inputgroup-addon { 
-  min-height: 46px; 
-  padding: 0 .9rem; 
-  display:flex; align-items:center; 
-}
-:host ::ng-deep .p-inputgroup > input.p-inputtext {
-  flex: 1 1 auto !important;
-  width: 1% !important;
-  min-width: 0 !important;
-  border: 0 !important;
-  background: transparent !important;
-  min-height: 46px;
-}
-
-/* Contenedor y campos */
-.form-container{ width:70%; margin:0 auto; padding:22px; background:#fff;
-  border:1px solid #cbd5e1; border-radius:14px; box-shadow:0 10px 26px rgba(15,23,42,.08); }
-.p-field{ margin-bottom:18px; }
-.p-field label{ display:block; margin-bottom:6px; font-weight:800; color:#334155; }
-
-/* InputGroup: que los hijos se estiren correctamente */
-:host ::ng-deep .p-inputgroup{
-  display:flex; align-items:center; gap:0; background:#f6f8fc;
-  border:1px solid #cbd5e1; border-radius:12px; overflow:hidden;
-}
-:host ::ng-deep .p-inputgroup:focus-within{
-  border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.15); background:#fff;
-}
-:host ::ng-deep .p-inputgroup-addon{
-  min-height:46px; padding:0 .9rem; border:0; background:transparent; color:#64748b;
-}
-
-/* ¡CLAVE! Forzar que los componentes crezcan dentro del group */
-:host ::ng-deep .p-inputgroup > input.p-inputtext,
-:host ::ng-deep .p-inputgroup > p-dropdown,
-:host ::ng-deep .p-inputgroup > p-multiselect,
-:host ::ng-deep .p-inputgroup > .p-inputwrapper,
-:host ::ng-deep .p-inputgroup > .p-component{
-  flex:1 1 auto !important; width:1% !important; min-width:0 !important;
-  border:0 !important; background:transparent !important; min-height:46px;
-}
-
-/* Dropdown / Multiselect (fuera o dentro del group) */
-.form-container :is(.p-dropdown,.p-multiselect){
-  width:100%; min-height:46px; border:1px solid #cbd5e1; border-radius:12px; background:#f6f8fc;
-  transition:border-color .15s, box-shadow .15s, background .15s;
-}
-.form-container :is(.p-dropdown.p-focus,.p-multiselect.p-focus){
-  border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.15); background:#fff;
-}
-.form-container .p-dropdown .p-dropdown-label,
-.form-container .p-multiselect .p-multiselect-label{ padding:.65rem .85rem; color:#0f172a; }
-.form-container .p-dropdown .p-dropdown-label.p-placeholder,
-.form-container .p-multiselect .p-multiselect-label.p-placeholder{ color:#8aa1b8; }
-
-/* Input simple */
-.form-container .p-inputtext{
-  width:100%; min-height:46px; border:1px solid #cbd5e1; border-radius:12px;
-  background:#f6f8fc; padding:.65rem .85rem;
-}
-.form-container .p-inputtext:focus{
-  outline:none; border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.15); background:#fff;
+  .summary-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
