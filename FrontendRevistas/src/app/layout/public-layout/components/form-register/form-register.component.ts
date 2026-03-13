@@ -1,18 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  Validators
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { HttpHeaders } from '@angular/common/http';
+
 import { UserService } from 'src/app/core/services/usuarios/user.service';
 import { UsuariosService } from 'src/app/core/services/dashboard/usuarios.service';
-import { HttpHeaders } from '@angular/common/http';
-import { finalize, switchMap } from 'rxjs/operators';
-import { of, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-form-register',
@@ -20,16 +13,20 @@ import { of, throwError } from 'rxjs';
   styleUrls: ['./form-register.component.css']
 })
 export class FormRegisterComponent implements OnInit {
-  public form!: FormGroup;
+  form: FormGroup = this.formBuilder.group({
+    first_name: ['', [Validators.required, Validators.minLength(2)]],
+    last_name: ['', [Validators.required, Validators.minLength(2)]],
+    email1: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
+    password2: ['', [Validators.required, Validators.minLength(8)]]
+  });
 
-  public displayMaximizable = true;
-  public bandera = false;
+  loading = false;
+  passwordVisible = false;
+  confirmPasswordVisible = false;
 
-  public passwordVisible = false;
-  public confirmPasswordVisible = false;
-
-  readonly acceptedDomain = 'uniguajira.edu.co';
-  readonly roleAutorId = 7;
+  heroImage = 'assets/revista_principal.jpeg';
+  logoImage = 'assets/logo_r.jpg';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -44,160 +41,149 @@ export class FormRegisterComponent implements OnInit {
     const user = localStorage.getItem('user');
 
     if (token && user) {
-      this.router.navigateByUrl('/landing');
-      return;
+      this.router.navigateByUrl('/welcome');
     }
-
-    this.buildForm();
   }
 
-  private buildForm(): void {
-    this.form = this.formBuilder.group(
-      {
-        first_name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
-        last_name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
-        email1: ['', [Validators.required, Validators.email, this.institutionalEmailValidator.bind(this)]],
-        password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(50)]],
-        password2: ['', [Validators.required]]
-      },
-      {
-        validators: [this.passwordMatchValidator]
-      }
-    );
-  }
-
-  private institutionalEmailValidator(control: AbstractControl): ValidationErrors | null {
-    const value = (control.value || '').trim().toLowerCase();
-
-    if (!value) {
-      return null;
-    }
-
-    const parts = value.split('@');
-    if (parts.length !== 2) {
-      return null;
-    }
-
-    return parts[1] === this.acceptedDomain ? null : { institutionalDomain: true };
-  }
-
-  private passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
-    const password = group.get('password')?.value;
-    const password2 = group.get('password2')?.value;
-
-    if (!password || !password2) {
-      return null;
-    }
-
-    return password === password2 ? null : { passwordMismatch: true };
-  }
-
-  get passwordsNoCoinciden(): boolean {
-    return !!(
-      this.form?.hasError('passwordMismatch') &&
-      (this.form.get('password2')?.touched || this.form.get('password')?.touched)
-    );
-  }
-
-  hasFieldError(controlName: string, errorName?: string): boolean {
+  campoInvalido(controlName: string): boolean {
     const control = this.form.get(controlName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
 
-    if (!control) {
+  get passwordsMismatch(): boolean {
+    const pass1 = this.form.get('password')?.value;
+    const pass2 = this.form.get('password2')?.value;
+
+    return !!pass1 && !!pass2 && pass1 !== pass2;
+  }
+
+  togglePassword(): void {
+    this.passwordVisible = !this.passwordVisible;
+  }
+
+  toggleConfirmPassword(): void {
+    this.confirmPasswordVisible = !this.confirmPasswordVisible;
+  }
+
+  verificarDominioInstitucional(email: string): boolean {
+    if (!email || !email.includes('@')) {
       return false;
     }
 
-    if (!errorName) {
-      return control.invalid && (control.dirty || control.touched);
-    }
-
-    return !!(control.hasError(errorName) && (control.dirty || control.touched));
-  }
-
-  togglePassword(field: 'password' | 'confirm'): void {
-    if (field === 'password') {
-      this.passwordVisible = !this.passwordVisible;
-      return;
-    }
-
-    this.confirmPasswordVisible = !this.confirmPasswordVisible;
+    const [, domain] = email.split('@');
+    return domain === 'uniguajira.edu.co';
   }
 
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-
       this.messageService.add({
         severity: 'warn',
         summary: 'Formulario incompleto',
-        detail: 'Por favor revisa los campos requeridos.'
+        detail: 'Por favor completa todos los campos obligatorios.'
       });
       return;
     }
 
-    const email = this.form.value.email1.trim().toLowerCase();
-    const username = email.substring(0, email.indexOf('@'));
+    if (this.passwordsMismatch) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Contraseñas diferentes',
+        detail: 'Las contraseñas no coinciden.'
+      });
+      return;
+    }
 
-    const formValue = {
-      username,
-      first_name: this.form.value.first_name.trim(),
-      last_name: this.form.value.last_name.trim(),
-      email,
+    const email = this.form.value.email1;
+
+    if (!this.verificarDominioInstitucional(email)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Dominio no permitido',
+        detail: 'Solo se permite el dominio @uniguajira.edu.co'
+      });
+      return;
+    }
+
+    const payload = {
+      username: email.substring(0, email.indexOf('@')),
+      first_name: this.form.value.first_name,
+      last_name: this.form.value.last_name,
+      email: email,
       password: this.form.value.password
     };
 
-    this.bandera = true;
+    this.loading = true;
 
-    this.userService.createUser(formValue).pipe(
-      switchMap(() => this.userService.getUserDetailsByEmail(email)),
-      switchMap((userData: any) => {
-        const userId = userData?.id || userData?.data?.id;
-
-        if (!userId) {
-          return throwError(() => new Error('No fue posible recuperar el usuario creado.'));
-        }
-
-        const userRoleData = {
-          status: true,
-          userId,
-          rolesId: this.roleAutorId
-        };
-
-        const bodyString = JSON.stringify(userRoleData);
-        const httpOptions = {
-          headers: new HttpHeaders({
-            'Content-Type': 'application/json'
-          })
-        };
-
-        return this.usuariosService.asignarRoles(bodyString, httpOptions);
-      }),
-      finalize(() => {
-        this.bandera = false;
-      })
-    ).subscribe({
+    this.userService.createUser(payload).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Registro exitoso',
-          detail: 'Tu cuenta fue creada correctamente.'
-        });
+        this.userService.getUserDetailsByEmail(payload.email).subscribe({
+          next: (userData) => {
+            if (userData?.id) {
+              const userRoleData = {
+                status: true,
+                userId: userData.id,
+                rolesId: 7
+              };
 
-        setTimeout(() => {
-          this.router.navigateByUrl('/login');
-        }, 1200);
+              const bodyString = JSON.stringify(userRoleData);
+              const httpOptions = {
+                headers: new HttpHeaders({
+                  'Content-Type': 'application/json'
+                })
+              };
+
+              this.usuariosService.asignarRoles(bodyString, httpOptions).subscribe({
+                next: () => {
+                  this.loading = false;
+                  this.messageService.add({
+                    severity: 'success',
+                    summary: 'Registro exitoso',
+                    detail: 'Tu cuenta fue creada correctamente.'
+                  });
+                  this.router.navigateByUrl('/login');
+                },
+                error: (error) => {
+                  console.error('Error al asignar rol autor:', error);
+                  this.loading = false;
+                  this.messageService.add({
+                    severity: 'warn',
+                    summary: 'Cuenta creada',
+                    detail: 'La cuenta fue creada, pero hubo un inconveniente al asignar el rol.'
+                  });
+                  this.router.navigateByUrl('/login');
+                }
+              });
+            } else {
+              this.loading = false;
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Registro exitoso',
+                detail: 'Tu cuenta fue creada correctamente.'
+              });
+              this.router.navigateByUrl('/login');
+            }
+          },
+          error: (error) => {
+            console.error('Error al consultar usuario creado:', error);
+            this.loading = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Registro exitoso',
+              detail: 'Tu cuenta fue creada correctamente.'
+            });
+            this.router.navigateByUrl('/login');
+          }
+        });
       },
       error: (responseError) => {
-        console.error('Error al registrar usuario:', responseError);
-
-        const detail =
-          responseError?.error?.errors?.error?.person ||
-          responseError?.error?.message ||
-          'No fue posible completar el registro.';
+        console.error(responseError);
+        this.loading = false;
 
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail
+          summary: 'Error en el registro',
+          detail: 'No fue posible completar el registro. Verifica los datos e intenta nuevamente.'
         });
       }
     });

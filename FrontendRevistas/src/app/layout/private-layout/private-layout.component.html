@@ -112,201 +112,386 @@
   </main>
 </ng-container>
 
-<!-- CERRAR CESION -->
-<p-dialog [(visible)]="Dialog" [style]="{'width': '40vw'}" [resizable]="false" zindex="10000" [showHeader]="false"
-  [closeOnEscape]="false" [closable]="false" [modal]="true">
-  <div class="flex flex-column " style="flex: 1">
-    <div class="text-center">
-      <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
-      <h4>Esta seguro de Cerrar la Sesion?</h4>
-      <p>Si para continuar</p>
+<!-- CERRAR SESIÓN -->
+<p-dialog
+  [(visible)]="Dialog"
+  [modal]="true"
+  [closable]="false"
+  [closeOnEscape]="false"
+  [dismissableMask]="false"
+  [resizable]="false"
+  [style]="{ width: '430px' }"
+  [styleClass]="'dialog-shell dialog-shell--danger dialog-shell--sm'"
+  [showHeader]="false">
+
+  <div class="dialog-card">
+    <div class="dialog-card__icon dialog-card__icon--danger">
+      <i class="pi pi-sign-out"></i>
+    </div>
+
+    <div class="dialog-card__content dialog-card__content--center">
+      <h3>Cerrar sesión</h3>
+      <p>
+        ¿Estás seguro de que deseas cerrar tu sesión actual en la plataforma?
+      </p>
+    </div>
+
+    <div class="dialog-card__actions dialog-card__actions--center">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-outlined p-button-secondary dialog-btn"
+        (click)="hideDialog()">
+      </button>
+
+      <button
+        pButton
+        type="button"
+        label="Sí, cerrar sesión"
+        icon="pi pi-check"
+        class="dialog-btn dialog-btn--primary dialog-btn--danger"
+        (click)="cerrarSesion()">
+      </button>
     </div>
   </div>
-  <ng-template pTemplate="footer" class="titleCard">
-    <div style="text-align: center;">
-      <button pButton pRipple label="No" icon="pi pi-times" style="color: rgb(31, 45, 64);" class="p-button-text"
-        (click)="hideDialog()"></button>
-      <button pButton pRipple label="Si" style="background: #02b1bc; border-color: #F16257;"
-        class=" p-button-raised p-button-rounded" icon="pi pi-check" (click)="cerrarSesion()"></button>
-    </div>
-  </ng-template>
 </p-dialog>
 
 <!-- CAMBIAR CONTRASEÑA -->
-<p-dialog [(visible)]="DialogContra" [style]="{'width': '30vw'}" [resizable]="false" zIndex="10000" [showHeader]="false"
-  [closeOnEscape]="false" [closable]="false" [modal]="true" [contentStyle]="{'padding': '2rem'}">
+<p-dialog
+  [(visible)]="DialogContra"
+  [modal]="true"
+  [closable]="false"
+  [closeOnEscape]="false"
+  [dismissableMask]="false"
+  [resizable]="false"
+  [style]="{ width: '520px' }"
+  [styleClass]="'dialog-shell dialog-shell--md'"
+  [showHeader]="false">
 
-  <div class="p-d-flex p-flex-column p-ai-center">
-    <div class="p-mb-4 text-center">
-      <i class="pi pi-key" style="font-size: 3rem; color: #F16257;"></i>
+  <div class="dialog-card">
+    <div class="dialog-card__header">
+      <div class="dialog-card__icon dialog-card__icon--primary">
+        <i class="pi pi-key"></i>
+      </div>
+
+      <div class="dialog-card__heading">
+        <span class="dialog-card__eyebrow">Seguridad</span>
+        <h3>Actualizar contraseña</h3>
+        <p>Cambia tu contraseña de acceso de forma segura.</p>
+      </div>
     </div>
-    <br>
-    <form (ngSubmit)="cambiarContrasena()" [formGroup]="formCambioContrasena" class="p-fluid">
-      <div class="p-field p-mb-3 p-input-icon-right">
-        <label for="contrasenaActual" class="p-d-block">Contraseña Actual</label>
-        <input id="contrasenaActual" [type]="passwordFieldType" formControlName="contrasenaActual"
-          class="p-inputtext p-d-block" required>
-        <i [ngClass]="passwordFieldIcon" (click)="togglePasswordVisibility()" class="pi pi-eye"></i>
+
+    <form (ngSubmit)="cambiarContrasena()" [formGroup]="formCambioContrasena" class="dialog-form">
+      <div class="dialog-form__group">
+        <label for="contrasenaActual">Contraseña actual</label>
+        <div class="dialog-input-shell">
+          <i class="pi pi-lock"></i>
+          <input
+            id="contrasenaActual"
+            [type]="passwordFieldType"
+            formControlName="contrasenaActual"
+            class="p-inputtext"
+            placeholder="Ingresa tu contraseña actual" />
+          <button
+            type="button"
+            class="dialog-input-shell__action"
+            (click)="togglePasswordVisibility()">
+            <i class="pi" [ngClass]="passwordFieldIcon"></i>
+          </button>
+        </div>
       </div>
-      <div class="p-field p-mb-3 p-input-icon-right">
-        <label for="nuevaContrasena" class="p-d-block">Nueva Contraseña</label>
-        <input id="nuevaContrasena" [type]="passwordFieldType" formControlName="nuevaContrasena"
-          class="p-inputtext p-d-block" required>
-        <i [ngClass]="passwordFieldIcon" (click)="togglePasswordVisibility()" class="pi pi-eye"></i>
+
+      <div class="dialog-form__group">
+        <label for="nuevaContrasena">Nueva contraseña</label>
+        <div class="dialog-input-shell">
+          <i class="pi pi-shield"></i>
+          <input
+            id="nuevaContrasena"
+            [type]="passwordFieldType"
+            formControlName="nuevaContrasena"
+            class="p-inputtext"
+            placeholder="Escribe tu nueva contraseña" />
+          <button
+            type="button"
+            class="dialog-input-shell__action"
+            (click)="togglePasswordVisibility()">
+            <i class="pi" [ngClass]="passwordFieldIcon"></i>
+          </button>
+        </div>
       </div>
-      <div class="p-field p-mb-4 p-input-icon-right">
-        <label for="confirmarContrasena" class="p-d-block">Confirmar Contraseña</label>
-        <input id="confirmarContrasena" [type]="passwordFieldType" formControlName="confirmarContrasena"
-          class="p-inputtext p-d-block" required>
-        <i [ngClass]="passwordFieldIcon" (click)="togglePasswordVisibility()" class="pi pi-eye"></i>
+
+      <div class="dialog-form__group">
+        <label for="confirmarContrasena">Confirmar contraseña</label>
+        <div class="dialog-input-shell">
+          <i class="pi pi-check-circle"></i>
+          <input
+            id="confirmarContrasena"
+            [type]="passwordFieldType"
+            formControlName="confirmarContrasena"
+            class="p-inputtext"
+            placeholder="Repite la nueva contraseña" />
+          <button
+            type="button"
+            class="dialog-input-shell__action"
+            (click)="togglePasswordVisibility()">
+            <i class="pi" [ngClass]="passwordFieldIcon"></i>
+          </button>
+        </div>
       </div>
-      <div class="p-d-flex p-jc-center">
-        <button pButton pRipple label="Guardar" class="p-button p-button-outlined p-button-warning p-mr-2"
-          icon="pi pi-check" style="font-weight: bold;"></button>
-        <button pButton pRipple label="Cancelar" class="p-button-secondary p-button-outlined" icon="pi pi-times"
-          style="font-weight: bold;" (click)="cerrarEditarContra()"></button>
+
+      <div class="dialog-card__actions">
+        <button
+          pButton
+          type="button"
+          label="Cancelar"
+          icon="pi pi-times"
+          class="p-button-outlined p-button-secondary dialog-btn"
+          (click)="cerrarEditarContra()">
+        </button>
+
+        <button
+          pButton
+          type="submit"
+          label="Guardar contraseña"
+          icon="pi pi-check"
+          class="dialog-btn dialog-btn--primary">
+        </button>
       </div>
     </form>
   </div>
 </p-dialog>
 
-<!-- EDITAR DATOS BASICOS Y DE FORMACION DE UN USUARIO -->
-<p-dialog [(visible)]="Dialog2" [style]="{'width': '60vw', 'top': '40px'}" [resizable]="false" zindex="10000"
-  [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true">
-  <div class="p-grid p-nogutter p-align-center"
-    style="padding: 0px; text-align: center; border: 2px solid #F16257; border-radius: 10px;">
-    <div class="p-col">
-      <h3 class="p-text-2xl font-weight-bold"><i class="pi pi-pencil"></i>editar perfil</h3>
-    </div>
-  </div>
-  <br>
-  <section>
-    <p-accordion *ngIf="usuario" [activeIndex]="[0, 1]" [multiple]="true" class="p-accordion-rounded">
-      <p-accordionTab header="Datos básicos" [selected]="0">
-        <div class="p-grid p-fluid">
-          <div class="p-col-12 p-md-6">
-            <div class="p-grid">
-              <div class="p-col-12 p-md-6">
-                <label for="nombres">Nombres:</label>
-                <input type="text" id="nombres" pInputText class="p-inputtext" [(ngModel)]="usuario.nombres">
-              </div>
-              <div class="p-col-12 p-md-6">
-                <label for="apellidos">Apellidos:</label>
-                <input type="text" id="apellidos" pInputText class="p-inputtext" [(ngModel)]="usuario.apellidos">
-              </div>
-            </div>
-          </div>
-          <div class="p-col-12 p-md-6">
-            <div class="p-grid">
-              <div class="p-col-12">
-                <label for="identificacion">Número de documento:</label>
-                <input type="text" id="identificacion" pInputText class="p-inputtext"
-                  [(ngModel)]="usuario.identificacion">
-              </div>
-            </div>
-          </div>
-          <div class="p-col-12 p-md-6">
-            <label for="nacionalidad">País de residencia:</label>
-            <input type="text" id="nacionalidad" pInputText class="p-inputtext" [(ngModel)]="usuario.pais">
-          </div>
-          <div class="p-col-12 p-md-6">
-            <label for="orcid">Orcid:</label>
-            <input type="text" id="orcid" pInputText class="p-inputtext" [(ngModel)]="usuario.orcid">
-          </div>
-          <div class="p-col-12 p-md-6">
-            <label for="url_orcid">URL de su Orcid:</label>
-            <input type="text" id="url_orcid" pInputText class="p-inputtext" [(ngModel)]="usuario.url_orcid">
-          </div>
+<!-- EDITAR PERFIL -->
+<p-dialog
+  [(visible)]="Dialog2"
+  [modal]="true"
+  [closable]="false"
+  [closeOnEscape]="false"
+  [dismissableMask]="false"
+  [resizable]="false"
+  [style]="{ width: '980px', top: '30px' }"
+  [styleClass]="'dialog-shell dialog-shell--xl dialog-shell--form'"
+  [showHeader]="false">
+
+  <div class="dialog-card dialog-card--large">
+    <div class="dialog-card__header dialog-card__header--space">
+      <div class="dialog-card__header-main">
+        <div class="dialog-card__icon dialog-card__icon--primary">
+          <i class="pi pi-user-edit"></i>
         </div>
-      </p-accordionTab>
-      <br>
-      <p-accordionTab header="Datos de formación" [selected]="1" class="custom-accordion-tab">
-        <div class="p-grid p-fluid">
-          <div class="p-col-12 p-md-6">
-            <form>
-              <div class="p-field">
-                <label for="nombreInstitucion">Nombre de la institución</label>
-                <input type="text" id="nombreInstitucion" name="nombreInstitucion" class="p-inputtext"
-                  [(ngModel)]="formacion.nombre_institucion">
-              </div>
-              <div class="p-field">
-                <label for="nivelFormacion">Nivel de formación</label>
-                <p-dropdown placeholder="Seleccionar..." id="nivelFormacion" name="nivelFormacion"
-                  [options]="niveles_formacion" optionLabel="nombre" [(ngModel)]="formacion.nivel_formacion"
-                  optionValue="id">
-                </p-dropdown>
-              </div>
-              <div class="p-field">
-                <label for="nombre">Título de formación</label>
-                <input type="text" id="nombre" name="nombre" class="p-inputtext" [(ngModel)]="formacion.nombre">
-              </div>
-              <div class="p-field custom-checkbox">
-                <label for="esEstudiante">¿Aún es estudiante?</label>
+
+        <div class="dialog-card__heading">
+          <span class="dialog-card__eyebrow">Perfil</span>
+          <h3>Editar perfil</h3>
+          <p>Actualiza tus datos básicos y de formación académica.</p>
+        </div>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        icon="pi pi-times"
+        class="p-button-rounded p-button-text dialog-close-btn"
+        (click)="cerrarEditarPerfil()">
+      </button>
+    </div>
+
+    <div class="profile-dialog-top">
+      <div class="profile-dialog-user">
+        <p-avatar [image]="profileImage" shape="circle" size="xlarge"></p-avatar>
+        <div>
+          <h4>{{ displayName }}</h4>
+          <p>{{ displayEmail }}</p>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <p-accordion *ngIf="usuario" [activeIndex]="[0, 1]" [multiple]="true" class="profile-accordion">
+        <p-accordionTab header="Datos básicos">
+          <div class="profile-grid">
+            <div class="dialog-form__group">
+              <label for="nombres">Nombres</label>
+              <input type="text" id="nombres" pInputText class="p-inputtext" [(ngModel)]="usuario.nombres">
+            </div>
+
+            <div class="dialog-form__group">
+              <label for="apellidos">Apellidos</label>
+              <input type="text" id="apellidos" pInputText class="p-inputtext" [(ngModel)]="usuario.apellidos">
+            </div>
+
+            <div class="dialog-form__group">
+              <label for="identificacion">Número de documento</label>
+              <input type="text" id="identificacion" pInputText class="p-inputtext" [(ngModel)]="usuario.identificacion">
+            </div>
+
+            <div class="dialog-form__group">
+              <label for="nacionalidad">País de residencia</label>
+              <input type="text" id="nacionalidad" pInputText class="p-inputtext" [(ngModel)]="usuario.pais">
+            </div>
+
+            <div class="dialog-form__group">
+              <label for="orcid">ORCID</label>
+              <input type="text" id="orcid" pInputText class="p-inputtext" [(ngModel)]="usuario.orcid">
+            </div>
+
+            <div class="dialog-form__group">
+              <label for="url_orcid">URL de ORCID</label>
+              <input type="text" id="url_orcid" pInputText class="p-inputtext" [(ngModel)]="usuario.url_orcid">
+            </div>
+          </div>
+        </p-accordionTab>
+
+        <p-accordionTab header="Datos de formación">
+          <div class="profile-grid">
+            <div class="dialog-form__group">
+              <label for="nombreInstitucion">Nombre de la institución</label>
+              <input type="text" id="nombreInstitucion" name="nombreInstitucion" class="p-inputtext"
+                [(ngModel)]="formacion.nombre_institucion">
+            </div>
+
+            <div class="dialog-form__group">
+              <label for="nivelFormacion">Nivel de formación</label>
+              <p-dropdown
+                placeholder="Seleccionar..."
+                id="nivelFormacion"
+                name="nivelFormacion"
+                [options]="niveles_formacion"
+                optionLabel="nombre"
+                [(ngModel)]="formacion.nivel_formacion"
+                optionValue="id">
+              </p-dropdown>
+            </div>
+
+            <div class="dialog-form__group">
+              <label for="nombre">Título de formación</label>
+              <input type="text" id="nombre" name="nombre" class="p-inputtext" [(ngModel)]="formacion.nombre">
+            </div>
+
+            <div class="dialog-form__group">
+              <label class="switch-row">
+                <span>¿Aún es estudiante?</span>
                 <input type="checkbox" id="esEstudiante" name="esEstudiante" [(ngModel)]="esEstudiante"
                   (click)="toggleCampos()">
-              </div>
-              <div class="p-field">
-                <label for="fechaGrado">Fecha de grado</label>
-                <input type="date" id="fechaGrado" name="fechaGrado" class="p-inputtext"
-                  [(ngModel)]="formacion.fecha_grado" [disabled]="esEstudiante">
-              </div>
-              <div class="p-field">
-                <label for="certGradoSin">Diploma de grado</label>
-                <div class="archivo-area">
-                  <div>
-                    <label for="archivo_adjunto" class="custom-file-upload">
-                      <i class="pi pi-upload"></i><span style="margin-left: 5px;">Seleccionar archivo</span>
-                      <input pButton type="file" id="archivo_adjunto" (change)="handleFileInput($event)"
-                        [disabled]="esEstudiante" style="display:none">
-                    </label>
-                  </div>
-                  <br>
-                  <div *ngIf="archivoCargado">
-                    <span>Archivo cargado:</span>
-                    {{ archivoCargado }}
-                  </div>
+              </label>
+            </div>
+
+            <div class="dialog-form__group">
+              <label for="fechaGrado">Fecha de grado</label>
+              <input
+                type="date"
+                id="fechaGrado"
+                name="fechaGrado"
+                class="p-inputtext"
+                [(ngModel)]="formacion.fecha_grado"
+                [disabled]="esEstudiante">
+            </div>
+
+            <div class="dialog-form__group dialog-form__group--full">
+              <label for="archivo_adjunto">Diploma de grado</label>
+              <div class="upload-box">
+                <label for="archivo_adjunto" class="upload-box__button">
+                  <i class="pi pi-upload"></i>
+                  <span>Seleccionar archivo</span>
+                  <input
+                    pButton
+                    type="file"
+                    id="archivo_adjunto"
+                    (change)="handleFileInput($event)"
+                    [disabled]="esEstudiante"
+                    style="display:none">
+                </label>
+
+                <div *ngIf="archivoCargado" class="upload-box__file">
+                  <i class="pi pi-file"></i>
+                  <span>{{ archivoCargado }}</span>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
-        </div>
-      </p-accordionTab>
-    </p-accordion>
-  </section>
-  <ng-template pTemplate="footer" class="titleCard">
-    <div style="text-align: center;">
-      <button pButton pRipple label="Cancelar" style="background: gray; border-color: gray"
-        class="p-button-raised p-button-rounded" icon="pi pi-times" (click)="cerrarEditarPerfil()"></button>
-      <button pButton pRipple label="Guardar datos" style="background: #02b1bc; border-color: #F16257;"
-        class="p-button-raised p-button-rounded" icon="pi pi-check"
-        (click)="guardarDatos(); guardarFormacion()"></button>
+        </p-accordionTab>
+      </p-accordion>
+    </section>
+
+    <div class="dialog-card__actions dialog-card__actions--end">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-outlined p-button-secondary dialog-btn"
+        (click)="cerrarEditarPerfil()">
+      </button>
+
+      <button
+        pButton
+        type="button"
+        label="Guardar cambios"
+        icon="pi pi-check"
+        class="dialog-btn dialog-btn--primary"
+        (click)="guardarDatos(); guardarFormacion()">
+      </button>
     </div>
-  </ng-template>
+  </div>
 </p-dialog>
 
 <!-- EDITAR IMAGEN DE PERFIL -->
-<p-dialog [visible]="displayDialog2" [modal]="true" [style]="{ width: '50%' }" [showHeader]="false">
-  <div class="edit-profile-dialog">
-    <h3>Editar Imagen de Perfil</h3>
-    <form (ngSubmit)="guardarImagenPerfil()">
-      <div class="form-group">
-        <div class="profile-image-container">
+<p-dialog
+  [visible]="displayDialog2"
+  [modal]="true"
+  [showHeader]="false"
+  [closable]="false"
+  [dismissableMask]="false"
+  [style]="{ width: '520px' }"
+  [styleClass]="'dialog-shell dialog-shell--md'">
+
+  <div class="dialog-card">
+    <div class="dialog-card__header">
+      <div class="dialog-card__icon dialog-card__icon--primary">
+        <i class="pi pi-image"></i>
+      </div>
+
+      <div class="dialog-card__heading">
+        <span class="dialog-card__eyebrow">Perfil</span>
+        <h3>Editar imagen de perfil</h3>
+        <p>Selecciona una imagen nueva para actualizar tu foto de usuario.</p>
+      </div>
+    </div>
+
+    <form (ngSubmit)="guardarImagenPerfil()" class="dialog-form">
+      <div class="profile-image-card">
+        <div class="profile-image-container profile-image-container--large">
           <img [src]="profileImage" alt="Imagen de perfil" class="profile-image">
         </div>
       </div>
-      <div class="form-group">
-        <label for="newImage">Seleccionar nueva imagen:</label>
-        <label class="file-input-label">
-          <i class="pi pi-upload file-input-icon"></i> Seleccionar archivo
+
+      <div class="dialog-form__group">
+        <label for="newImage">Seleccionar nueva imagen</label>
+        <label class="upload-box__button upload-box__button--wide">
+          <i class="pi pi-upload"></i>
+          <span>Cargar imagen</span>
           <input type="file" id="newImage" (change)="onFileSelected($event)" accept="image/*" class="input-file">
         </label>
       </div>
-      <div class="button-container-imagen">
-        <button type="submit" class="btn btn-primary">
-          <i class="pi pi-check"></i> Guardar Cambios
+
+      <div class="dialog-card__actions">
+        <button
+          type="button"
+          pButton
+          label="Cancelar"
+          icon="pi pi-times"
+          class="p-button-outlined p-button-secondary dialog-btn"
+          (click)="cerrarEditarImagen()">
         </button>
-        <button type="button" class="btn btn-secondary" (click)="cerrarEditarImagen()">
-          <i class="pi pi-times"></i> Cancelar
+
+        <button
+          type="submit"
+          pButton
+          label="Guardar imagen"
+          icon="pi pi-check"
+          class="dialog-btn dialog-btn--primary">
         </button>
       </div>
     </form>
