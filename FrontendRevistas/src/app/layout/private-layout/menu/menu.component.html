@@ -1,48 +1,47 @@
-<div *ngFor="let item of menu; let i = index" class=" padre grid align-items-center justify-content-cente pl-2">
-  <span [routerLink]="item.link" (click)="clickHandler($event, item)"
-    class=" text-600 cursor-pointer border-2 border-transparent border-rounded"
-    style="padding-left: 10px;padding-bottom: 10px;padding-top: 10px;">
-    <i [ngClass]="item.icono" style="font-size: 1.5rem; margin-top: 5px;"></i>
-    <span class="ml-4 font-bold" style=" width: 500px; font-size: 18px;">{{ item.titulo }}</span>
-    <ng-container *ngIf="item.menu != null">
+<div class="menu-tree" *ngIf="menu?.length">
+  <ng-container
+    *ngTemplateOutlet="recursiveMenu; context: { $implicit: menu, level: 0 }">
+  </ng-container>
+</div>
 
-      <span *ngIf="item.collapsed " style="margin-left: 20px; 
-          position: relative; top: 0px; left: 0px; right: 10px; bottom: 0px;">
-        <i class="ml-4 pi pi-angle-up"></i>
-      </span>
-      
-      <span *ngIf="!item.collapsed" style="margin-left: 20px; margin-right: 20px;
-          position: relative; top: 0px; left: 0px; right: 10px; bottom: 0px;">
-        <i class="mr-0  pi pi-angle-down"></i>
-      </span>
-    </ng-container>
-  </span>
-  <div *ngIf="item.menu && !item.collapsed">
-    <div *ngFor="let subitem of item.menu" class="hijo">
-      <span [routerLink]="subitem.link" (click)="clickHandler($event, subitem)" style="padding-left: 10px;">
-        <i class="ml-2 pi pi-chevron-right" style="font-size: 1.5rem; margin-top: 5px;"></i>
-        <span class="ml-2 " style="font-size: 18px;">{{ subitem.titulo }}</span>
+<ng-template #recursiveMenu let-items let-level="level">
+  <div class="menu-level" [attr.data-level]="level">
+    <div
+      class="menu-node"
+      *ngFor="let item of items; trackBy: trackByMenu">
 
-        <ng-container *ngIf="subitem.menu">
-          <span *ngIf="subitem.collapsed ">
-            <i class="ml-2  pi pi-angle-up"></i>
+      <div
+        [ngClass]="getItemClasses(item, level)"
+        [routerLink]="!hasChildren(item) ? item.link : null"
+        routerLinkActive="menu-node__trigger--active"
+        [routerLinkActiveOptions]="{ exact: false }"
+        (click)="onItemClick($event, item)">
 
+        <div class="menu-node__left">
+          <span class="menu-node__icon" *ngIf="item.icono">
+            <i [ngClass]="item.icono"></i>
           </span>
-          <span *ngIf="!subitem.collapsed">
-            <i class="ml-2  pi pi-angle-down"></i>
 
-          </span>
-        </ng-container>
-      </span>
-      <div *ngIf="subitem.menu && !subitem.collapsed">
-        <div *ngFor="let item3 of subitem.menu" class="nieto">
-          <span class="mat-list-item" [routerLink]="item3.link" (click)="clickHandler($event, item3)"
-            style="margin-top: 5px;padding-left: 10px;">
-            <i class="ml-4 pi pi-angle-right" style="font-size: 1.5rem; margin-top: 5px;"></i>
-            <span class="ml-4 " style="font-size: 18px;">{{ item3.titulo }}</span>
+          <span class="menu-node__bullet" *ngIf="!item.icono && level > 0"></span>
+
+          <span class="menu-node__label">
+            {{ item.titulo }}
           </span>
         </div>
+
+        <span class="menu-node__right" *ngIf="hasChildren(item)">
+          <i
+            class="pi"
+            [ngClass]="item.collapsed ? 'pi-angle-down' : 'pi-angle-up'">
+          </i>
+        </span>
+      </div>
+
+      <div class="menu-node__children" *ngIf="hasChildren(item) && !item.collapsed">
+        <ng-container
+          *ngTemplateOutlet="recursiveMenu; context: { $implicit: item.menu, level: level + 1 }">
+        </ng-container>
       </div>
     </div>
   </div>
-</div>
+</ng-template>

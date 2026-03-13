@@ -1,70 +1,146 @@
-<form (ngSubmit)="onSubmit()" [formGroup]="form" novalidate>
-  <p-dialog [(visible)]="displayMaximizable" [modal]="true"
-    [style]="{'width': '77%','max-height':'80%','text-align': 'center','background':'#333333'}"
-    contentStyleClass="overflow-y-hidden" [closable]="false" [closeOnEscape]="false" [resizable]="false" zindex="10000"
-    [showHeader]="false">
-    <div class="grid grid-nogutter surface-section text-800">
-      <div
-        class="col-12 sm:col-6 md:col-6 lg:col-4 xl:col-4 pl-3 pr-3 pb-6 text-center md:text-center align-items-center">
-        <section class="mr-1 md:mt-4 md:mb-3">
-          <span class="block text-6xl font-bold mb-3" style="color:black">Revista
-            <strong class="block" style="color:gray;font-size: 0.8rem;">
-              Ciencia e ingenieria - Uniguajira
-            </strong>
-          </span>
-          <p-avatar styleClass="mr-2 " shape="circle" size="xlarge"><img src="assets/logo_r.jpg"></p-avatar>
-          <div style="margin-top:-1px">
-            <div fxLayout="row" class="titleCard">
-              <i class="pi pi-shield" style="font-size: 2rem;margin-right: 10px;"></i>
-              <h2 class="fondebabutton" style="margin-top: -1px;">Inicio de sesión</h2>
+<div class="login-page">
+  <div class="login-shell">
+    <section class="login-showcase">
+      <div class="login-showcase__overlay"></div>
+
+      <img [src]="heroImage" alt="Revista Ciencia e Ingeniería" class="login-showcase__image" />
+
+      <div class="login-showcase__content">
+        <div class="brand-badge">
+          <img [src]="logoImage" alt="Logo revista" />
+          <span>Universidad de La Guajira</span>
+        </div>
+
+        <h1>Revista Ciencia e Ingeniería</h1>
+        <p>
+          Plataforma editorial institucional para la gestión y seguimiento
+          de artículos científicos.
+        </p>
+
+        <div class="showcase-pills">
+          <span><i class="pi pi-shield"></i> Acceso seguro</span>
+          <span><i class="pi pi-file-edit"></i> Gestión editorial</span>
+          <span><i class="pi pi-users"></i> Colaboración académica</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="login-panel">
+      <div class="login-card">
+        <div class="login-card__header">
+          <div class="login-card__logo">
+            <img [src]="logoImage" alt="Logo revista" />
+          </div>
+
+          <div>
+            <span class="login-card__eyebrow">Inicio de sesión</span>
+            <h2>Bienvenido de nuevo</h2>
+            <p>Ingresa tus credenciales para acceder a la plataforma.</p>
+          </div>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="login-form">
+          <div class="form-field">
+            <label for="username">Usuario</label>
+            <div class="input-shell" [class.input-shell--error]="campoInvalido('username')">
+              <i class="pi pi-user"></i>
+              <input
+                id="username"
+                type="text"
+                pInputText
+                formControlName="username"
+                placeholder="Ingresa tu nombre de usuario" />
             </div>
-            <div class="p-grid p-fluid">
-              <div class="p-col-12 p-md-6">
-                <div class="form-field">
-                  <span class="pi pi-user"></span>
-                  <input type="text" pInputText formControlName="username" placeholder="Nombre de usuario">
-                </div>
+            <small class="field-error" *ngIf="campoInvalido('username')">
+              El usuario es obligatorio.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="password">Contraseña</label>
+            <div class="input-shell" [class.input-shell--error]="campoInvalido('password')">
+              <i class="pi pi-lock"></i>
+              <input
+                id="password"
+                [type]="passwordVisible ? 'text' : 'password'"
+                pInputText
+                formControlName="password"
+                placeholder="Ingresa tu contraseña" />
+
+              <button
+                type="button"
+                class="input-action"
+                (click)="togglePassword()"
+                aria-label="Mostrar u ocultar contraseña">
+                <i class="pi" [ngClass]="passwordVisible ? 'pi-eye-slash' : 'pi-eye'"></i>
+              </button>
+            </div>
+            <small class="field-error" *ngIf="campoInvalido('password')">
+              La contraseña es obligatoria.
+            </small>
+          </div>
+
+          <div class="captcha-box">
+            <div class="captcha-box__header">
+              <div>
+                <span class="captcha-label">Verificación</span>
+                <strong>{{ captchaPregunta }}</strong>
               </div>
-              <div class="p-col-12 p-md-6">
-                <div class="password-container">
-                  <i class="pi pi-key"></i>
-                  <input [type]="passwordVisible ? 'text' : 'password'" pInputText formControlName="password"
-                    placeholder="Contraseña">
-                  <i class="pi" [ngClass]="passwordVisible ? 'pi pi-eye-slash' : 'pi pi-eye'" class="toggle-password"
-                    (click)="togglePassword()"></i>
-                </div>
+
+              <button
+                type="button"
+                class="captcha-refresh"
+                (click)="regenerarCaptcha()"
+                aria-label="Regenerar captcha">
+                <i class="pi pi-refresh"></i>
+              </button>
+            </div>
+
+            <div class="form-field form-field--compact">
+              <div class="input-shell" [class.input-shell--error]="campoInvalido('captcha')">
+                <i class="pi pi-calculator"></i>
+                <input
+                  id="captcha"
+                  type="number"
+                  pInputText
+                  formControlName="captcha"
+                  placeholder="Escribe el resultado" />
               </div>
-              <div class="p-col-12 p-md-6">
-                <div class="form-field">
-                  <label style="display:block; color:black; margin-bottom:5px;">
-                    ¿Cuánto es {{numero1}} + {{numero2}}?
-                  </label>
-                  <input type="number" pInputText formControlName="captcha" placeholder="Resultado">
-                </div>
-              </div>
+              <small class="field-error" *ngIf="campoInvalido('captcha')">
+                Debes resolver la operación.
+              </small>
             </div>
           </div>
-          <ng-template [ngIf]="motrar == false">
-            <div fxLayout="row" class="titleCard">
-              <button pButton pRipple type="submit" icon="pi pi-check" label="Entrar" [disabled]="!form.valid"
-                style="width:auto" styleClass="mr-2" class="mr-3 p-button-raised mt-3"></button>
-              <button pButton pRipple type="button" routerLink="/register" icon="pi pi-users" styleClass="p-button-text"
-                style="width:auto" label="Registrarse" class="p-button-outlined mt-3"></button>
-            </div>
-          </ng-template>
-          <ng-template [ngIf]="motrar == true">
-            <br><br>
-            <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
-          </ng-template>
-        </section>
-      </div>
-      <div class="col-12 sm:col-6 md:col-6 lg:col-8 xl:col-8 overflow-hidden image-container">
-        <img src="assets/revista_principal.jpeg" alt="Image" class="md:ml-auto block revista-img">
-      </div>
-    </div>
 
-  </p-dialog>
-</form>
-<img width="100%" height="45%" src="assets/Revista_c.jpeg">
-<p-toast></p-toast>
-<p-confirmPopup></p-confirmPopup>
+          <div class="login-actions">
+            <button
+              pButton
+              type="submit"
+              class="login-btn"
+              [disabled]="loading"
+              [label]="loading ? 'Ingresando...' : 'Entrar'"
+              [icon]="loading ? 'pi pi-spin pi-spinner' : 'pi pi-sign-in'">
+            </button>
+
+            <button
+              pButton
+              type="button"
+              routerLink="/register"
+              class="register-btn p-button-outlined"
+              icon="pi pi-user-plus"
+              label="Registrarse">
+            </button>
+          </div>
+
+          <p-progressBar
+            *ngIf="loading"
+            mode="indeterminate"
+            [style]="{ height: '6px' }">
+          </p-progressBar>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>

@@ -1,4 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 
 @Component({
   selector: 'app-menu',
@@ -6,44 +13,58 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnChanges {
-
   @Input() menu: any[] = [];
   @Output() funcion = new EventEmitter<boolean>();
   @Output() optionSelected = new EventEmitter<any>();
 
-  constructor() { }
-
   ngOnChanges(changes: SimpleChanges): void {
-
-    this.setCollapse(changes['menu'].currentValue);
+    if (changes['menu']?.currentValue) {
+      this.initializeCollapse(changes['menu'].currentValue);
+    }
   }
 
-  public clickHandler(event: Event, item: any): void {
+  trackByMenu(index: number, item: any): any {
+    return item?.id ?? item?.titulo ?? index;
+  }
+
+  hasChildren(item: any): boolean {
+    return !!item?.menu && Array.isArray(item.menu) && item.menu.length > 0;
+  }
+
+  onItemClick(event: Event, item: any): void {
     event.stopPropagation();
-    
-    if (item.menu) {
+
+    if (this.hasChildren(item)) {
       this.toggleItem(item);
-    } else {
-      this.selectOption();
+      return;
     }
+
+    this.optionSelected.emit(item);
+    this.funcion.emit(false);
   }
 
-  private setCollapse(menu: any[]) {
-    for (let i = 0; i < menu.length; i++) {
-      menu[i].collapsed = true;
-      if (menu[i].menu) {
-        this.setCollapse(menu[i].menu);
-      }
-    }
-  }
-
-  private selectOption(): void {
-    this.optionSelected.emit();
-    this.funcion.emit(false)
-  }
-
-  private toggleItem(item: any): void {
+  toggleItem(item: any): void {
     item.collapsed = !item.collapsed;
   }
 
+  getItemClasses(item: any, level: number): string[] {
+    return [
+      'menu-node__trigger',
+      `menu-node__trigger--level-${level}`,
+      this.hasChildren(item) ? 'menu-node__trigger--parent' : 'menu-node__trigger--leaf',
+      !item?.collapsed && this.hasChildren(item) ? 'menu-node__trigger--expanded' : ''
+    ];
+  }
+
+  private initializeCollapse(menu: any[]): void {
+    menu.forEach((item) => {
+      if (item.collapsed === undefined || item.collapsed === null) {
+        item.collapsed = true;
+      }
+
+      if (this.hasChildren(item)) {
+        this.initializeCollapse(item.menu);
+      }
+    });
+  }
 }

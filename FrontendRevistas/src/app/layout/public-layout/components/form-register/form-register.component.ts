@@ -1,187 +1,205 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { UserService } from 'src/app/core/services/usuarios/user.service';
-import { RoleI } from 'src/app/models/authorization/usr_roles';
 import { UsuariosService } from 'src/app/core/services/dashboard/usuarios.service';
 import { HttpHeaders } from '@angular/common/http';
+import { finalize, switchMap } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-form-register',
   templateUrl: './form-register.component.html',
   styleUrls: ['./form-register.component.css']
 })
-
 export class FormRegisterComponent implements OnInit {
-  public form: FormGroup = this.formBuilder.group({});
-  public mostrar: boolean = false;
-  displayMaximizable: boolean = true
-  selectedCities3: any[] = [];
-  cities: RoleI[] = [];
-  public image: string = 'assets/demo.png'
-  blockSpecial: RegExp = /^[^<>*!@.,]+$/
-  public Roles1: any[] = []
-  public bandera: boolean = false
+  public form!: FormGroup;
+
+  public displayMaximizable = true;
+  public bandera = false;
+
+  public passwordVisible = false;
+  public confirmPasswordVisible = false;
+
+  readonly acceptedDomain = 'uniguajira.edu.co';
+  readonly roleAutorId = 7;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private messageService: MessageService,
     private userService: UserService,
-    private usuariosService: UsuariosService,
-  ) { }
+    private usuariosService: UsuariosService
+  ) {}
 
   ngOnInit(): void {
-    var token: string | null = localStorage.getItem('token');
-    var user: string | null = localStorage.getItem('user');
-    // var menu :string | null= localStorage.getItem('menu');
-    if (token != null && user != null) {
-      // this.showSuccess()
-      let userObjeto: any = JSON.parse(user);
-      // let menuObjeto:any = JSON.parse(menu); 
-      let userLoginResponse = {
-        user: userObjeto,
-        token: token,
-      }
-      this.router.navigateByUrl('/welcome');
-    } else { }
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+
+    if (token && user) {
+      this.router.navigateByUrl('/landing');
+      return;
+    }
+
     this.buildForm();
   }
-  public verificar() {
-    // e.preventDefault();
-    let email = this.form;
 
-    let dominios = new Array('uniguajira.edu.co');
+  private buildForm(): void {
+    this.form = this.formBuilder.group(
+      {
+        first_name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
+        last_name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
+        email1: ['', [Validators.required, Validators.email, this.institutionalEmailValidator.bind(this)]],
+        password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(50)]],
+        password2: ['', [Validators.required]]
+      },
+      {
+        validators: [this.passwordMatchValidator]
+      }
+    );
+  }
 
-    // email.addEventListener('blur', function() {
+  private institutionalEmailValidator(control: AbstractControl): ValidationErrors | null {
+    const value = (control.value || '').trim().toLowerCase();
 
+    if (!value) {
+      return null;
+    }
 
-    if (email.value.email1 == '' || email.value.email1 == 'undefined') {
+    const parts = value.split('@');
+    if (parts.length !== 2) {
+      return null;
+    }
+
+    return parts[1] === this.acceptedDomain ? null : { institutionalDomain: true };
+  }
+
+  private passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+    const password = group.get('password')?.value;
+    const password2 = group.get('password2')?.value;
+
+    if (!password || !password2) {
+      return null;
+    }
+
+    return password === password2 ? null : { passwordMismatch: true };
+  }
+
+  get passwordsNoCoinciden(): boolean {
+    return !!(
+      this.form?.hasError('passwordMismatch') &&
+      (this.form.get('password2')?.touched || this.form.get('password')?.touched)
+    );
+  }
+
+  hasFieldError(controlName: string, errorName?: string): boolean {
+    const control = this.form.get(controlName);
+
+    if (!control) {
       return false;
-
-    } else {
-      let value = email.value.email1.split('@'); //split() funciona para dividir una cadena en un array pasando un caracter como delimitador
-
-
-      if (value[1] == undefined) {
-        return false;
-      } else {
-        if (dominios.indexOf(value[1]) == -1) { //.indexOf() sirve para encontrar un elemento en un array
-
-          dominios.forEach(function (dominio) { //utilizamos forEach para recorrer el arreglo.
-
-          })
-          this.messageService.add({ severity: 'warn', summary: 'Warn', detail: `El dominio aceptado es: ${dominios[0]}`, life: 1000 });
-
-          return false;
-        } else {
-          return true;
-
-        }
-      }
-
-
     }
 
+    if (!errorName) {
+      return control.invalid && (control.dirty || control.touched);
+    }
+
+    return !!(control.hasError(errorName) && (control.dirty || control.touched));
   }
 
-  private buildForm() {
-    this.form = this.formBuilder.group({
-      first_name: ['', [Validators.required]],
-      last_name: ['', [Validators.required]],
-      // DocumentTypeId: [1],
-      // identification: ['', [Validators.required]],
-      // GenderId:['', [Validators.required]],
-      // address:['', [Validators.required]],
-      // phone:['', [Validators.required]],
-      email1: ['', [Validators.required]],
-      // nationality: ['', [Validators.required]],
-      // date_of_birth: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-      password2: ['', [Validators.required]],
-      // documentTypeId: [1]
-    });
+  togglePassword(field: 'password' | 'confirm'): void {
+    if (field === 'password') {
+      this.passwordVisible = !this.passwordVisible;
+      return;
+    }
+
+    this.confirmPasswordVisible = !this.confirmPasswordVisible;
   }
 
-  onSubmit() {
-    let email = this.form.value.email1;
-    let formValue = {
-      username: email.substring(0, email.indexOf('@')),
-      first_name: this.form.value.first_name,
-      last_name: this.form.value.last_name,
-      email: this.form.value.email1,
-      password: this.form.value.password,
+  onSubmit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formulario incompleto',
+        detail: 'Por favor revisa los campos requeridos.'
+      });
+      return;
+    }
+
+    const email = this.form.value.email1.trim().toLowerCase();
+    const username = email.substring(0, email.indexOf('@'));
+
+    const formValue = {
+      username,
+      first_name: this.form.value.first_name.trim(),
+      last_name: this.form.value.last_name.trim(),
+      email,
+      password: this.form.value.password
     };
-    if (this.form.value.password !== this.form.value.password2) {
-      this.messageService.add({ severity: 'warn', summary: 'Alerta', detail: 'Las contraseñas no coinciden' });
-    } else {
-      if (formValue.username != "" && formValue.email != "" && formValue.password != "") {
-        this.bandera = true
 
-        this.userService.createUser(formValue).subscribe(
-          (user) => {
-            var date = new Date('2020-01-01 00:00:03');
-            function padLeft(n: any) {
-              return n = "00".substring(0, "00".length - n.length) + n;
-            }
-            var interval = setInterval(() => {
-              var minutes = padLeft(date.getMinutes() + "");
-              var seconds = padLeft(date.getSeconds() + "");
-              if (seconds == '03') {
-                this.messageService.add({ severity: 'success', summary: 'Registro', detail: 'Registro exitoso.' });
-              }
-              if (seconds == '01') {
-                this.bandera = false
-                this.userService.getUserDetailsByEmail(formValue.email).subscribe(
-                  (userData) => {
-                    if (userData) {
-                      const userId = userData.id;
-                      const userRoleData = {
-                        status: true,
-                        userId: userId,
-                        rolesId: 7
-                      };
-                      const bodyString = JSON.stringify(userRoleData);
-                      const httpOptions = {
-                        headers: new HttpHeaders({
-                          'Content-Type': 'application/json'
-                        })
-                      };
+    this.bandera = true;
 
-                      this.usuariosService.asignarRoles(bodyString, httpOptions).subscribe(
-                        (response) => {
-                          if (response.status) {
-                            this.messageService.add({ severity: 'success', summary: 'Registro', detail: 'Registro de autor exitoso.' });
-                          }
-                        },
-                        (error) => {
-                          console.error('Error al asignar el rol "autor" al usuario', error);
-                        }
-                      );
-                    }
-                  }
-                )
-              }
+    this.userService.createUser(formValue).pipe(
+      switchMap(() => this.userService.getUserDetailsByEmail(email)),
+      switchMap((userData: any) => {
+        const userId = userData?.id || userData?.data?.id;
 
-              date = new Date(date.getTime() - 1000);
+        if (!userId) {
+          return throwError(() => new Error('No fue posible recuperar el usuario creado.'));
+        }
 
-              if (user.ok) {
-                this.bandera = false
-                this.router.navigateByUrl('/login');
-                clearInterval(interval);
-              }
-            }, 1000);
-          }, async (responseError) => {
-            if (responseError.error && responseError.error.errors && responseError.error.errors.error) {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: `Error. ${responseError.error.errors.error.person}` });
-            }
-            this.bandera = false;
-          });
-      } else {
-        this.messageService.add({ severity: 'warn', summary: 'Warn', detail: 'Faltan datos' });
-        this.bandera = false
+        const userRoleData = {
+          status: true,
+          userId,
+          rolesId: this.roleAutorId
+        };
+
+        const bodyString = JSON.stringify(userRoleData);
+        const httpOptions = {
+          headers: new HttpHeaders({
+            'Content-Type': 'application/json'
+          })
+        };
+
+        return this.usuariosService.asignarRoles(bodyString, httpOptions);
+      }),
+      finalize(() => {
+        this.bandera = false;
+      })
+    ).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Registro exitoso',
+          detail: 'Tu cuenta fue creada correctamente.'
+        });
+
+        setTimeout(() => {
+          this.router.navigateByUrl('/login');
+        }, 1200);
+      },
+      error: (responseError) => {
+        console.error('Error al registrar usuario:', responseError);
+
+        const detail =
+          responseError?.error?.errors?.error?.person ||
+          responseError?.error?.message ||
+          'No fue posible completar el registro.';
+
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail
+        });
       }
-    }
+    });
   }
 }

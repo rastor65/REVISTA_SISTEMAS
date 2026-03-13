@@ -1,107 +1,184 @@
 <form (ngSubmit)="onSubmit()" [formGroup]="form" novalidate>
-  <p-dialog [(visible)]="displayMaximizable" [modal]="true"
-    [style]="{'width': '77%','height':'75%','text-align': 'center','background':'#333333'}" [closable]="false"
-    [closeOnEscape]="false" [resizable]="false" zindex="10000" [showHeader]="false">
-    <div class="grid grid-nogutter surface-section text-800 ">
-      <div class="col-12 sm:col-7 md:col-7 lg:col-7 xl:col-7 overflow-hidden">
-        <img src="assets/revista_principal.jpeg" alt="Image" class="sm:ml-auto block sm:h-full sm:w-full "
-          style="clip-path: polygon(0% 0%, 95% 0%, 85% 100%, 0% 100%) ">
+  <p-dialog
+    [(visible)]="displayMaximizable"
+    [modal]="true"
+    [closable]="false"
+    [closeOnEscape]="false"
+    [resizable]="false"
+    [draggable]="false"
+    [showHeader]="false"
+    [style]="{'width':'77%','max-height':'86%'}"
+    styleClass="register-dialog"
+  >
+    <div class="auth-shell">
+      <div class="auth-visual">
+        <img src="assets/revista_principal.jpeg" alt="Revista Ciencia e Ingeniería" class="auth-visual__image" />
+        <div class="auth-visual__overlay"></div>
+
+        <div class="auth-visual__content">
+          <div class="auth-visual__brand">
+            <img src="assets/logo_r.jpg" alt="Logo revista" class="auth-visual__logo" />
+            <div>
+              <span class="auth-visual__eyebrow">Universidad de La Guajira</span>
+              <h2>Revista Ciencia e Ingeniería</h2>
+              <p>Registro institucional para autores y colaboradores de la plataforma editorial.</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-12 sm:col-5 md:col-5 lg:col-5 xl:col-5 pl-3 pr-3  text-center 
-      md:text-center  align-items-center ">
-        <section class=" text-center ">
-          <div fxLayout="row" class="titleCard" style="margin-left: -25px;">
-            <p-avatar styleClass="" shape="circle" size="xlarge"> <img src="assets/logo_r.jpg"></p-avatar>
-            <span class="block text-6xl font-bold mb-2" style="color:black">
-              REVISTA
-              <strong class="block" style="color:gray;font-size: 0.8rem;">
-                Ciencia e ingenieria - Uniguajira
-              </strong>
-            </span>
+
+      <div class="auth-panel">
+        <div class="auth-panel__header">
+          <span class="auth-badge">
+            <i class="pi pi-user-plus"></i>
+            Registro
+          </span>
+
+          <h1>Crear cuenta</h1>
+          <p>Completa tus datos para registrarte en la plataforma editorial institucional.</p>
+        </div>
+        <div class="auth-form-grid">
+          <div class="form-field">
+            <div class="input-wrap">
+              <i class="pi pi-id-card"></i>
+              <input
+                id="first_name"
+                type="text"
+                pInputText
+                formControlName="first_name"
+                placeholder="Ingresa tus nombres"
+              />
+            </div>
+            <small class="field-error" *ngIf="hasFieldError('first_name', 'required')">
+              Los nombres son obligatorios.
+            </small>
           </div>
-          <div [style]="{'margin-top':'-6px'}">
-            <br>
-            <div fxLayout="row" class="titleCard">
-              <i class="pi pi-shield" style="font-size: 2rem;margin-right: 10px;margin-top: -10px;"></i>
-              <h2 class="fondebabutton" style="margin-top: -12px;">Registro de Usuario</h2>
+
+          <div class="form-field">
+            <div class="input-wrap">
+              <i class="pi pi-id-card"></i>
+              <input
+                id="last_name"
+                type="text"
+                pInputText
+                formControlName="last_name"
+                placeholder="Ingresa tus apellidos"
+              />
             </div>
-            <br>
-            <div class="grid">
-              <div class="col-12 sm:col-6" style="width: 100%;">
-                <div class="p-grid p-fluid">
-                  <div class="p-col-12 p-md-6">
-                    <div class="form-field">
-                      <span class="pi pi-id-card"></span>
-                      <input type="text" pInputText formControlName="first_name" placeholder="Nombres" required
-                        title="Nombres">
-                    </div>
-                  </div>
-                </div>
-                <div class="p-grid p-fluid">
-                  <div class="p-col-12 p-md-6">
-                    <div class="form-field">
-                      <span class="pi pi-id-card"></span>
-                      <input type="text" pInputText formControlName="last_name" placeholder="Apellidos" required
-                        title="Apellidos">
-                    </div>
-                  </div>
-                </div>
-                <div class="p-grid p-fluid">
-                  <div class="p-col-12 p-md-6">
-                    <div class="form-field">
-                      <span class="pi pi-envelope"></span>
-                      <input type="email" class="p-inputtext" name="email1" formControlName="email1"
-                        placeholder="Correo Electrónico" required title="Correo Electrónico">
-                    </div>
-                  </div>
-                </div>
-                <div class="grid">
-                  <div class="col-12 sm:col-6">
-                    <div class="p-grid p-fluid">
-                      <div class="p-col-12 p-md-6">
-                        <div class="form-field">
-                          <span class="pi pi-key"></span>
-                          <input type="password" pInputText formControlName="password" placeholder="Contraseña"
-                            title="Contraseña" minlength="8" maxlength="50">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-12 sm:col-6">
-                    <div class="p-grid p-fluid">
-                      <div class="p-col-12 p-md-6">
-                        <div class="form-field">
-                          <span class="pi pi-key"></span>
-                          <input type="password" pInputText formControlName="password2"
-                            placeholder="Confirmación de Contraseña" title="Confirmación Contraseña" minlength="8"
-                            maxlength="50">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <small class="field-error" *ngIf="hasFieldError('last_name', 'required')">
+              Los apellidos son obligatorios.
+            </small>
           </div>
-          <ng-template [ngIf]="bandera == false">
-            <br>
-            <div fxLayout="row" class="titleCard ">
-              <button pButton pRipple type="submit" icon="pi pi-check" label="Enviar" [disabled]="!form.valid"
-                class=" mr-2 p-button-success "></button>
-              <button pButton pRipple type="button" routerLink="/login" icon="pi pi-sync" styleClass="p-button-text"
-                label="Login" class="p-button-outlined "></button>
+
+          <div class="form-field form-field--full">
+            <div class="input-wrap">
+              <i class="pi pi-envelope"></i>
+              <input
+                id="email1"
+                type="email"
+                pInputText
+                formControlName="email1"
+                placeholder="usuario@uniguajira.edu.co"
+              />
             </div>
-          </ng-template>
-          <ng-template [ngIf]="bandera == true">
-            <br>
-            <br>
+            <small class="field-error" *ngIf="hasFieldError('email1', 'required')">
+              El correo es obligatorio.
+            </small>
+            <small class="field-error" *ngIf="hasFieldError('email1', 'email')">
+              Debes ingresar un correo válido.
+            </small>
+            <small class="field-error" *ngIf="hasFieldError('email1', 'institutionalDomain')">
+              El correo debe pertenecer al dominio @{{ acceptedDomain }}.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <div class="input-wrap input-wrap--password">
+              <i class="pi pi-key"></i>
+              <input
+                id="password"
+                [type]="passwordVisible ? 'text' : 'password'"
+                pInputText
+                formControlName="password"
+                placeholder="contraseña"
+              />
+              <button
+                type="button"
+                class="toggle-password"
+                (click)="togglePassword('password')"
+              >
+                <i class="pi" [ngClass]="passwordVisible ? 'pi-eye-slash' : 'pi-eye'"></i>
+              </button>
+            </div>
+            <small class="field-error" *ngIf="hasFieldError('password', 'required')">
+              La contraseña es obligatoria.
+            </small>
+            <small class="field-error" *ngIf="hasFieldError('password', 'minlength')">
+              La contraseña debe tener mínimo 8 caracteres.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <div class="input-wrap input-wrap--password">
+              <i class="pi pi-lock"></i>
+              <input
+                id="password2"
+                [type]="confirmPasswordVisible ? 'text' : 'password'"
+                pInputText
+                formControlName="password2"
+                placeholder="Repite tu contraseña"
+              />
+              <button
+                type="button"
+                class="toggle-password"
+                (click)="togglePassword('confirm')"
+              >
+                <i class="pi" [ngClass]="confirmPasswordVisible ? 'pi-eye-slash' : 'pi-eye'"></i>
+              </button>
+            </div>
+            <small class="field-error" *ngIf="hasFieldError('password2', 'required')">
+              Debes confirmar la contraseña.
+            </small>
+            <small class="field-error" *ngIf="passwordsNoCoinciden">
+              Las contraseñas no coinciden.
+            </small>
+          </div>
+        </div>
+
+        <ng-container *ngIf="!bandera; else loadingBlock">
+          <div class="auth-actions">
+            <button
+              pButton
+              pRipple
+              type="submit"
+              icon="pi pi-check"
+              label="Crear cuenta"
+              class="p-button-raised auth-submit-btn"
+              [disabled]="form.invalid"
+            ></button>
+
+            <button
+              pButton
+              pRipple
+              type="button"
+              routerLink="/login"
+              icon="pi pi-arrow-left"
+              label="Volver al login"
+              class="p-button-outlined auth-secondary-btn"
+            ></button>
+          </div>
+        </ng-container>
+
+        <ng-template #loadingBlock>
+          <div class="auth-loading">
             <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
-          </ng-template>
-        </section>
+            <span>Registrando usuario...</span>
+          </div>
+        </ng-template>
       </div>
     </div>
   </p-dialog>
 </form>
-<img width="100%" height="45%" src="assets/Revista_c.jpeg">
-<p-toast></p-toast>
+
+<p-toast [style]="{ top: '80px' }"></p-toast>
 <p-confirmPopup></p-confirmPopup>

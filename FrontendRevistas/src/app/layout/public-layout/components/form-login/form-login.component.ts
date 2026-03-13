@@ -1,36 +1,37 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { UserLoginI } from 'src/app/models/authorization/usr_User';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-form-login',
   templateUrl: './form-login.component.html',
   styleUrls: ['./form-login.component.css']
 })
-
 export class FormLoginComponent implements OnInit {
-  displayMaximizable: boolean = true
   public form: FormGroup = this.formBuilder.group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required]],
     captcha: ['', [Validators.required]]
   });
-  public motrar: boolean = false
-  passwordVisible: boolean = false;
-  public image3: string = 'assets/demo.png'
-  public numero1: number = 0;
-  public numero2: number = 0;
+
+  passwordVisible = false;
+  submitted = false;
+  loading = false;
+
+  numero1 = 0;
+  numero2 = 0;
+
+  heroImage = 'assets/revista_principal.jpeg';
+  logoImage = 'assets/logo_r.jpg';
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private messageService: MessageService,
-    private http: HttpClient
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -38,12 +39,18 @@ export class FormLoginComponent implements OnInit {
 
     const token: string | null = localStorage.getItem('token');
     const user: string | null = localStorage.getItem('user');
-    if (token !== null && user !== null) {
-      this.router.navigateByUrl('/landing');
 
-    } else {
-      this.router.navigateByUrl('/login');
+    if (token && user) {
+      this.router.navigateByUrl('/landing');
     }
+  }
+
+  get f() {
+    return this.form.controls;
+  }
+
+  get captchaPregunta(): string {
+    return `¿Cuánto es ${this.numero1} + ${this.numero2}?`;
   }
 
   generarCaptcha(): void {
@@ -51,55 +58,90 @@ export class FormLoginComponent implements OnInit {
     this.numero2 = Math.floor(Math.random() * 10) + 1;
   }
 
-  togglePassword() {
+  regenerarCaptcha(): void {
+    this.generarCaptcha();
+    this.form.patchValue({ captcha: '' });
+  }
+
+  togglePassword(): void {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  onSubmit() {
-    const form = this.form.value;
+  campoInvalido(controlName: string): boolean {
+    const control = this.form.get(controlName);
+    return !!control && control.invalid && (control.touched || this.submitted);
+  }
 
-    const captchaInput = parseInt(form.captcha);
-    const captchaCorrecto = !isNaN(captchaInput) && captchaInput === (this.numero1 + this.numero2);
+  onSubmit(): void {
+    this.submitted = true;
 
-    if (!captchaCorrecto) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Captcha incorrecto' });
-      this.generarCaptcha();
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campos incompletos',
+        detail: 'Por favor completa los campos requeridos.'
+      });
       return;
     }
 
-    this.authService.login(form).subscribe((result) => {
-      if (result)
-        this.motrar = true;
-      
-      if (result && result.data && result.data.user && result.data.user.name) {
-        this.messageService.add({ severity: 'success', summary: `Bienvenido ${result.data.user.name}` });
-      }
+    const formValue = this.form.value;
+    const captchaInput = parseInt(formValue.captcha, 10);
+    const captchaCorrecto =
+      !isNaN(captchaInput) && captchaInput === (this.numero1 + this.numero2);
 
-      var date = new Date('2020-01-01 00:00:04');
-      function padLeft(n: any) {
-        return n = "00".substring(0, "00".length - n.length) + n;
-      }
-      var interval = setInterval(() => {
-        var minutes = padLeft(date.getMinutes() + "");
-        var seconds = padLeft(date.getSeconds() + "");
+    if (!captchaCorrecto) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Captcha incorrecto',
+        detail: 'Verifica el resultado e inténtalo nuevamente.'
+      });
+      this.regenerarCaptcha();
+      return;
+    }
 
+    this.loading = true;
 
-        date = new Date(date.getTime() - 1000);
-        if (minutes === '00' && seconds === '01') {
+    const payload: UserLoginI = {
+      email: formValue.username,
+      username: formValue.username,
+      password: formValue.password
+    };
+
+    this.authService.login(payload).subscribe({
+      next: (result) => {
+        this.loading = false;
+
+        if (result?.data?.user?.name) {
+          this.messageService.add({
+            severity: 'success',
+            summary: `Bienvenido ${result.data.user.name}`,
+            detail: 'Inicio de sesión exitoso.'
+          });
+        } else {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Bienvenido',
+            detail: 'Inicio de sesión exitoso.'
+          });
+        }
+
+        setTimeout(() => {
           this.router.navigateByUrl('/landing');
-          clearInterval(interval);
-        }
-      }, 1000);
-    }, async error => {
-      this.motrar = false;
+        }, 700);
+      },
+      error: (error) => {
+        this.loading = false;
+        this.regenerarCaptcha();
 
-      if (error != undefined) {
-        if (error.error) {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: `Credenciales incorrectas` });
-        }
+        console.error(error);
 
-        console.log(error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Acceso denegado',
+          detail: 'Credenciales incorrectas.'
+        });
       }
-    })
+    });
   }
 }

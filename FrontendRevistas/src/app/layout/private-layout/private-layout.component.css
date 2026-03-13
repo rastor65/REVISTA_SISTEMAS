@@ -1,16 +1,30 @@
 :host {
   --topbar-height: 78px;
   --layout-bg: linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
-  --topbar-bg: rgba(8, 27, 45, 0.88);
-  --sidebar-bg: #0f1f33;
+  --topbar-bg: rgba(8, 27, 45, 0.9);
+
+  --sidebar-bg-1: #0b1727;
+  --sidebar-bg-2: #10253d;
+  --sidebar-bg-3: #0d1e31;
+
   --primary: #02b1bc;
   --primary-dark: #0d8aa1;
+  --primary-soft: rgba(2, 177, 188, 0.16);
+  --primary-soft-2: rgba(2, 177, 188, 0.24);
+
   --text-main: #172033;
   --text-soft: #667085;
   --white-soft: rgba(255, 255, 255, 0.72);
   --white-border: rgba(255, 255, 255, 0.08);
   --white-surface: rgba(255, 255, 255, 0.08);
   --white-surface-hover: rgba(255, 255, 255, 0.14);
+
+  --menu-text: rgba(255, 255, 255, 0.82);
+  --menu-text-soft: rgba(255, 255, 255, 0.6);
+  --menu-hover: rgba(255, 255, 255, 0.08);
+  --menu-active: linear-gradient(135deg, rgba(2, 177, 188, 0.22) 0%, rgba(13, 138, 161, 0.18) 100%);
+  --menu-border: rgba(255, 255, 255, 0.08);
+  --menu-shadow: 18px 0 40px rgba(15, 23, 42, 0.24);
 
   display: block;
   width: 100%;
@@ -179,7 +193,6 @@
   flex-shrink: 0;
 }
 
-/* Botones PrimeNG en header */
 :host ::ng-deep .topbar__menu-btn.p-button {
   width: 46px;
   height: 46px;
@@ -229,7 +242,9 @@
   flex-shrink: 0;
 }
 
-/* Menú popup de perfil */
+/* =========================
+   MENÚ POPUP PERFIL
+========================= */
 :host ::ng-deep .p-menu {
   border-radius: 16px;
   border: 1px solid #e6edf5;
@@ -253,14 +268,14 @@
    SIDEBAR
 ========================= */
 :host ::ng-deep .app-sidebar {
-  width: 350px !important;
+  width: 360px !important;
   top: var(--topbar-height) !important;
   height: calc(100vh - var(--topbar-height)) !important;
   max-height: calc(100vh - var(--topbar-height)) !important;
-  background: var(--sidebar-bg);
+  background: linear-gradient(180deg, var(--sidebar-bg-1) 0%, var(--sidebar-bg-2) 45%, var(--sidebar-bg-3) 100%);
   color: #ffffff;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 18px 0 40px rgba(15, 23, 42, 0.22);
+  box-shadow: var(--menu-shadow);
 }
 
 :host ::ng-deep .app-sidebar .p-sidebar-content {
@@ -274,10 +289,12 @@
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(circle at top right, rgba(2, 177, 188, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(2, 177, 188, 0.2), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.03), transparent 30%),
     linear-gradient(180deg, #10253d 0%, #0b1a2b 100%);
 }
 
+/* header del sidebar */
 .sidebar-header {
   display: flex;
   align-items: flex-start;
@@ -291,12 +308,16 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  min-height: 96px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.07);
+  min-height: 98px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.05) 100%);
   padding: 16px 18px;
   text-decoration: none;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 12px 28px rgba(0, 0, 0, 0.12);
 }
 
 .sidebar-brand img {
@@ -324,18 +345,21 @@
   box-shadow: 0 0 0 0.15rem rgba(2, 177, 188, 0.18);
 }
 
+/* tarjeta usuario */
 .sidebar-user-card {
-  margin: 10px 18px 20px;
+  margin: 10px 18px 18px;
   padding: 18px;
   border-radius: 24px;
   background: linear-gradient(180deg,
-      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.09) 0%,
       rgba(255, 255, 255, 0.05) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   gap: 14px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
 .sidebar-user-avatar {
@@ -358,10 +382,11 @@
   word-break: break-word;
 }
 
+/* contenedor del menú */
 .sidebar-menu-wrap {
   flex: 1;
   overflow-y: auto;
-  padding: 2px 14px 24px;
+  padding: 4px 14px 24px;
 }
 
 .sidebar-menu-wrap::-webkit-scrollbar {
@@ -373,28 +398,253 @@
   border-radius: 999px;
 }
 
+.sidebar-menu-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* header navegación */
 .sidebar-menu-header {
   display: flex;
   align-items: center;
+  gap: 12px;
   padding: 6px 8px 14px;
 }
 
-.sidebar-menu-header span {
-  font-size: 0.8rem;
+.sidebar-menu-header__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(2, 177, 188, 0.2) 0%, rgba(13, 138, 161, 0.18) 100%);
+  border: 1px solid rgba(2, 177, 188, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7ce7ef;
+  box-shadow: 0 10px 18px rgba(2, 177, 188, 0.1);
+}
+
+.sidebar-menu-header__icon i {
+  font-size: 1rem;
+}
+
+.sidebar-menu-header__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-menu-header__content span {
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.82);
 }
 
+.sidebar-menu-header__content small {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+/* tarjeta interna del menú */
 .sidebar-menu-card {
-  border-radius: 22px;
-  padding: 16px 10px;
+  border-radius: 26px;
+  padding: 14px 10px;
   background: linear-gradient(180deg,
-      rgba(255, 255, 255, 0.035) 0%,
-      rgba(255, 255, 255, 0.02) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+      rgba(255, 255, 255, 0.055) 0%,
+      rgba(255, 255, 255, 0.025) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   min-height: 260px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 14px 28px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================
+   ESTILO DEL app-menu
+========================= */
+:host ::ng-deep .sidebar-app-menu {
+  display: block;
+  width: 100%;
+}
+
+/* listas base */
+:host ::ng-deep .sidebar-app-menu ul,
+:host ::ng-deep .sidebar-app-menu ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* separación entre items */
+:host ::ng-deep .sidebar-app-menu li {
+  margin: 5px 0;
+}
+
+/* enlaces / botones del menú */
+:host ::ng-deep .sidebar-app-menu a,
+:host ::ng-deep .sidebar-app-menu button,
+:host ::ng-deep .sidebar-app-menu .menu-item,
+:host ::ng-deep .sidebar-app-menu .menu-link,
+:host ::ng-deep .sidebar-app-menu .item-link,
+:host ::ng-deep .sidebar-app-menu .nav-link {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  text-decoration: none;
+  color: var(--menu-text);
+  background: transparent;
+  border: 1px solid transparent;
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease,
+    transform 0.18s ease,
+    box-shadow 0.22s ease,
+    color 0.22s ease;
+  font-size: 0.95rem;
+  font-weight: 600;
+  position: relative;
+}
+
+/* hover */
+:host ::ng-deep .sidebar-app-menu a:hover,
+:host ::ng-deep .sidebar-app-menu button:hover,
+:host ::ng-deep .sidebar-app-menu .menu-item:hover,
+:host ::ng-deep .sidebar-app-menu .menu-link:hover,
+:host ::ng-deep .sidebar-app-menu .item-link:hover,
+:host ::ng-deep .sidebar-app-menu .nav-link:hover {
+  background: var(--menu-hover);
+  border-color: var(--menu-border);
+  color: #ffffff;
+  transform: translateX(4px);
+  box-shadow: 0 12px 20px rgba(2, 177, 188, 0.08);
+}
+
+/* item activo */
+:host ::ng-deep .sidebar-app-menu .active,
+:host ::ng-deep .sidebar-app-menu .router-link-active,
+:host ::ng-deep .sidebar-app-menu .is-active,
+:host ::ng-deep .sidebar-app-menu a.active,
+:host ::ng-deep .sidebar-app-menu a.router-link-active {
+  background: var(--menu-active);
+  border-color: rgba(2, 177, 188, 0.32);
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 12px 28px rgba(2, 177, 188, 0.12);
+}
+
+/* detalle luminoso del activo */
+:host ::ng-deep .sidebar-app-menu .active::before,
+:host ::ng-deep .sidebar-app-menu .router-link-active::before,
+:host ::ng-deep .sidebar-app-menu .is-active::before,
+:host ::ng-deep .sidebar-app-menu a.active::before,
+:host ::ng-deep .sidebar-app-menu a.router-link-active::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #5ce6ee 0%, #02b1bc 100%);
+  box-shadow: 0 0 12px rgba(92, 230, 238, 0.45);
+}
+
+/* iconos */
+:host ::ng-deep .sidebar-app-menu i,
+:host ::ng-deep .sidebar-app-menu .pi,
+:host ::ng-deep .sidebar-app-menu .menu-icon,
+:host ::ng-deep .sidebar-app-menu .item-icon {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.72);
+  transition: color 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+:host ::ng-deep .sidebar-app-menu a:hover i,
+:host ::ng-deep .sidebar-app-menu button:hover i,
+:host ::ng-deep .sidebar-app-menu .menu-item:hover i,
+:host ::ng-deep .sidebar-app-menu .active i,
+:host ::ng-deep .sidebar-app-menu .router-link-active i {
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* textos */
+:host ::ng-deep .sidebar-app-menu span,
+:host ::ng-deep .sidebar-app-menu .menu-label,
+:host ::ng-deep .sidebar-app-menu .item-label {
+  line-height: 1.35;
+}
+
+/* submenús */
+:host ::ng-deep .sidebar-app-menu li ul,
+:host ::ng-deep .sidebar-app-menu li ol,
+:host ::ng-deep .sidebar-app-menu .submenu,
+:host ::ng-deep .sidebar-app-menu .children {
+  margin-top: 6px;
+  margin-left: 10px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* subitems */
+:host ::ng-deep .sidebar-app-menu li ul a,
+:host ::ng-deep .sidebar-app-menu li ul button,
+:host ::ng-deep .sidebar-app-menu li ul .menu-item,
+:host ::ng-deep .sidebar-app-menu li ul .menu-link {
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  border-radius: 14px;
+  color: var(--menu-text-soft);
+}
+
+/* PrimeNG menus si app-menu usa panelmenu/menu */
+:host ::ng-deep .sidebar-app-menu .p-panelmenu,
+:host ::ng-deep .sidebar-app-menu .p-menu,
+:host ::ng-deep .sidebar-app-menu .p-tieredmenu {
+  width: 100%;
+  background: transparent !important;
+  border: none !important;
+}
+
+:host ::ng-deep .sidebar-app-menu .p-panelmenu .p-panelmenu-header > a,
+:host ::ng-deep .sidebar-app-menu .p-menu .p-menuitem-link,
+:host ::ng-deep .sidebar-app-menu .p-tieredmenu .p-menuitem-link {
+  min-height: 52px;
+  padding: 12px 14px !important;
+  border-radius: 18px !important;
+  color: var(--menu-text) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  transition: all 0.22s ease;
+}
+
+:host ::ng-deep .sidebar-app-menu .p-panelmenu .p-panelmenu-header > a:hover,
+:host ::ng-deep .sidebar-app-menu .p-menu .p-menuitem-link:hover,
+:host ::ng-deep .sidebar-app-menu .p-tieredmenu .p-menuitem-link:hover {
+  background: var(--menu-hover) !important;
+  border-color: var(--menu-border) !important;
+  color: #ffffff !important;
+  transform: translateX(4px);
+}
+
+:host ::ng-deep .sidebar-app-menu .p-panelmenu .p-panelmenu-content {
+  background: transparent !important;
+  border: none !important;
+  padding: 4px 0 0 10px;
+}
+
+:host ::ng-deep .sidebar-app-menu .p-menuitem-icon,
+:host ::ng-deep .sidebar-app-menu .p-panelmenu-icon {
+  color: rgba(255, 255, 255, 0.74) !important;
 }
 
 /* =========================
@@ -448,7 +698,7 @@
 }
 
 /* =========================
-   DIÁLOGO IMAGEN DE PERFIL
+   DIÁLOGOS
 ========================= */
 .edit-profile-dialog {
   text-align: center;
@@ -547,9 +797,6 @@
   color: #1f2937;
 }
 
-/* =========================
-   FORMULARIOS DE DIÁLOGOS
-========================= */
 section {
   max-width: 900px;
   margin: 0 auto;
@@ -660,6 +907,41 @@ label {
     max-height: calc(100vh - var(--topbar-height)) !important;
   }
 
+  .sidebar-header {
+    padding: 18px 16px 12px;
+  }
+
+  .sidebar-brand {
+    min-height: 88px;
+    border-radius: 20px;
+  }
+
+  .sidebar-user-card {
+    margin: 8px 16px 16px;
+    padding: 16px;
+  }
+
+  .sidebar-menu-wrap {
+    padding: 4px 12px 20px;
+  }
+
+  .sidebar-menu-card {
+    padding: 12px 8px;
+    border-radius: 22px;
+  }
+
+  :host ::ng-deep .sidebar-app-menu a,
+  :host ::ng-deep .sidebar-app-menu button,
+  :host ::ng-deep .sidebar-app-menu .menu-item,
+  :host ::ng-deep .sidebar-app-menu .menu-link,
+  :host ::ng-deep .sidebar-app-menu .item-link,
+  :host ::ng-deep .sidebar-app-menu .nav-link {
+    min-height: 46px;
+    padding: 11px 12px;
+    font-size: 0.92rem;
+    border-radius: 14px;
+  }
+
   .institutional-banner,
   .private-footer {
     padding-left: 16px;
@@ -696,5 +978,13 @@ label {
     min-height: 46px;
     padding: 0.35rem 0.45rem;
     border-radius: 14px;
+  }
+
+  .sidebar-user-info h3 {
+    font-size: 0.98rem;
+  }
+
+  .sidebar-user-info p {
+    font-size: 0.84rem;
   }
 }
